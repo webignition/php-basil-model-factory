@@ -3,6 +3,8 @@
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
+use webignition\BasilModel\Value\ObjectValue;
+use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\ValueFactory;
@@ -24,52 +26,81 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider createFromValueStringDataProvider
      */
-    public function testCreateFromValueString(string $valueString, string $expectedType, string $expectedValue)
+    public function testCreateFromValueString(string $valueString, ValueInterface $expectedValue)
     {
         $value = $this->valueFactory->createFromValueString($valueString);
 
         $this->assertInstanceOf(ValueInterface::class, $value);
-        $this->assertEquals($expectedType, $value->getType());
-        $this->assertEquals($expectedValue, $value->getValue());
+        $this->assertInstanceOf(get_class($expectedValue), $value);
+        $this->assertEquals($expectedValue, $value);
     }
 
     public function createFromValueStringDataProvider(): array
     {
         return [
-            'empty' => [
-                'valueString' => '',
-                'expectedType' => ValueTypes::STRING,
-                'expectedValue' => '',
-            ],
             'quoted string' => [
                 'valueString' => '"value"',
-                'expectedType' => ValueTypes::STRING,
-                'expectedValue' => 'value',
+                'expectedValue' => new Value(
+                    ValueTypes::STRING,
+                    'value'
+                ),
             ],
             'unquoted string' => [
                 'valueString' => 'value',
-                'expectedType' => ValueTypes::STRING,
-                'expectedValue' => 'value',
+                'expectedValue' => new Value(
+                    ValueTypes::STRING,
+                    'value'
+                ),
             ],
             'quoted string wrapped with escaped quotes' => [
                 'valueString' => '"\"value\""',
-                'expectedType' => ValueTypes::STRING,
-                'expectedValue' => '"value"',
+                'expectedValue' => new Value(
+                    ValueTypes::STRING,
+                    '"value"'
+                ),
             ],
             'quoted string containing escaped quotes' => [
                 'valueString' => '"v\"alu\"e"',
-                'expectedType' => ValueTypes::STRING,
-                'expectedValue' => 'v"alu"e',
+                'expectedValue' => new Value(
+                    ValueTypes::STRING,
+                    'v"alu"e'
+                ),
             ],
             'data parameter' => [
-                'valueString' => '$data.name',
-                'expectedType' => ValueTypes::DATA_PARAMETER,
-                'expectedValue' => '$data.name',
+                'valueString' => '$data.data_name',
+                'expectedValue' => new ObjectValue(
+                    ValueTypes::DATA_PARAMETER,
+                    '$data.data_name',
+                    'data',
+                    'data_name'
+                ),
             ],
             'element parameter' => [
-                'valueString' => '$elements.name',
-                'expectedType' => ValueTypes::ELEMENT_PARAMETER,
-                'expectedValue' => '$elements.name',
+                'valueString' => '$elements.element_name',
+                'expectedValue' => new ObjectValue(
+                    ValueTypes::ELEMENT_PARAMETER,
+                    '$elements.element_name',
+                    'elements',
+                    'element_name'
+                ),
+            ],
+            'page property' => [
+                'valueString' => '$page.url',
+                'expectedValue' => new ObjectValue(
+                    ValueTypes::PAGE_OBJECT_PROPERTY,
+                    '$page.url',
+                    'page',
+                    'url'
+                ),
+            ],
+            'browser property' => [
+                'valueString' => '$browser.size',
+                'expectedValue' => new ObjectValue(
+                    ValueTypes::BROWSER_OBJECT_PROPERTY,
+                    '$browser.size',
+                    'browser',
+                    'size'
+                ),
             ],
         ];
     }
