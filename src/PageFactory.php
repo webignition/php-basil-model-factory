@@ -6,8 +6,7 @@ use Nyholm\Psr7\Uri;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
-use webignition\BasilParser\DataStructure\Page as PageData;
-use webignition\BasilParser\Exception\MalformedPageElementReferenceException;
+use webignition\BasilDataStructure\Page as PageData;
 
 class PageFactory
 {
@@ -19,6 +18,11 @@ class PageFactory
     public function __construct(IdentifierFactory $identifierFactory)
     {
         $this->identifierFactory = $identifierFactory;
+    }
+
+    public static function create(?IdentifierFactory $identifierFactory = null): PageFactory
+    {
+        return new PageFactory($identifierFactory ?? IdentifierFactory::createFactory());
     }
 
     /**
