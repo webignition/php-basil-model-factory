@@ -23,6 +23,11 @@ class ValueFactory
     const PAGE_OBJECT_PARAMETER_PREFIX = '$page.';
     const BROWSER_OBJECT_PARAMETER_PREFIX = '$browser.';
 
+    public static function createFactory(): ValueFactory
+    {
+        return new ValueFactory();
+    }
+
     public function createFromValueString(string $valueString): ValueInterface
     {
         $valueString = trim($valueString);

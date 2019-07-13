@@ -20,7 +20,7 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->valueFactory = new ValueFactory();
+        $this->valueFactory = ValueFactory::createFactory();
     }
 
     /**
@@ -38,6 +38,13 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
     public function createFromValueStringDataProvider(): array
     {
         return [
+            'empty' => [
+                'valueString' => '',
+                'expectedValue' => new Value(
+                    ValueTypes::STRING,
+                    ''
+                ),
+            ],
             'quoted string' => [
                 'valueString' => '"value"',
                 'expectedValue' => new Value(
