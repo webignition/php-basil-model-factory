@@ -32,7 +32,7 @@ class InputActionTypeFactory extends AbstractActionTypeFactory implements Action
         ?IdentifierFactory $identifierFactory = null,
         ?IdentifierStringExtractor $identifierStringExtractor = null,
         ?ValueFactory $valueFactory = null
-    ): ActionTypeFactoryInterface {
+    ): InputActionTypeFactory {
         return new InputActionTypeFactory(
             $identifierFactory ?? IdentifierFactory::createFactory(),
             $identifierStringExtractor ?? IdentifierStringExtractor::create(),
