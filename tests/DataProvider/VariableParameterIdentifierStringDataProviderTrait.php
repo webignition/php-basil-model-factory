@@ -1,6 +1,6 @@
 <?php
 
-namespace webignition\BasilModelFactory\Tests\Unit\DataProvider;
+namespace webignition\BasilModelFactory\Tests\DataProvider;
 
 trait VariableParameterIdentifierStringDataProviderTrait
 {

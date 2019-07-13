@@ -4,9 +4,9 @@
 namespace webignition\BasilModelFactory\Tests\Unit\IdentifierStringExtractor;
 
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
-use webignition\BasilModelFactory\Tests\Unit\DataProvider\LiteralParameterStringDataProviderTrait;
-use webignition\BasilModelFactory\Tests\Unit\DataProvider\QuotedIdentifierStringDataProviderTrait;
-use webignition\BasilModelFactory\Tests\Unit\DataProvider\VariableParameterIdentifierStringDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\LiteralParameterStringDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\QuotedIdentifierStringDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\VariableParameterIdentifierStringDataProviderTrait;
 
 class IdentifierStringExtractorTest extends \PHPUnit\Framework\TestCase
 {

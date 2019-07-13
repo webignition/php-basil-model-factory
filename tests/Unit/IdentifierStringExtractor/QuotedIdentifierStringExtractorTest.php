@@ -4,7 +4,7 @@
 namespace webignition\BasilModelFactory\Tests\Unit\IdentifierStringExtractor;
 
 use webignition\BasilModelFactory\IdentifierStringExtractor\QuotedIdentifierStringExtractor;
-use webignition\BasilModelFactory\Tests\Unit\DataProvider\QuotedIdentifierStringDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\QuotedIdentifierStringDataProviderTrait;
 
 class QuotedIdentifierStringExtractorTest extends \PHPUnit\Framework\TestCase
 {
