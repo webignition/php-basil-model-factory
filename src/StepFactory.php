@@ -3,7 +3,7 @@
 namespace webignition\BasilModelFactory;
 
 use webignition\BasilContextAwareException\ExceptionContext\ExceptionContextInterface;
-use webignition\BasilModel\DataSet\DataSet;
+use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
@@ -108,13 +108,7 @@ class StepFactory
 
         $dataArray = $stepData->getDataArray();
         if (!empty($dataArray)) {
-            foreach ($dataArray as $key => $dataSetData) {
-                $data[$key] = new DataSet($dataSetData);
-            }
-        }
-
-        if (!empty($data)) {
-            $step = $step->withDataSets($data);
+            $step = $step->withDataSetCollection(DataSetCollection::fromArray($dataArray));
         }
 
         $elementIdentifiers = [];

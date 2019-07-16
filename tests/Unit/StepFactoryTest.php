@@ -12,6 +12,7 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Assertion\Assertion;
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\DataSet\DataSet;
+use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
@@ -222,11 +223,11 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     new Step([], []),
                     'import_name',
                     ''
-                ))->withDataSets([
+                ))->withDataSetCollection(new DataSetCollection([
                     'data_set_1' => new DataSet([
                         'expected_title' => 'Foo',
                     ]),
-                ]),
+                ])),
             ],
             'import name and page imported page elements' => [
                 'stepData' => new StepData([
