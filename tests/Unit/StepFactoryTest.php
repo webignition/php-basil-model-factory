@@ -14,6 +14,7 @@ use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
@@ -224,7 +225,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     'import_name',
                     ''
                 ))->withDataSetCollection(new DataSetCollection([
-                    'data_set_1' => new DataSet([
+                    'data_set_1' => new DataSet('data_set_1', [
                         'expected_title' => 'Foo',
                     ]),
                 ])),
@@ -240,7 +241,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     new Step([], []),
                     'import_name',
                     ''
-                ))->withElementIdentifiers([
+                ))->withIdentifierCollection(new IdentifierCollection([
                     'heading' => new Identifier(
                         IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
                         new Value(
@@ -250,7 +251,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         1,
                         'heading'
                     ),
-                ]),
+                ])),
             ],
             'import name, data provider name, actions and assertions' => [
                 'stepData' => new StepData([

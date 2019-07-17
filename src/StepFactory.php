@@ -4,6 +4,7 @@ namespace webignition\BasilModelFactory;
 
 use webignition\BasilContextAwareException\ExceptionContext\ExceptionContextInterface;
 use webignition\BasilModel\DataSet\DataSetCollection;
+use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
@@ -112,16 +113,17 @@ class StepFactory
         }
 
         $elementIdentifiers = [];
+
         foreach ($stepData->getElements() as $elementName => $elementIdentifierString) {
             $elementIdentifier = $this->identifierFactory->create($elementIdentifierString, $elementName);
 
             if ($elementIdentifier instanceof IdentifierInterface) {
-                $elementIdentifiers[$elementName] = $elementIdentifier;
+                $elementIdentifiers[] = $elementIdentifier;
             }
         }
 
         if (!empty($elementIdentifiers)) {
-            $step = $step->withElementIdentifiers($elementIdentifiers);
+            $step = $step->withIdentifierCollection(new IdentifierCollection($elementIdentifiers));
         }
 
         return $step;
