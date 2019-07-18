@@ -109,6 +109,27 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
                     'size'
                 ),
             ],
+            'page model reference' => [
+                'valueString' => 'page_import_name.elements.element_name',
+                'expectedValue' => new Value(
+                    ValueTypes::PAGE_MODEL_REFERENCE,
+                    'page_import_name.elements.element_name'
+                ),
+            ],
+            'page model reference string' => [
+                'valueString' => '"page_import_name.elements.element_name"',
+                'expectedValue' => new Value(
+                    ValueTypes::STRING,
+                    'page_import_name.elements.element_name'
+                ),
+            ],
+            'page model reference string with escaped quotes' => [
+                'valueString' => '"\"page_import_name.elements.element_name\""',
+                'expectedValue' => new Value(
+                    ValueTypes::STRING,
+                    '"page_import_name.elements.element_name"'
+                ),
+            ],
         ];
     }
 }

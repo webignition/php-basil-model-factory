@@ -259,7 +259,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
                     new Value(
-                        ValueTypes::STRING,
+                        ValueTypes::PAGE_MODEL_REFERENCE,
                         'page_import_name.elements.element_name'
                     )
                 ),
