@@ -2,6 +2,7 @@
 
 namespace webignition\BasilModelFactory;
 
+use webignition\BasilModel\PageElementReference\PageElementReference;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueInterface;
@@ -10,6 +11,7 @@ use webignition\BasilModel\Value\ValueTypes;
 class ValueFactory
 {
     const OBJECT_PARAMETER_PREFIX = '$%s.';
+    const QUOTED_STRING_PATTERN = '/^"[^"]+"$/';
 
     const OBJECT_NAME_VALUE_TYPE_MAP = [
         'data' => ValueTypes::DATA_PARAMETER,
@@ -44,6 +46,8 @@ class ValueFactory
             return new ObjectValue($objectType, $valueString, $objectName, $propertyName);
         }
 
+        $isUnprocessedStringQuoted = preg_match('/^"[^"]+"$/', $valueString) === 1;
+
         if ('"' === $valueString[0]) {
             $valueString = mb_substr($valueString, 1);
         }
@@ -53,6 +57,16 @@ class ValueFactory
         }
 
         $valueString = str_replace('\\"', '"', $valueString);
+
+        $isDeQuotedStringQuoted = preg_match('/^"[^"]+"$/', $valueString) === 1;
+
+        if (!$isUnprocessedStringQuoted && !$isDeQuotedStringQuoted) {
+            $pageElementReference = new PageElementReference($valueString);
+
+            if ($pageElementReference->isValid()) {
+                $type = ValueTypes::PAGE_MODEL_REFERENCE;
+            }
+        }
 
         return new Value($type, $valueString);
     }

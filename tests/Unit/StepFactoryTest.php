@@ -166,7 +166,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             new Identifier(
                                 IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
                                 new Value(
-                                    ValueTypes::STRING,
+                                    ValueTypes::PAGE_MODEL_REFERENCE,
                                     'page_import_name.elements.element_name'
                                 )
                             ),
@@ -179,7 +179,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             new Identifier(
                                 IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
                                 new Value(
-                                    ValueTypes::STRING,
+                                    ValueTypes::PAGE_MODEL_REFERENCE,
                                     'page_import_name.elements.element_name'
                                 )
                             ),
@@ -245,7 +245,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     'heading' => new Identifier(
                         IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
                         new Value(
-                            ValueTypes::STRING,
+                            ValueTypes::PAGE_MODEL_REFERENCE,
                             'page_import_name.elements.heading'
                         ),
                         1,
