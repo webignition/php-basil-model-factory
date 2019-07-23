@@ -28,18 +28,16 @@ class IdentifierFactory
     const REFERENCED_ELEMENT_REGEX = '/^"{{.+/';
     const REFERENCED_ELEMENT_EXTRACTOR_REGEX = '/^".+?(?=(}}))}}/';
 
-    private $valueFactory;
-
-    public function __construct(ValueFactory $valueFactory)
-    {
-        $this->valueFactory = $valueFactory;
-    }
+//    private $valueFactory;
+//
+//    public function __construct(ValueFactory $valueFactory)
+//    {
+//        $this->valueFactory = $valueFactory;
+//    }
 
     public static function createFactory()
     {
-        return new IdentifierFactory(
-            ValueFactory::createFactory()
-        );
+        return new IdentifierFactory();
     }
 
     /**
@@ -48,8 +46,6 @@ class IdentifierFactory
      * @param IdentifierInterface[] $existingIdentifiers
      *
      * @return IdentifierInterface|null
-     *
-     * @throws MalformedPageElementReferenceException
      */
     public function createWithElementReference(
         string $identifierString,
@@ -115,15 +111,29 @@ class IdentifierFactory
 //        return new Identifier($type, $this->valueFactory->createFromValueString($identifierString), 1, $name);
     }
 
+    public static function isCssSelector(string $identifierString)
+    {
+        return 1 === preg_match(self::CSS_SELECTOR_REGEX, $identifierString);
+    }
+
+    public static function isXpathExpression(string $identifierString)
+    {
+        return 1 === preg_match(self::XPATH_EXPRESSION_REGEX, $identifierString);
+    }
+
     private function deriveType(string $identifierString): string
     {
+        if (self::isXpathExpression($identifierString)) {
+            return IdentifierTypes::XPATH_EXPRESSION;
+        }
+
 //        if (1 === preg_match(self::CSS_SELECTOR_REGEX, $identifierString)) {
 //            return IdentifierTypes::CSS_SELECTOR;
 //        }
-
-        if (1 === preg_match(self::XPATH_EXPRESSION_REGEX, $identifierString)) {
-            return IdentifierTypes::XPATH_EXPRESSION;
-        }
+//
+//        if (1 === preg_match(self::XPATH_EXPRESSION_REGEX, $identifierString)) {
+//            return IdentifierTypes::XPATH_EXPRESSION;
+//        }
 
         return IdentifierTypes::CSS_SELECTOR;
 
