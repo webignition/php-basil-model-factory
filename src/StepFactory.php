@@ -39,15 +39,12 @@ class StepFactory
         $this->identifierFactory = $identifierFactory;
     }
 
-    public static function createFactory(
-        ?ActionFactory $actionFactory = null,
-        ?AssertionFactory $assertionFactory = null,
-        ?IdentifierFactory $identifierFactory = null
-    ): StepFactory {
+    public static function createFactory(): StepFactory
+    {
         return new StepFactory(
-            $actionFactory ?? ActionFactory::createFactory(),
-            $assertionFactory ?? AssertionFactory::createFactory(),
-            $identifierFactory ?? IdentifierFactory::createFactory()
+            ActionFactory::createFactory(),
+            AssertionFactory::createFactory(),
+            IdentifierFactory::createFactory()
         );
     }
 

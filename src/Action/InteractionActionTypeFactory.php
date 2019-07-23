@@ -17,10 +17,10 @@ class InteractionActionTypeFactory extends AbstractActionTypeFactory implements 
         $this->identifierFactory = $identifierFactory;
     }
 
-    public static function createFactory(?IdentifierFactory $identifierFactory = null): InteractionActionTypeFactory
+    public static function createFactory(): InteractionActionTypeFactory
     {
         return new InteractionActionTypeFactory(
-            $identifierFactory ?? IdentifierFactory::createFactory()
+            IdentifierFactory::createFactory()
         );
     }
 

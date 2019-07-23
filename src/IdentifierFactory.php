@@ -32,9 +32,11 @@ class IdentifierFactory
         $this->valueFactory = $valueFactory;
     }
 
-    public static function createFactory(?ValueFactory $valueFactory = null)
+    public static function createFactory()
     {
-        return new IdentifierFactory($valueFactory ?? ValueFactory::createFactory());
+        return new IdentifierFactory(
+            ValueFactory::createFactory()
+        );
     }
 
     /**

@@ -28,15 +28,12 @@ class InputActionTypeFactory extends AbstractActionTypeFactory implements Action
         $this->valueFactory = $valueFactory;
     }
 
-    public static function createFactory(
-        ?IdentifierFactory $identifierFactory = null,
-        ?IdentifierStringExtractor $identifierStringExtractor = null,
-        ?ValueFactory $valueFactory = null
-    ): InputActionTypeFactory {
+    public static function createFactory(): InputActionTypeFactory
+    {
         return new InputActionTypeFactory(
-            $identifierFactory ?? IdentifierFactory::createFactory(),
-            $identifierStringExtractor ?? IdentifierStringExtractor::create(),
-            $valueFactory ?? ValueFactory::createFactory()
+            IdentifierFactory::createFactory(),
+            IdentifierStringExtractor::create(),
+            ValueFactory::createFactory()
         );
     }
 

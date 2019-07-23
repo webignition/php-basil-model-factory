@@ -21,13 +21,11 @@ class TestFactory
         $this->stepFactory = $stepFactory;
     }
 
-    public static function createFactory(
-        ?ConfigurationFactory $configurationFactory = null,
-        ?StepFactory $stepFactory = null
-    ): TestFactory {
+    public static function createFactory(): TestFactory
+    {
         return new TestFactory(
-            $configurationFactory ?? ConfigurationFactory::createFactory(),
-            $stepFactory ?? StepFactory::createFactory()
+            ConfigurationFactory::createFactory(),
+            StepFactory::createFactory()
         );
     }
 
