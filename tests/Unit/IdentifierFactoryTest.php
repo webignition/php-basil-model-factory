@@ -8,11 +8,13 @@ use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\IdentifierFactory;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 
+/**
+ * @todo: remove commented
+ */
 class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -30,10 +32,10 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider createCssSelectorDataProvider
      * @dataProvider createXpathExpressionDataProvider
-     * @dataProvider createElementParameterDataProvider
-     * @dataProvider createPageModelElementReferenceDataProvider
-     * @dataProvider createPageObjectParameterDataProvider
-     * @dataProvider createBrowserObjectParameterDataProvider
+     * @!dataProvider createElementParameterDataProvider
+     * @!dataProvider createPageModelElementReferenceDataProvider
+     * @!dataProvider createPageObjectParameterDataProvider
+     * @!dataProvider createBrowserObjectParameterDataProvider
      */
     public function testCreateSuccess(
         string $identifierString,
@@ -52,10 +54,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '"#element-id"',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::CSS_SELECTOR,
-                    new Value(
-                        ValueTypes::STRING,
-                        '#element-id'
-                    ),
+                    '#element-id',
                     1
                 ),
             ],
@@ -63,10 +62,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '".listed-item"',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::CSS_SELECTOR,
-                    new Value(
-                        ValueTypes::STRING,
-                        '.listed-item'
-                    ),
+                    '.listed-item',
                     1
                 ),
             ],
@@ -74,10 +70,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '".listed-item":1',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::CSS_SELECTOR,
-                    new Value(
-                        ValueTypes::STRING,
-                        '.listed-item'
-                    ),
+                    '.listed-item',
                     1
                 ),
             ],
@@ -85,10 +78,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '".listed-item":3',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::CSS_SELECTOR,
-                    new Value(
-                        ValueTypes::STRING,
-                        '.listed-item'
-                    ),
+                    '.listed-item',
                     3
                 ),
             ],
@@ -96,10 +86,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '".listed-item":-1',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::CSS_SELECTOR,
-                    new Value(
-                        ValueTypes::STRING,
-                        '.listed-item'
-                    ),
+                    '.listed-item',
                     -1
                 ),
             ],
@@ -107,10 +94,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '".listed-item":-3',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::CSS_SELECTOR,
-                    new Value(
-                        ValueTypes::STRING,
-                        '.listed-item'
-                    ),
+                    '.listed-item',
                     -3
                 ),
             ],
@@ -118,10 +102,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '".listed-item":first',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::CSS_SELECTOR,
-                    new Value(
-                        ValueTypes::STRING,
-                        '.listed-item'
-                    ),
+                    '.listed-item',
                     1
                 ),
             ],
@@ -129,10 +110,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '".listed-item":last',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::CSS_SELECTOR,
-                    new Value(
-                        ValueTypes::STRING,
-                        '.listed-item'
-                    ),
+                    '.listed-item',
                     -1
                 ),
             ],
@@ -146,10 +124,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '"//*[@id="element-id"]"',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::XPATH_EXPRESSION,
-                    new Value(
-                        ValueTypes::STRING,
-                        '//*[@id="element-id"]'
-                    ),
+                    '//*[@id="element-id"]',
                     1
                 ),
             ],
@@ -157,10 +132,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '"//input[@type="submit"]"',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::XPATH_EXPRESSION,
-                    new Value(
-                        ValueTypes::STRING,
-                        '//input[@type="submit"]'
-                    ),
+                    '//input[@type="submit"]',
                     1
                 ),
             ],
@@ -168,10 +140,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '"//input[@type="submit"]":1',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::XPATH_EXPRESSION,
-                    new Value(
-                        ValueTypes::STRING,
-                        '//input[@type="submit"]'
-                    ),
+                    '//input[@type="submit"]',
                     1
                 ),
             ],
@@ -179,10 +148,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '"//input[@type="submit"]":3',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::XPATH_EXPRESSION,
-                    new Value(
-                        ValueTypes::STRING,
-                        '//input[@type="submit"]'
-                    ),
+                    '//input[@type="submit"]',
                     3
                 ),
             ],
@@ -190,10 +156,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '"//input[@type="submit"]":-1',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::XPATH_EXPRESSION,
-                    new Value(
-                        ValueTypes::STRING,
-                        '//input[@type="submit"]'
-                    ),
+                    '//input[@type="submit"]',
                     -1
                 ),
             ],
@@ -201,10 +164,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '"//input[@type="submit"]":-3',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::XPATH_EXPRESSION,
-                    new Value(
-                        ValueTypes::STRING,
-                        '//input[@type="submit"]'
-                    ),
+                    '//input[@type="submit"]',
                     -3
                 ),
             ],
@@ -212,10 +172,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '"//input[@type="submit"]":first',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::XPATH_EXPRESSION,
-                    new Value(
-                        ValueTypes::STRING,
-                        '//input[@type="submit"]'
-                    ),
+                    '//input[@type="submit"]',
                     1
                 ),
             ],
@@ -223,85 +180,82 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '"//input[@type="submit"]":last',
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::XPATH_EXPRESSION,
-                    new Value(
-                        ValueTypes::STRING,
-                        '//input[@type="submit"]'
-                    ),
+                    '//input[@type="submit"]',
                     -1
                 ),
             ],
         ];
     }
 
-    public function createElementParameterDataProvider(): array
-    {
-        return [
-            'element parameter' => [
-                'identifierString' => '$elements.name',
-                'expectedIdentifier' => new Identifier(
-                    IdentifierTypes::ELEMENT_PARAMETER,
-                    new ObjectValue(
-                        ValueTypes::ELEMENT_PARAMETER,
-                        '$elements.name',
-                        'elements',
-                        'name'
-                    )
-                ),
-            ],
-        ];
-    }
-
-    public function createPageModelElementReferenceDataProvider(): array
-    {
-        return [
-            'page model element reference' => [
-                'identifierString' => 'page_import_name.elements.element_name',
-                'expectedIdentifier' => new Identifier(
-                    IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
-                    new Value(
-                        ValueTypes::PAGE_MODEL_REFERENCE,
-                        'page_import_name.elements.element_name'
-                    )
-                ),
-            ],
-        ];
-    }
-
-    public function createPageObjectParameterDataProvider(): array
-    {
-        return [
-            'page object parameter' => [
-                'identifierString' => '$page.title',
-                'expectedIdentifier' => new Identifier(
-                    IdentifierTypes::PAGE_OBJECT_PARAMETER,
-                    new ObjectValue(
-                        ValueTypes::PAGE_OBJECT_PROPERTY,
-                        '$page.title',
-                        'page',
-                        'title'
-                    )
-                ),
-            ],
-        ];
-    }
-
-    public function createBrowserObjectParameterDataProvider(): array
-    {
-        return [
-            'browser object parameter' => [
-                'identifierString' => '$browser.size',
-                'expectedIdentifier' => new Identifier(
-                    IdentifierTypes::BROWSER_OBJECT_PARAMETER,
-                    new ObjectValue(
-                        ValueTypes::BROWSER_OBJECT_PROPERTY,
-                        '$browser.size',
-                        'browser',
-                        'size'
-                    )
-                ),
-            ],
-        ];
-    }
+//    public function createElementParameterDataProvider(): array
+//    {
+//        return [
+//            'element parameter' => [
+//                'identifierString' => '$elements.name',
+//                'expectedIdentifier' => new Identifier(
+//                    IdentifierTypes::ELEMENT_PARAMETER,
+//                    new ObjectValue(
+//                        ValueTypes::ELEMENT_PARAMETER,
+//                        '$elements.name',
+//                        'elements',
+//                        'name'
+//                    )
+//                ),
+//            ],
+//        ];
+//    }
+//
+//    public function createPageModelElementReferenceDataProvider(): array
+//    {
+//        return [
+//            'page model element reference' => [
+//                'identifierString' => 'page_import_name.elements.element_name',
+//                'expectedIdentifier' => new Identifier(
+//                    IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
+//                    new Value(
+//                        ValueTypes::PAGE_MODEL_REFERENCE,
+//                        'page_import_name.elements.element_name'
+//                    )
+//                ),
+//            ],
+//        ];
+//    }
+//
+//    public function createPageObjectParameterDataProvider(): array
+//    {
+//        return [
+//            'page object parameter' => [
+//                'identifierString' => '$page.title',
+//                'expectedIdentifier' => new Identifier(
+//                    IdentifierTypes::PAGE_OBJECT_PARAMETER,
+//                    new ObjectValue(
+//                        ValueTypes::PAGE_OBJECT_PROPERTY,
+//                        '$page.title',
+//                        'page',
+//                        'title'
+//                    )
+//                ),
+//            ],
+//        ];
+//    }
+//
+//    public function createBrowserObjectParameterDataProvider(): array
+//    {
+//        return [
+//            'browser object parameter' => [
+//                'identifierString' => '$browser.size',
+//                'expectedIdentifier' => new Identifier(
+//                    IdentifierTypes::BROWSER_OBJECT_PARAMETER,
+//                    new ObjectValue(
+//                        ValueTypes::BROWSER_OBJECT_PROPERTY,
+//                        '$browser.size',
+//                        'browser',
+//                        'size'
+//                    )
+//                ),
+//            ],
+//        ];
+//    }
 
     /**
      * @dataProvider createReferencedElementDataProvider
@@ -324,10 +278,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $parentIdentifier = new Identifier(
             IdentifierTypes::CSS_SELECTOR,
-            new Value(
-                ValueTypes::STRING,
-                '.parent'
-            ),
+            '.parent',
             null,
             'element_name'
         );
@@ -342,10 +293,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'existingIdentifiers' => [],
                 'expectedIdentifier' => new Identifier(
                     IdentifierTypes::CSS_SELECTOR,
-                    new Value(
-                        ValueTypes::STRING,
-                        '.selector'
-                    )
+                    '.selector'
                 ),
             ],
             'element reference with css selector, position null' => [
@@ -354,10 +302,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedIdentifier' =>
                     (new Identifier(
                         IdentifierTypes::CSS_SELECTOR,
-                        new Value(
-                            ValueTypes::STRING,
-                            '.selector'
-                        )
+                        '.selector'
                     ))->withParentIdentifier($parentIdentifier),
             ],
             'element reference with css selector, position 1' => [
@@ -366,10 +311,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedIdentifier' =>
                     (new Identifier(
                         IdentifierTypes::CSS_SELECTOR,
-                        new Value(
-                            ValueTypes::STRING,
-                            '.selector'
-                        )
+                        '.selector'
                     ))->withParentIdentifier($parentIdentifier),
             ],
             'element reference with css selector, position 2' => [
@@ -378,10 +320,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedIdentifier' =>
                     (new Identifier(
                         IdentifierTypes::CSS_SELECTOR,
-                        new Value(
-                            ValueTypes::STRING,
-                            '.selector'
-                        ),
+                        '.selector',
                         2
                     ))->withParentIdentifier($parentIdentifier),
             ],
@@ -391,10 +330,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedIdentifier' =>
                     (new Identifier(
                         IdentifierTypes::CSS_SELECTOR,
-                        new Value(
-                            ValueTypes::STRING,
-                            '{{ another_element_name }} .selector'
-                        )
+                        '{{ another_element_name }} .selector'
                     ))->withParentIdentifier($parentIdentifier),
             ],
             'element reference with xpath expression, position null' => [
@@ -403,10 +339,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedIdentifier' =>
                     (new Identifier(
                         IdentifierTypes::XPATH_EXPRESSION,
-                        new Value(
-                            ValueTypes::STRING,
-                            '//foo'
-                        )
+                        '//foo'
                     ))->withParentIdentifier($parentIdentifier),
             ],
             'element reference with xpath expression, position 1' => [
@@ -415,10 +348,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedIdentifier' =>
                     (new Identifier(
                         IdentifierTypes::XPATH_EXPRESSION,
-                        new Value(
-                            ValueTypes::STRING,
-                            '//foo'
-                        )
+                        '//foo'
                     ))->withParentIdentifier($parentIdentifier),
             ],
             'element reference with xpath expression, position 2' => [
@@ -427,10 +357,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedIdentifier' =>
                     (new Identifier(
                         IdentifierTypes::XPATH_EXPRESSION,
-                        new Value(
-                            ValueTypes::STRING,
-                            '//foo'
-                        ),
+                        '//foo',
                         2
                     ))->withParentIdentifier($parentIdentifier),
             ],
@@ -449,11 +376,11 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->factory->createWithElementReference(' ', null, []));
     }
 
-    public function testCreateForMalformedPageElementReference()
-    {
-        $this->expectException(MalformedPageElementReferenceException::class);
-        $this->expectExceptionMessage('Malformed page element reference "invalid-page-model-element-reference"');
-
-        $this->factory->create('invalid-page-model-element-reference');
-    }
+//    public function testCreateForMalformedPageElementReference()
+//    {
+//        $this->expectException(MalformedPageElementReferenceException::class);
+//        $this->expectExceptionMessage('Malformed page element reference "invalid-page-model-element-reference"');
+//
+//        $this->factory->create('invalid-page-model-element-reference');
+//    }
 }
