@@ -100,7 +100,7 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
                     'size'
                 ),
             ],
-            'page model reference' => [
+            'page element reference' => [
                 'valueString' => 'page_import_name.elements.element_name',
                 'expectedValue' => new ObjectValue(
                     ValueTypes::PAGE_ELEMENT_REFERENCE,
@@ -109,11 +109,11 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
                     'element_name'
                 ),
             ],
-            'page model reference string' => [
+            'page element reference string' => [
                 'valueString' => '"page_import_name.elements.element_name"',
                 'expectedValue' => new LiteralValue('page_import_name.elements.element_name'),
             ],
-            'page model reference string with escaped quotes' => [
+            'page element reference string with escaped quotes' => [
                 'valueString' => '"\"page_import_name.elements.element_name\""',
                 'expectedValue' => new LiteralValue('"page_import_name.elements.element_name"'),
             ],
@@ -155,6 +155,10 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
                     'KEY',
                     '"default_value"'
                 ),
+            ],
+            'malformed page element reference' => [
+                'valueString' => 'page_import_name.foo.element_name',
+                'expectedValue' => new LiteralValue('page_import_name.foo.element_name'),
             ],
         ];
     }
