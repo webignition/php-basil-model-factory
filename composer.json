@@ -34,7 +34,7 @@
     "require": {
         "php": ">=7.2",
         "ext-mbstring": "*",
-        "webignition/php-basil-models": ">=0.35,<1",
+        "webignition/php-basil-models": ">=0.36,<1",
         "webignition/php-basil-data-structures": "^0.1.0",
         "webignition/php-basil-context-aware-exception": "^0.1.0",
         "nyholm/psr7": "^1.1"
