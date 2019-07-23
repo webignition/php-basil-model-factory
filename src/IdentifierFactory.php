@@ -111,14 +111,19 @@ class IdentifierFactory
 //        return new Identifier($type, $this->valueFactory->createFromValueString($identifierString), 1, $name);
     }
 
-    public static function isCssSelector(string $identifierString)
+    public static function isCssSelector(string $identifierString): bool
     {
         return 1 === preg_match(self::CSS_SELECTOR_REGEX, $identifierString);
     }
 
-    public static function isXpathExpression(string $identifierString)
+    public static function isXpathExpression(string $identifierString): bool
     {
         return 1 === preg_match(self::XPATH_EXPRESSION_REGEX, $identifierString);
+    }
+
+    public static function isIdentifier(string $identifierString): bool
+    {
+        return self::isCssSelector($identifierString) || self::isXpathExpression($identifierString);
     }
 
     private function deriveType(string $identifierString): string

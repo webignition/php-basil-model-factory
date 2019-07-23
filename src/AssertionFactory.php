@@ -5,6 +5,7 @@ namespace webignition\BasilModelFactory;
 use webignition\BasilModel\Assertion\Assertion;
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
+use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
 
 class AssertionFactory
@@ -36,32 +37,40 @@ class AssertionFactory
      * @param string $assertionString
      *
      * @return AssertionInterface
-     *
-     * @throws MalformedPageElementReferenceException
      */
     public function createFromAssertionString(string $assertionString): AssertionInterface
     {
+        $assertionString = trim($assertionString);
+        if ('' === $assertionString) {
+            return new Assertion('', null, null);
+        }
+
         $identifierString = $this->identifierStringExtractor->extractFromStart($assertionString);
+        $examinedValue = null;
+        $expectedValue = null;
 
-        $identifier = $this->identifierFactory->create($identifierString);
-        $value = null;
+        if (IdentifierFactory::isIdentifier($identifierString)) {
+            $examinedValue = new ElementValue($this->identifierFactory->create($identifierString));
+        } else {
+            $examinedValue = $this->valueFactory->createFromValueString($identifierString);
+        }
 
-        $comparisonAndValue = trim(mb_substr($assertionString, mb_strlen($identifierString)));
+        $comparisonAndExpectedValue = trim(mb_substr($assertionString, mb_strlen($identifierString)));
 
-        if (substr_count($comparisonAndValue, ' ') === 0) {
-            $comparison = $comparisonAndValue;
+        if (substr_count($comparisonAndExpectedValue, ' ') === 0) {
+            $comparison = $comparisonAndExpectedValue;
             $valueString = null;
         } else {
-            $comparisonAndValueParts = explode(' ', $comparisonAndValue, 2);
+            $comparisonAndValueParts = explode(' ', $comparisonAndExpectedValue, 2);
             list($comparison, $valueString) = $comparisonAndValueParts;
 
             if (in_array($comparison, AssertionComparisons::NO_VALUE_TYPES)) {
-                $value = null;
+                $expectedValue = null;
             } else {
-                $value = $this->valueFactory->createFromValueString($valueString);
+                $expectedValue = $this->valueFactory->createFromValueString($valueString);
             }
         }
 
-        return new Assertion($assertionString, $identifier, $comparison, $value);
+        return new Assertion($assertionString, $examinedValue, $comparison, $expectedValue);
     }
 }
