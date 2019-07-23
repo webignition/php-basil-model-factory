@@ -11,6 +11,7 @@ use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
@@ -276,19 +277,31 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
         return [
             'wait 1' => [
                 'actionString' => 'wait 1',
-                'expectedAction' => new WaitAction('wait 1', '1'),
+                'expectedAction' => new WaitAction('wait 1', new Value(ValueTypes::STRING, '1')),
             ],
             'wait 15' => [
                 'actionString' => 'wait 15',
-                'expectedAction' => new WaitAction('wait 15', '15'),
+                'expectedAction' => new WaitAction('wait 15', new Value(ValueTypes::STRING, '15')),
             ],
             'wait $data.name' => [
                 'actionString' => 'wait $data.name',
-                'expectedAction' => new WaitAction('wait $data.name', '$data.name'),
+                'expectedAction' => new WaitAction('wait $data.name', new ObjectValue(
+                    ValueTypes::DATA_PARAMETER,
+                    '$data.name',
+                    'data',
+                    'name'
+                )),
             ],
             'wait no arguments' => [
                 'actionString' => 'wait',
-                'expectedAction' => new WaitAction('wait', ''),
+                'expectedAction' => new WaitAction('wait', new Value(ValueTypes::STRING, '')),
+            ],
+            'wait $env.DURATION' => [
+                'actionString' => 'wait $env.DURATION',
+                'expectedAction' => new WaitAction('wait $env.DURATION', new EnvironmentValue(
+                    '$env.DURATION',
+                    'DURATION'
+                )),
             ],
         ];
     }
