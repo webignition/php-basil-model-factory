@@ -2,7 +2,10 @@
 
 namespace webignition\BasilModelFactory;
 
+use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\PageElementReference\PageElementReference;
+use webignition\BasilModel\Value\ElementValue;
+use webignition\BasilModel\Value\ElementValueInterface;
 use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectNames;
@@ -74,6 +77,11 @@ class ValueFactory
         }
 
         return new LiteralValue($valueString);
+    }
+
+    public function createFromIdentifier(IdentifierInterface $identifier): ElementValueInterface
+    {
+        return new ElementValue($identifier);
     }
 
     private function findObjectProperties(string $valueString): ?array
