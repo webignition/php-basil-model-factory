@@ -4,9 +4,9 @@
 namespace webignition\BasilModelFactory\Tests\Unit;
 
 use webignition\BasilModel\Value\EnvironmentValue;
+use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\ValueFactory;
@@ -42,38 +42,23 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
         return [
             'empty' => [
                 'valueString' => '',
-                'expectedValue' => new Value(
-                    ValueTypes::STRING,
-                    ''
-                ),
+                'expectedValue' => new LiteralValue(''),
             ],
             'quoted string' => [
                 'valueString' => '"value"',
-                'expectedValue' => new Value(
-                    ValueTypes::STRING,
-                    'value'
-                ),
+                'expectedValue' => new LiteralValue('value'),
             ],
             'unquoted string' => [
                 'valueString' => 'value',
-                'expectedValue' => new Value(
-                    ValueTypes::STRING,
-                    'value'
-                ),
+                'expectedValue' => new LiteralValue('value'),
             ],
             'quoted string wrapped with escaped quotes' => [
                 'valueString' => '"\"value\""',
-                'expectedValue' => new Value(
-                    ValueTypes::STRING,
-                    '"value"'
-                ),
+                'expectedValue' => new LiteralValue('"value"'),
             ],
             'quoted string containing escaped quotes' => [
                 'valueString' => '"v\"alu\"e"',
-                'expectedValue' => new Value(
-                    ValueTypes::STRING,
-                    'v"alu"e'
-                ),
+                'expectedValue' => new LiteralValue('v"alu"e'),
             ],
             'data parameter' => [
                 'valueString' => '$data.data_name',
@@ -113,24 +98,20 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'page model reference' => [
                 'valueString' => 'page_import_name.elements.element_name',
-                'expectedValue' => new Value(
-                    ValueTypes::PAGE_MODEL_REFERENCE,
-                    'page_import_name.elements.element_name'
+                'expectedValue' => new ObjectValue(
+                    ValueTypes::PAGE_ELEMENT_REFERENCE,
+                    'page_import_name.elements.element_name',
+                    'page_import_name',
+                    'element_name'
                 ),
             ],
             'page model reference string' => [
                 'valueString' => '"page_import_name.elements.element_name"',
-                'expectedValue' => new Value(
-                    ValueTypes::STRING,
-                    'page_import_name.elements.element_name'
-                ),
+                'expectedValue' => new LiteralValue('page_import_name.elements.element_name'),
             ],
             'page model reference string with escaped quotes' => [
                 'valueString' => '"\"page_import_name.elements.element_name\""',
-                'expectedValue' => new Value(
-                    ValueTypes::STRING,
-                    '"page_import_name.elements.element_name"'
-                ),
+                'expectedValue' => new LiteralValue('"page_import_name.elements.element_name"'),
             ],
             'environment parameter, no default' => [
                 'valueString' => '$env.KEY',
