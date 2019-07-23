@@ -23,15 +23,12 @@ class AssertionFactory
         $this->identifierStringExtractor = $identifierStringExtractor;
     }
 
-    public static function createFactory(
-        ?IdentifierFactory $identifierFactory = null,
-        ?ValueFactory $valueFactory = null,
-        ?IdentifierStringExtractor $identifierStringExtractor = null
-    ): AssertionFactory {
+    public static function createFactory(): AssertionFactory
+    {
         return new AssertionFactory(
-            $identifierFactory ?? IdentifierFactory::createFactory(),
-            $valueFactory ?? ValueFactory::createFactory(),
-            $identifierStringExtractor ?? IdentifierStringExtractor::create()
+            IdentifierFactory::createFactory(),
+            ValueFactory::createFactory(),
+            IdentifierStringExtractor::create()
         );
     }
 

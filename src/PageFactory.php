@@ -20,9 +20,11 @@ class PageFactory
         $this->identifierFactory = $identifierFactory;
     }
 
-    public static function create(?IdentifierFactory $identifierFactory = null): PageFactory
+    public static function create(): PageFactory
     {
-        return new PageFactory($identifierFactory ?? IdentifierFactory::createFactory());
+        return new PageFactory(
+            IdentifierFactory::createFactory()
+        );
     }
 
     /**
