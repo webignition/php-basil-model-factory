@@ -3,6 +3,8 @@
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
+use webignition\BasilModel\Value\EnvironmentValue;
+use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueInterface;
@@ -78,7 +80,7 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedValue' => new ObjectValue(
                     ValueTypes::DATA_PARAMETER,
                     '$data.data_name',
-                    'data',
+                    ObjectNames::DATA,
                     'data_name'
                 ),
             ],
@@ -87,7 +89,7 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedValue' => new ObjectValue(
                     ValueTypes::ELEMENT_PARAMETER,
                     '$elements.element_name',
-                    'elements',
+                    ObjectNames::ELEMENT,
                     'element_name'
                 ),
             ],
@@ -96,7 +98,7 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedValue' => new ObjectValue(
                     ValueTypes::PAGE_OBJECT_PROPERTY,
                     '$page.url',
-                    'page',
+                    ObjectNames::PAGE,
                     'url'
                 ),
             ],
@@ -105,7 +107,7 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedValue' => new ObjectValue(
                     ValueTypes::BROWSER_OBJECT_PROPERTY,
                     '$browser.size',
-                    'browser',
+                    ObjectNames::BROWSER,
                     'size'
                 ),
             ],
@@ -128,6 +130,45 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedValue' => new Value(
                     ValueTypes::STRING,
                     '"page_import_name.elements.element_name"'
+                ),
+            ],
+            'environment parameter, no default' => [
+                'valueString' => '$env.KEY',
+                'expectedValue' => new EnvironmentValue(
+                    '$env.KEY',
+                    'KEY'
+                ),
+            ],
+            'environment parameter, has default' => [
+                'valueString' => '$env.KEY|"default_value"',
+                'expectedValue' => new EnvironmentValue(
+                    '$env.KEY|"default_value"',
+                    'KEY',
+                    'default_value'
+                ),
+            ],
+            'environment parameter, empty default' => [
+                'valueString' => '$env.KEY|""',
+                'expectedValue' => new EnvironmentValue(
+                    '$env.KEY|""',
+                    'KEY',
+                    ''
+                ),
+            ],
+            'environment parameter, missing default' => [
+                'valueString' => '$env.KEY|',
+                'expectedValue' => new EnvironmentValue(
+                    '$env.KEY|',
+                    'KEY',
+                    ''
+                ),
+            ],
+            'environment parameter, has escaped-quote default' => [
+                'valueString' => '$env.KEY|"\"default_value\""',
+                'expectedValue' => new EnvironmentValue(
+                    '$env.KEY|"\"default_value\""',
+                    'KEY',
+                    '"default_value"'
                 ),
             ],
         ];

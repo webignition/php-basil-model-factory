@@ -3,6 +3,8 @@
 namespace webignition\BasilModelFactory;
 
 use webignition\BasilModel\PageElementReference\PageElementReference;
+use webignition\BasilModel\Value\EnvironmentValue;
+use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueInterface;
@@ -12,12 +14,15 @@ class ValueFactory
 {
     const OBJECT_PARAMETER_PREFIX = '$%s.';
     const QUOTED_STRING_PATTERN = '/^"[^"]+"$/';
+    const ENVIRONMENT_PARAMETER_WITH_DEFAULT_PATTERN = '/^[^|]+\|/';
+    const ENVIRONMENT_PARAMETER_DEFAULT_DELIMITER = '|';
 
     const OBJECT_NAME_VALUE_TYPE_MAP = [
-        'data' => ValueTypes::DATA_PARAMETER,
-        'elements' => ValueTypes::ELEMENT_PARAMETER,
-        'page' => ValueTypes::PAGE_OBJECT_PROPERTY,
-        'browser' => ValueTypes::BROWSER_OBJECT_PROPERTY,
+        ObjectNames::DATA => ValueTypes::DATA_PARAMETER,
+        ObjectNames::ELEMENT => ValueTypes::ELEMENT_PARAMETER,
+        ObjectNames::PAGE => ValueTypes::PAGE_OBJECT_PROPERTY,
+        ObjectNames::BROWSER => ValueTypes::BROWSER_OBJECT_PROPERTY,
+        ObjectNames::ENVIRONMENT => ValueTypes::ENVIRONMENT_PARAMETER,
     ];
 
     const DATA_PARAMETER_PREFIX = '$data.';
@@ -43,20 +48,16 @@ class ValueFactory
         if (is_array($objectProperties)) {
             list($objectType, $objectName, $propertyName) = $objectProperties;
 
+            if (ValueTypes::ENVIRONMENT_PARAMETER === $objectType) {
+                return $this->createEnvironmentValue($valueString, $propertyName);
+            }
+
             return new ObjectValue($objectType, $valueString, $objectName, $propertyName);
         }
 
         $isUnprocessedStringQuoted = preg_match('/^"[^"]+"$/', $valueString) === 1;
 
-        if ('"' === $valueString[0]) {
-            $valueString = mb_substr($valueString, 1);
-        }
-
-        if ('"' === $valueString[-1]) {
-            $valueString = mb_substr($valueString, 0, -1);
-        }
-
-        $valueString = str_replace('\\"', '"', $valueString);
+        $valueString = $this->getQuotedValue($valueString);
 
         $isDeQuotedStringQuoted = preg_match('/^"[^"]+"$/', $valueString) === 1;
 
@@ -88,5 +89,35 @@ class ValueFactory
         }
 
         return null;
+    }
+
+    private function createEnvironmentValue(string $valueString, string $propertyName)
+    {
+        $default = null;
+
+        if (preg_match(self::ENVIRONMENT_PARAMETER_WITH_DEFAULT_PATTERN, $propertyName)) {
+            $propertyNameDefaultParts = explode(self::ENVIRONMENT_PARAMETER_DEFAULT_DELIMITER, $propertyName, 2);
+            $propertyName = $propertyNameDefaultParts[0];
+            $default = $this->getQuotedValue($propertyNameDefaultParts[1]);
+        }
+
+        return new EnvironmentValue($valueString, $propertyName, $default);
+    }
+
+    private function getQuotedValue(string $valueString): string
+    {
+        if ('' === $valueString) {
+            return $valueString;
+        }
+
+        if ('"' === $valueString[0]) {
+            $valueString = mb_substr($valueString, 1);
+        }
+
+        if ('"' === $valueString[-1]) {
+            $valueString = mb_substr($valueString, 0, -1);
+        }
+
+        return str_replace('\\"', '"', $valueString);
     }
 }
