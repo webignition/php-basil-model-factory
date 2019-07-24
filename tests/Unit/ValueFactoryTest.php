@@ -4,10 +4,10 @@
 namespace webignition\BasilModelFactory\Tests\Unit;
 
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Value\ElementValueInterface;
 use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\LiteralValueInterface;
 use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueInterface;
@@ -45,23 +45,23 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
         return [
             'empty' => [
                 'valueString' => '',
-                'expectedValue' => new LiteralValue(''),
+                'expectedValue' => LiteralValue::createStringValue(''),
             ],
             'quoted string' => [
                 'valueString' => '"value"',
-                'expectedValue' => new LiteralValue('value'),
+                'expectedValue' => LiteralValue::createStringValue('value'),
             ],
             'unquoted string' => [
                 'valueString' => 'value',
-                'expectedValue' => new LiteralValue('value'),
+                'expectedValue' => LiteralValue::createStringValue('value'),
             ],
             'quoted string wrapped with escaped quotes' => [
                 'valueString' => '"\"value\""',
-                'expectedValue' => new LiteralValue('"value"'),
+                'expectedValue' => LiteralValue::createStringValue('"value"'),
             ],
             'quoted string containing escaped quotes' => [
                 'valueString' => '"v\"alu\"e"',
-                'expectedValue' => new LiteralValue('v"alu"e'),
+                'expectedValue' => LiteralValue::createStringValue('v"alu"e'),
             ],
             'data parameter' => [
                 'valueString' => '$data.data_name',
@@ -110,11 +110,11 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'page element reference string' => [
                 'valueString' => '"page_import_name.elements.element_name"',
-                'expectedValue' => new LiteralValue('page_import_name.elements.element_name'),
+                'expectedValue' => LiteralValue::createStringValue('page_import_name.elements.element_name'),
             ],
             'page element reference string with escaped quotes' => [
                 'valueString' => '"\"page_import_name.elements.element_name\""',
-                'expectedValue' => new LiteralValue('"page_import_name.elements.element_name"'),
+                'expectedValue' => LiteralValue::createStringValue('"page_import_name.elements.element_name"'),
             ],
             'environment parameter, no default' => [
                 'valueString' => '$env.KEY',
@@ -157,17 +157,46 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'malformed page element reference' => [
                 'valueString' => 'page_import_name.foo.element_name',
-                'expectedValue' => new LiteralValue('page_import_name.foo.element_name'),
+                'expectedValue' => LiteralValue::createStringValue('page_import_name.foo.element_name'),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider createFromIdentifierStringDataProvider
+     */
+    public function testCreateFromIdentifierString(string $identifierString, LiteralValueInterface $expectedValue)
+    {
+        $value = $this->valueFactory->createFromIdentifierString($identifierString);
+
+        $this->assertEquals($expectedValue, $value);
+    }
+
+    public function createFromIdentifierStringDataProvider(): array
+    {
+        return [
+            'empty' => [
+                'identifierString' => '',
+                'expectedValue' => LiteralValue::createStringValue(''),
+            ],
+            'css selector' => [
+                'identifierString' => '".selector"',
+                'expectedValue' => LiteralValue::createCssSelectorValue('.selector'),
+            ],
+            'xpath expression' => [
+                'identifierString' => '"//foo"',
+                'expectedValue' => LiteralValue::createXpathExpressionValue('//foo'),
+            ],
+            'non-selector' => [
+                'identifierString' => 'value',
+                'expectedValue' => LiteralValue::createStringValue('value'),
             ],
         ];
     }
 
     public function testCreateFromIdentifier()
     {
-        $identifier = new ElementIdentifier(
-            IdentifierTypes::CSS_SELECTOR,
-            '.selector'
-        );
+        $identifier = new ElementIdentifier(LiteralValue::createCssSelectorValue('.selector'));
 
         $value = $this->valueFactory->createFromIdentifier($identifier);
 
