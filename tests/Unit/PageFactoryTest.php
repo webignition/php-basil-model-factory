@@ -7,10 +7,10 @@ namespace webignition\BasilModelFactory\Tests\Unit;
 use Nyholm\Psr7\Uri;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilDataStructure\Page as PageData;
+use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\PageFactory;
 
 class PageFactoryTest extends \PHPUnit\Framework\TestCase
@@ -41,8 +41,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
     public function createFromPageDataDataProvider(): array
     {
         $parentIdentifier = new ElementIdentifier(
-            IdentifierTypes::CSS_SELECTOR,
-            '.form',
+            LiteralValue::createCssSelectorValue('.form'),
             1,
             'form'
         );
@@ -69,8 +68,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                     new Uri('http://example.com/'),
                     new IdentifierCollection([
                         'css-selector' => new ElementIdentifier(
-                            IdentifierTypes::CSS_SELECTOR,
-                            '.selector',
+                            LiteralValue::createCssSelectorValue('.selector'),
                             1,
                             'css-selector'
                         ),
@@ -90,8 +88,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                     new IdentifierCollection([
                         'form' => $parentIdentifier,
                         'form_field' => (new ElementIdentifier(
-                            IdentifierTypes::CSS_SELECTOR,
-                            '.field',
+                            LiteralValue::createCssSelectorValue('.field'),
                             1,
                             'form_field'
                         ))->withParentIdentifier($parentIdentifier),
