@@ -5,9 +5,10 @@
 namespace webignition\BasilModelFactory\Tests\Unit;
 
 use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\Identifier\ReferenceIdentifier;
+use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\IdentifierFactory;
@@ -93,64 +94,56 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
             'css id selector' => [
                 'identifierString' => '"#element-id"',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::CSS_SELECTOR,
-                    '#element-id',
+                    LiteralValue::createCssSelectorValue('#element-id'),
                     1
                 ),
             ],
             'css class selector, position: null' => [
                 'identifierString' => '".listed-item"',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::CSS_SELECTOR,
-                    '.listed-item',
+                    LiteralValue::createCssSelectorValue('.listed-item'),
                     1
                 ),
             ],
             'css class selector; position: 1' => [
                 'identifierString' => '".listed-item":1',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::CSS_SELECTOR,
-                    '.listed-item',
+                    LiteralValue::createCssSelectorValue('.listed-item'),
                     1
                 ),
             ],
             'css class selector; position: 3' => [
                 'identifierString' => '".listed-item":3',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::CSS_SELECTOR,
-                    '.listed-item',
+                    LiteralValue::createCssSelectorValue('.listed-item'),
                     3
                 ),
             ],
             'css class selector; position: -1' => [
                 'identifierString' => '".listed-item":-1',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::CSS_SELECTOR,
-                    '.listed-item',
+                    LiteralValue::createCssSelectorValue('.listed-item'),
                     -1
                 ),
             ],
             'css class selector; position: -3' => [
                 'identifierString' => '".listed-item":-3',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::CSS_SELECTOR,
-                    '.listed-item',
+                    LiteralValue::createCssSelectorValue('.listed-item'),
                     -3
                 ),
             ],
             'css class selector; position: first' => [
                 'identifierString' => '".listed-item":first',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::CSS_SELECTOR,
-                    '.listed-item',
+                    LiteralValue::createCssSelectorValue('.listed-item'),
                     1
                 ),
             ],
             'css class selector; position: last' => [
                 'identifierString' => '".listed-item":last',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::CSS_SELECTOR,
-                    '.listed-item',
+                    LiteralValue::createCssSelectorValue('.listed-item'),
                     -1
                 ),
             ],
@@ -163,64 +156,56 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
             'xpath id selector' => [
                 'identifierString' => '"//*[@id="element-id"]"',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::XPATH_EXPRESSION,
-                    '//*[@id="element-id"]',
+                    LiteralValue::createXpathExpressionValue('//*[@id="element-id"]'),
                     1
                 ),
             ],
             'xpath attribute selector, position: null' => [
                 'identifierString' => '"//input[@type="submit"]"',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::XPATH_EXPRESSION,
-                    '//input[@type="submit"]',
+                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
                     1
                 ),
             ],
             'xpath attribute selector; position: 1' => [
                 'identifierString' => '"//input[@type="submit"]":1',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::XPATH_EXPRESSION,
-                    '//input[@type="submit"]',
+                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
                     1
                 ),
             ],
             'xpath attribute selector; position: 3' => [
                 'identifierString' => '"//input[@type="submit"]":3',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::XPATH_EXPRESSION,
-                    '//input[@type="submit"]',
+                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
                     3
                 ),
             ],
             'xpath attribute selector; position: -1' => [
                 'identifierString' => '"//input[@type="submit"]":-1',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::XPATH_EXPRESSION,
-                    '//input[@type="submit"]',
+                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
                     -1
                 ),
             ],
             'xpath attribute selector; position: -3' => [
                 'identifierString' => '"//input[@type="submit"]":-3',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::XPATH_EXPRESSION,
-                    '//input[@type="submit"]',
+                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
                     -3
                 ),
             ],
             'xpath attribute selector; position: first' => [
                 'identifierString' => '"//input[@type="submit"]":first',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::XPATH_EXPRESSION,
-                    '//input[@type="submit"]',
+                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
                     1
                 ),
             ],
             'xpath attribute selector; position: last' => [
                 'identifierString' => '"//input[@type="submit"]":last',
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::XPATH_EXPRESSION,
-                    '//input[@type="submit"]',
+                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
                     -1
                 ),
             ],
@@ -232,7 +217,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
         return [
             'element parameter' => [
                 'identifierString' => '$elements.name',
-                'expectedIdentifier' => new ReferenceIdentifier(
+                'expectedIdentifier' => new Identifier(
                     IdentifierTypes::ELEMENT_PARAMETER,
                     new ObjectValue(
                         ValueTypes::ELEMENT_PARAMETER,
@@ -250,7 +235,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
         return [
             'page model element reference' => [
                 'identifierString' => 'page_import_name.elements.element_name',
-                'expectedIdentifier' => new ReferenceIdentifier(
+                'expectedIdentifier' => new Identifier(
                     IdentifierTypes::PAGE_ELEMENT_REFERENCE,
                     new ObjectValue(
                         ValueTypes::PAGE_ELEMENT_REFERENCE,
@@ -283,8 +268,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     public function createReferencedElementDataProvider(): array
     {
         $parentIdentifier = new ElementIdentifier(
-            IdentifierTypes::CSS_SELECTOR,
-            '.parent',
+            LiteralValue::createCssSelectorValue('.parent'),
             1,
             'element_name'
         );
@@ -298,8 +282,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '"{{ element_name }} .selector"',
                 'existingIdentifiers' => [],
                 'expectedIdentifier' => new ElementIdentifier(
-                    IdentifierTypes::CSS_SELECTOR,
-                    '.selector'
+                    LiteralValue::createCssSelectorValue('.selector')
                 ),
             ],
             'element reference with css selector, position null' => [
@@ -307,8 +290,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '.selector'
+                        LiteralValue::createCssSelectorValue('.selector')
                     ))->withParentIdentifier($parentIdentifier),
             ],
             'element reference with css selector, position 1' => [
@@ -316,8 +298,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '.selector'
+                        LiteralValue::createCssSelectorValue('.selector')
                     ))->withParentIdentifier($parentIdentifier),
             ],
             'element reference with css selector, position 2' => [
@@ -325,8 +306,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '.selector',
+                        LiteralValue::createCssSelectorValue('.selector'),
                         2
                     ))->withParentIdentifier($parentIdentifier),
             ],
@@ -335,8 +315,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '{{ another_element_name }} .selector'
+                        LiteralValue::createCssSelectorValue('{{ another_element_name }} .selector')
                     ))->withParentIdentifier($parentIdentifier),
             ],
             'element reference with xpath expression, position null' => [
@@ -344,8 +323,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
-                        IdentifierTypes::XPATH_EXPRESSION,
-                        '//foo'
+                        LiteralValue::createXpathExpressionValue('//foo')
                     ))->withParentIdentifier($parentIdentifier),
             ],
             'element reference with xpath expression, position 1' => [
@@ -353,8 +331,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
-                        IdentifierTypes::XPATH_EXPRESSION,
-                        '//foo'
+                        LiteralValue::createXpathExpressionValue('//foo')
                     ))->withParentIdentifier($parentIdentifier),
             ],
             'element reference with xpath expression, position 2' => [
@@ -362,8 +339,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
-                        IdentifierTypes::XPATH_EXPRESSION,
-                        '//foo',
+                        LiteralValue::createXpathExpressionValue('//foo'),
                         2
                     ))->withParentIdentifier($parentIdentifier),
             ],
