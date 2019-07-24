@@ -2,16 +2,13 @@
 
 namespace webignition\BasilModelFactory;
 
-use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-//use webignition\BasilModel\PageElementReference\PageElementReference;
-//use webignition\BasilModel\Value\Value;
-//use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
+use webignition\BasilModel\PageElementReference\PageElementReference;
 
-/**
- * @todo: remove commented
- */
 class IdentifierFactory
 {
     const POSITION_FIRST = 'first';
@@ -28,16 +25,18 @@ class IdentifierFactory
     const REFERENCED_ELEMENT_REGEX = '/^"{{.+/';
     const REFERENCED_ELEMENT_EXTRACTOR_REGEX = '/^".+?(?=(}}))}}/';
 
-//    private $valueFactory;
-//
-//    public function __construct(ValueFactory $valueFactory)
-//    {
-//        $this->valueFactory = $valueFactory;
-//    }
+    private $valueFactory;
+
+    public function __construct(ValueFactory $valueFactory)
+    {
+        $this->valueFactory = $valueFactory;
+    }
 
     public static function createFactory()
     {
-        return new IdentifierFactory();
+        return new IdentifierFactory(
+            ValueFactory::createFactory()
+        );
     }
 
     /**
@@ -46,6 +45,8 @@ class IdentifierFactory
      * @param IdentifierInterface[] $existingIdentifiers
      *
      * @return IdentifierInterface|null
+     *
+     * @throws MalformedPageElementReferenceException
      */
     public function createWithElementReference(
         string $identifierString,
@@ -68,7 +69,7 @@ class IdentifierFactory
         $parentIdentifier = $existingIdentifiers[$parentIdentifierName] ?? null;
         $identifier = $this->create($identifierString, $elementName);
 
-        if ($identifier instanceof IdentifierInterface && $parentIdentifier) {
+        if ($identifier instanceof ElementIdentifierInterface && $parentIdentifier) {
             return $identifier->withParentIdentifier($parentIdentifier);
         }
 
@@ -80,6 +81,8 @@ class IdentifierFactory
      * @param string|null $name
      *
      * @return IdentifierInterface|null
+     *
+     * @throws MalformedPageElementReferenceException
      */
     public function create(
         string $identifierString,
@@ -93,22 +96,22 @@ class IdentifierFactory
 
         $type = $this->deriveType($identifierString);
 
-//        if (in_array($type, [IdentifierTypes::CSS_SELECTOR, IdentifierTypes::XPATH_EXPRESSION])) {
         list($value, $position) = $this->extractValueAndPosition($identifierString);
         $value = trim($value, '"');
 
-        return new Identifier($type, $value, $position, $name);
-//        }
+        if (in_array($type, [IdentifierTypes::CSS_SELECTOR, IdentifierTypes::XPATH_EXPRESSION])) {
+            return new ElementIdentifier($type, $value, $position, $name);
+        }
 
-//        if (IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE === $type) {
-//            $pageElementReference = new PageElementReference($identifierString);
-//
-//            if (!$pageElementReference->isValid()) {
-//                throw new MalformedPageElementReferenceException($pageElementReference);
-//            }
-//        }
-//
-//        return new Identifier($type, $this->valueFactory->createFromValueString($identifierString), 1, $name);
+        if (IdentifierTypes::PAGE_ELEMENT_REFERENCE === $type) {
+            $pageElementReference = new PageElementReference($identifierString);
+
+            if (!$pageElementReference->isValid()) {
+                throw new MalformedPageElementReferenceException($pageElementReference);
+            }
+        }
+
+        return new ReferenceIdentifier($type, $this->valueFactory->createFromValueString($identifierString));
     }
 
     public static function isCssSelector(string $identifierString): bool
@@ -121,9 +124,14 @@ class IdentifierFactory
         return 1 === preg_match(self::XPATH_EXPRESSION_REGEX, $identifierString);
     }
 
-    public static function isIdentifier(string $identifierString): bool
+    public static function isElementIdentifier(string $identifierString): bool
     {
         return self::isCssSelector($identifierString) || self::isXpathExpression($identifierString);
+    }
+
+    public static function isElementParameterReference(string $identifierString): bool
+    {
+        return 1 === preg_match(self::ELEMENT_PARAMETER_REGEX, $identifierString);
     }
 
     private function deriveType(string $identifierString): string
@@ -132,29 +140,15 @@ class IdentifierFactory
             return IdentifierTypes::XPATH_EXPRESSION;
         }
 
-//        if (1 === preg_match(self::CSS_SELECTOR_REGEX, $identifierString)) {
-//            return IdentifierTypes::CSS_SELECTOR;
-//        }
-//
-//        if (1 === preg_match(self::XPATH_EXPRESSION_REGEX, $identifierString)) {
-//            return IdentifierTypes::XPATH_EXPRESSION;
-//        }
+        if (self::isCssSelector($identifierString)) {
+            return IdentifierTypes::CSS_SELECTOR;
+        }
 
-        return IdentifierTypes::CSS_SELECTOR;
+        if (self::isElementParameterReference($identifierString)) {
+            return IdentifierTypes::ELEMENT_PARAMETER;
+        }
 
-//        if (1 === preg_match(self::ELEMENT_PARAMETER_REGEX, $identifierString)) {
-//            return IdentifierTypes::ELEMENT_PARAMETER;
-//        }
-//
-//        if (1 === preg_match(self::PAGE_OBJECT_PARAMETER_REGEX, $identifierString)) {
-//            return IdentifierTypes::PAGE_OBJECT_PARAMETER;
-//        }
-//
-//        if (1 === preg_match(self::BROWSER_OBJECT_PARAMETER_REGEX, $identifierString)) {
-//            return IdentifierTypes::BROWSER_OBJECT_PARAMETER;
-//        }
-//
-//        return IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE;
+        return IdentifierTypes::PAGE_ELEMENT_REFERENCE;
     }
 
     private function extractValueAndPosition(string $identifier)
