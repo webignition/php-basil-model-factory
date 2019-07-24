@@ -5,7 +5,7 @@
 namespace webignition\BasilModelFactory\Tests\Unit;
 
 use Nyholm\Psr7\Uri;
-use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Page\Page;
@@ -40,7 +40,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromPageDataDataProvider(): array
     {
-        $parentIdentifier = new Identifier(
+        $parentIdentifier = new ElementIdentifier(
             IdentifierTypes::CSS_SELECTOR,
             '.form',
             1,
@@ -68,7 +68,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedPage' => new Page(
                     new Uri('http://example.com/'),
                     new IdentifierCollection([
-                        'css-selector' => new Identifier(
+                        'css-selector' => new ElementIdentifier(
                             IdentifierTypes::CSS_SELECTOR,
                             '.selector',
                             1,
@@ -89,7 +89,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                     new Uri('http://example.com/'),
                     new IdentifierCollection([
                         'form' => $parentIdentifier,
-                        'form_field' => (new Identifier(
+                        'form_field' => (new ElementIdentifier(
                             IdentifierTypes::CSS_SELECTOR,
                             '.field',
                             1,

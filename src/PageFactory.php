@@ -32,6 +32,8 @@ class PageFactory
      * @param PageData $pageData
      *
      * @return PageInterface
+     *
+     * @throws MalformedPageElementReferenceException
      */
     public function createFromPageData(PageData $pageData): PageInterface
     {
