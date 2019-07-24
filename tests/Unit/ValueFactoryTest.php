@@ -3,9 +3,8 @@
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
-use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\ElementValueInterface;
 use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
@@ -165,7 +164,7 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateFromIdentifier()
     {
-        $identifier = new Identifier(
+        $identifier = new ElementIdentifier(
             IdentifierTypes::CSS_SELECTOR,
             '.selector'
         );
