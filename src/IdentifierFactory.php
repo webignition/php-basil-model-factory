@@ -2,12 +2,12 @@
 
 namespace webignition\BasilModelFactory;
 
-use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\PageElementReference\PageElementReference;
-use webignition\BasilModel\Value\Value;
-use webignition\BasilModel\Value\ValueTypes;
 
 class IdentifierFactory
 {
@@ -69,7 +69,8 @@ class IdentifierFactory
         $parentIdentifier = $existingIdentifiers[$parentIdentifierName] ?? null;
         $identifier = $this->create($identifierString, $elementName);
 
-        if ($identifier instanceof IdentifierInterface && $parentIdentifier) {
+        if ($identifier instanceof ElementIdentifierInterface &&
+            $parentIdentifier instanceof ElementIdentifierInterface) {
             return $identifier->withParentIdentifier($parentIdentifier);
         }
 
@@ -96,14 +97,14 @@ class IdentifierFactory
 
         $type = $this->deriveType($identifierString);
 
-        if (in_array($type, [IdentifierTypes::CSS_SELECTOR, IdentifierTypes::XPATH_EXPRESSION])) {
-            list($value, $position) = $this->extractValueAndPosition($identifierString);
-            $value = trim($value, '"');
+        list($value, $position) = $this->extractValueAndPosition($identifierString);
+        $value = trim($value, '"');
 
-            return new Identifier($type, new Value(ValueTypes::STRING, $value), $position, $name);
+        if (in_array($type, [IdentifierTypes::CSS_SELECTOR, IdentifierTypes::XPATH_EXPRESSION])) {
+            return new ElementIdentifier($type, $value, $position, $name);
         }
 
-        if (IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE === $type) {
+        if (IdentifierTypes::PAGE_ELEMENT_REFERENCE === $type) {
             $pageElementReference = new PageElementReference($identifierString);
 
             if (!$pageElementReference->isValid()) {
@@ -111,32 +112,53 @@ class IdentifierFactory
             }
         }
 
-        return new Identifier($type, $this->valueFactory->createFromValueString($identifierString), 1, $name);
+        $referenceIdentifier = new ReferenceIdentifier(
+            $type,
+            $this->valueFactory->createFromValueString($identifierString)
+        );
+
+        if (null !== $name) {
+            $referenceIdentifier = $referenceIdentifier->withName($name);
+        }
+
+        return $referenceIdentifier;
+    }
+
+    public static function isCssSelector(string $identifierString): bool
+    {
+        return 1 === preg_match(self::CSS_SELECTOR_REGEX, $identifierString);
+    }
+
+    public static function isXpathExpression(string $identifierString): bool
+    {
+        return 1 === preg_match(self::XPATH_EXPRESSION_REGEX, $identifierString);
+    }
+
+    public static function isElementIdentifier(string $identifierString): bool
+    {
+        return self::isCssSelector($identifierString) || self::isXpathExpression($identifierString);
+    }
+
+    public static function isElementParameterReference(string $identifierString): bool
+    {
+        return 1 === preg_match(self::ELEMENT_PARAMETER_REGEX, $identifierString);
     }
 
     private function deriveType(string $identifierString): string
     {
-        if (1 === preg_match(self::CSS_SELECTOR_REGEX, $identifierString)) {
-            return IdentifierTypes::CSS_SELECTOR;
-        }
-
-        if (1 === preg_match(self::XPATH_EXPRESSION_REGEX, $identifierString)) {
+        if (self::isXpathExpression($identifierString)) {
             return IdentifierTypes::XPATH_EXPRESSION;
         }
 
-        if (1 === preg_match(self::ELEMENT_PARAMETER_REGEX, $identifierString)) {
+        if (self::isCssSelector($identifierString)) {
+            return IdentifierTypes::CSS_SELECTOR;
+        }
+
+        if (self::isElementParameterReference($identifierString)) {
             return IdentifierTypes::ELEMENT_PARAMETER;
         }
 
-        if (1 === preg_match(self::PAGE_OBJECT_PARAMETER_REGEX, $identifierString)) {
-            return IdentifierTypes::PAGE_OBJECT_PARAMETER;
-        }
-
-        if (1 === preg_match(self::BROWSER_OBJECT_PARAMETER_REGEX, $identifierString)) {
-            return IdentifierTypes::BROWSER_OBJECT_PARAMETER;
-        }
-
-        return IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE;
+        return IdentifierTypes::PAGE_ELEMENT_REFERENCE;
     }
 
     private function extractValueAndPosition(string $identifier)

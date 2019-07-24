@@ -16,17 +16,18 @@ use webignition\BasilModel\Assertion\Assertion;
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
-use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Test\Configuration;
 use webignition\BasilModel\Test\Test;
 use webignition\BasilModel\Test\TestInterface;
 use webignition\BasilDataStructure\Test\Test as TestData;
+use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\Test\TestFactory;
@@ -128,20 +129,14 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                     'verify page is open' => new Step([], [
                         new Assertion(
                             '$page.url is "http://example.com"',
-                            new Identifier(
-                                IdentifierTypes::PAGE_OBJECT_PARAMETER,
-                                new ObjectValue(
-                                    ValueTypes::PAGE_OBJECT_PROPERTY,
-                                    '$page.url',
-                                    'page',
-                                    'url'
-                                )
+                            new ObjectValue(
+                                ValueTypes::PAGE_OBJECT_PROPERTY,
+                                '$page.url',
+                                'page',
+                                'url'
                             ),
                             AssertionComparisons::IS,
-                            new Value(
-                                ValueTypes::STRING,
-                                'http://example.com'
-                            )
+                            new LiteralValue('http://example.com')
                         ),
                     ]),
                     'query "example"' => new Step(
@@ -149,12 +144,9 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             new InteractionAction(
                                 'click ".form .submit"',
                                 ActionTypes::CLICK,
-                                new Identifier(
+                                new ElementIdentifier(
                                     IdentifierTypes::CSS_SELECTOR,
-                                    new Value(
-                                        ValueTypes::STRING,
-                                        '.form .submit'
-                                    )
+                                    '.form .submit'
                                 ),
                                 '".form .submit"'
                             ),
@@ -162,20 +154,14 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                         [
                             new Assertion(
                                 '$page.title is "example - Example Domain"',
-                                new Identifier(
-                                    IdentifierTypes::PAGE_OBJECT_PARAMETER,
-                                    new ObjectValue(
-                                        ValueTypes::PAGE_OBJECT_PROPERTY,
-                                        '$page.title',
-                                        'page',
-                                        'title'
-                                    )
+                                new ObjectValue(
+                                    ValueTypes::PAGE_OBJECT_PROPERTY,
+                                    '$page.title',
+                                    'page',
+                                    'title'
                                 ),
                                 AssertionComparisons::IS,
-                                new Value(
-                                    ValueTypes::STRING,
-                                    'example - Example Domain'
-                                )
+                                new LiteralValue('example - Example Domain')
                             ),
                         ]
                     ),
@@ -203,13 +189,14 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             new InteractionAction(
                                 'click page_import_name.elements.button',
                                 ActionTypes::CLICK,
-                                new Identifier(
-                                    IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
-                                    new Value(
-                                        ValueTypes::PAGE_MODEL_REFERENCE,
-                                        'page_import_name.elements.button'
-                                    ),
-                                    null
+                                new ReferenceIdentifier(
+                                    IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+                                    new ObjectValue(
+                                        ValueTypes::PAGE_ELEMENT_REFERENCE,
+                                        'page_import_name.elements.button',
+                                        'page_import_name',
+                                        'button'
+                                    )
                                 ),
                                 'page_import_name.elements.button'
                             ),
@@ -217,19 +204,14 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                         [
                             new Assertion(
                                 'page_import_name.elements.heading is "example"',
-                                new Identifier(
-                                    IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
-                                    new Value(
-                                        ValueTypes::PAGE_MODEL_REFERENCE,
-                                        'page_import_name.elements.heading'
-                                    ),
-                                    null
+                                new ObjectValue(
+                                    ValueTypes::PAGE_ELEMENT_REFERENCE,
+                                    'page_import_name.elements.heading',
+                                    'page_import_name',
+                                    'heading'
                                 ),
                                 AssertionComparisons::IS,
-                                new Value(
-                                    ValueTypes::STRING,
-                                    'example'
-                                )
+                                new LiteralValue('example')
                             ),
                         ]
                     ),
@@ -363,13 +345,14 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             'step_import_name',
                             ''
                         ))->withIdentifierCollection(new IdentifierCollection([
-                            'heading' => new Identifier(
-                                IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
-                                new Value(
-                                    ValueTypes::PAGE_MODEL_REFERENCE,
-                                    'page_import_name.elements.heading'
+                            'heading' => new ReferenceIdentifier(
+                                IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+                                new ObjectValue(
+                                    ValueTypes::PAGE_ELEMENT_REFERENCE,
+                                    'page_import_name.elements.heading',
+                                    'page_import_name',
+                                    'heading'
                                 ),
-                                null,
                                 'heading'
                             )
                         ])),
@@ -404,60 +387,10 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
         //   thrown when trying to uses a page element reference that is not of the correct form
         //
         //   cases:
-        //   - assertion string contains malformed reference
         //   - action string contains malformed reference
         //   - test.elements contains malformed reference
 
         return [
-            'MalformedPageElementReferenceException: assertion string contains malformed reference (1)' => [
-                'name' => 'test name',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => [
-                            ConfigurationData::KEY_BROWSER => 'chrome',
-                            ConfigurationData::KEY_URL => 'http://example.com',
-                        ],
-                        'step name' => [
-                            StepData::KEY_ASSERTIONS => [
-                                'malformed_reference is "assertion one value"',
-                            ],
-                        ],
-                    ]
-                ),
-                'expectedException' => MalformedPageElementReferenceException::class,
-                'expectedExceptionMessage' => 'Malformed page element reference "malformed_reference"',
-                'expectedExceptionContext' =>  new ExceptionContext([
-                    ExceptionContextInterface::KEY_TEST_NAME => 'test name',
-                    ExceptionContextInterface::KEY_STEP_NAME => 'step name',
-                    ExceptionContextInterface::KEY_CONTENT => 'malformed_reference is "assertion one value"',
-                ]),
-            ],
-            'MalformedPageElementReferenceException: assertion string contains malformed reference (2)' => [
-                'name' => 'test name',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => [
-                            ConfigurationData::KEY_BROWSER => 'chrome',
-                            ConfigurationData::KEY_URL => 'http://example.com',
-                        ],
-                        'step name' => [
-                            StepData::KEY_ASSERTIONS => [
-                                '".heading" is "assertion one value"',
-                                'malformed_reference is "assertion two value"',
-                            ],
-                        ],
-                    ]
-                ),
-                'expectedException' => MalformedPageElementReferenceException::class,
-                'expectedExceptionMessage' => 'Malformed page element reference "malformed_reference"',
-                'expectedExceptionContext' =>  new ExceptionContext([
-                    ExceptionContextInterface::KEY_TEST_NAME => 'test name',
-                    ExceptionContextInterface::KEY_STEP_NAME => 'step name',
-                    ExceptionContextInterface::KEY_CONTENT => 'malformed_reference is "assertion two value"',
-                ]),
-            ],
             'MalformedPageElementReferenceException: action string contains malformed reference (1)' => [
                 'name' => 'test name',
                 'testData' => new TestData(

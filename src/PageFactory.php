@@ -3,6 +3,7 @@
 namespace webignition\BasilModelFactory;
 
 use Nyholm\Psr7\Uri;
+use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
@@ -55,6 +56,6 @@ class PageFactory
             }
         }
 
-        return new Page($uri, $elementIdentifiers);
+        return new Page($uri, new IdentifierCollection($elementIdentifiers));
     }
 }

@@ -2,11 +2,14 @@
 
 namespace webignition\BasilModelFactory;
 
+use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\PageElementReference\PageElementReference;
+use webignition\BasilModel\Value\ElementValue;
+use webignition\BasilModel\Value\ElementValueInterface;
 use webignition\BasilModel\Value\EnvironmentValue;
+use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModel\Value\ValueTypes;
 
@@ -38,10 +41,9 @@ class ValueFactory
     public function createFromValueString(string $valueString): ValueInterface
     {
         $valueString = trim($valueString);
-        $type = ValueTypes::STRING;
 
         if ('' === $valueString) {
-            return new Value($type, '');
+            return new LiteralValue('');
         }
 
         $objectProperties = $this->findObjectProperties($valueString);
@@ -65,11 +67,21 @@ class ValueFactory
             $pageElementReference = new PageElementReference($valueString);
 
             if ($pageElementReference->isValid()) {
-                $type = ValueTypes::PAGE_MODEL_REFERENCE;
+                return new ObjectValue(
+                    ValueTypes::PAGE_ELEMENT_REFERENCE,
+                    $valueString,
+                    $pageElementReference->getImportName(),
+                    $pageElementReference->getElementName()
+                );
             }
         }
 
-        return new Value($type, $valueString);
+        return new LiteralValue($valueString);
+    }
+
+    public function createFromIdentifier(IdentifierInterface $identifier): ElementValueInterface
+    {
+        return new ElementValue($identifier);
     }
 
     private function findObjectProperties(string $valueString): ?array
