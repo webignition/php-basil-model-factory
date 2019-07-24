@@ -69,7 +69,8 @@ class IdentifierFactory
         $parentIdentifier = $existingIdentifiers[$parentIdentifierName] ?? null;
         $identifier = $this->create($identifierString, $elementName);
 
-        if ($identifier instanceof ElementIdentifierInterface && $parentIdentifier) {
+        if ($identifier instanceof ElementIdentifierInterface &&
+            $parentIdentifier instanceof ElementIdentifierInterface) {
             return $identifier->withParentIdentifier($parentIdentifier);
         }
 
