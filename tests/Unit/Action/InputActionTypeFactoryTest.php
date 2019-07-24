@@ -4,7 +4,6 @@
 namespace webignition\BasilModelFactory\Tests\Unit\Action;
 
 use webignition\BasilModel\Action\ActionTypes;
-use webignition\BasilModelFactory\Action\ActionTypeFactoryInterface;
 use webignition\BasilModelFactory\Action\InputActionTypeFactory;
 
 class InputActionTypeFactoryTest extends \PHPUnit\Framework\TestCase
