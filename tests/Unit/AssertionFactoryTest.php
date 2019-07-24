@@ -7,13 +7,12 @@ namespace webignition\BasilModelFactory\Tests\Unit;
 use webignition\BasilModel\Assertion\Assertion;
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
+use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
-use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModelFactory\AssertionFactory;
 
@@ -44,7 +43,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromAssertionString(): array
     {
-        $cssSelectorIdentifier = new Identifier(
+        $cssSelectorIdentifier = new ElementIdentifier(
             IdentifierTypes::CSS_SELECTOR,
             '.selector'
         );
@@ -68,7 +67,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAssertion' => new Assertion(
                     '"{{ reference }} .selector" is "value"',
                     new ElementValue(
-                        new Identifier(
+                        new ElementIdentifier(
                             IdentifierTypes::CSS_SELECTOR,
                             '{{ reference }} .selector'
                         )
@@ -247,7 +246,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAssertion' => new Assertion(
                     '".selector is is-not exists not-exists includes excludes matches foo" is "value"',
                     new ElementValue(
-                        new Identifier(
+                        new ElementIdentifier(
                             IdentifierTypes::CSS_SELECTOR,
                             '.selector is is-not exists not-exists includes excludes matches foo'
                         )
@@ -261,7 +260,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAssertion' => new Assertion(
                     '"//foo" is "value"',
                     new ElementValue(
-                        new Identifier(
+                        new ElementIdentifier(
                             IdentifierTypes::XPATH_EXPRESSION,
                             '//foo'
                         )
@@ -276,7 +275,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAssertion' => new Assertion(
                     '"//a[ends-with(@href is exists not-exists matches includes excludes, \".pdf\")]" is "value"',
                     new ElementValue(
-                        new Identifier(
+                        new ElementIdentifier(
                             IdentifierTypes::XPATH_EXPRESSION,
                             '//a[ends-with(@href is exists not-exists matches includes excludes, \".pdf\")]'
                         )

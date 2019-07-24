@@ -37,6 +37,8 @@ class AssertionFactory
      * @param string $assertionString
      *
      * @return AssertionInterface
+     *
+     * @throws MalformedPageElementReferenceException
      */
     public function createFromAssertionString(string $assertionString): AssertionInterface
     {
