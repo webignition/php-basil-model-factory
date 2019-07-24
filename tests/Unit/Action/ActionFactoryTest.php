@@ -10,8 +10,8 @@ use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectValue;
@@ -49,8 +49,8 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionStringForClickActionDataProvider(): array
     {
-        $cssSelectorValue = '.selector';
-        $cssSelectorIdentifier = new ElementIdentifier(IdentifierTypes::CSS_SELECTOR, $cssSelectorValue);
+        $cssSelectorValue = LiteralValue::createCssSelectorValue('.selector');
+        $cssSelectorIdentifier = new ElementIdentifier($cssSelectorValue);
 
         return [
             'click css selector with null position double-quoted' => [
@@ -68,7 +68,6 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     'click ".selector":3',
                     ActionTypes::CLICK,
                     new ElementIdentifier(
-                        IdentifierTypes::CSS_SELECTOR,
                         $cssSelectorValue,
                         3
                     ),
@@ -80,7 +79,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'click page_import_name.elements.element_name',
                     ActionTypes::CLICK,
-                    new ReferenceIdentifier(
+                    new Identifier(
                         IdentifierTypes::PAGE_ELEMENT_REFERENCE,
                         new ObjectValue(
                             ValueTypes::PAGE_ELEMENT_REFERENCE,
@@ -97,7 +96,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'click $elements.name',
                     ActionTypes::CLICK,
-                    new ReferenceIdentifier(
+                    new Identifier(
                         IdentifierTypes::ELEMENT_PARAMETER,
                         new ObjectValue(
                             ValueTypes::ELEMENT_PARAMETER,
@@ -123,8 +122,8 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionStringForSubmitActionDataProvider(): array
     {
-        $cssSelectorValue = '.selector';
-        $cssSelectorIdentifier = new ElementIdentifier(IdentifierTypes::CSS_SELECTOR, $cssSelectorValue);
+        $cssSelectorValue = LiteralValue::createCssSelectorValue('.selector');
+        $cssSelectorIdentifier = new ElementIdentifier($cssSelectorValue);
 
         return [
             'submit css selector with null position double-quoted' => [
@@ -142,7 +141,6 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     'submit ".selector":3',
                     ActionTypes::SUBMIT,
                     new ElementIdentifier(
-                        IdentifierTypes::CSS_SELECTOR,
                         $cssSelectorValue,
                         3
                     ),
@@ -154,7 +152,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'submit page_import_name.elements.element_name',
                     ActionTypes::SUBMIT,
-                    new ReferenceIdentifier(
+                    new Identifier(
                         IdentifierTypes::PAGE_ELEMENT_REFERENCE,
                         new ObjectValue(
                             ValueTypes::PAGE_ELEMENT_REFERENCE,
@@ -171,7 +169,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'submit $elements.name',
                     ActionTypes::SUBMIT,
-                    new ReferenceIdentifier(
+                    new Identifier(
                         IdentifierTypes::ELEMENT_PARAMETER,
                         new ObjectValue(
                             ValueTypes::ELEMENT_PARAMETER,
@@ -197,8 +195,8 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionStringForWaitForActionDataProvider(): array
     {
-        $cssSelectorValue = '.selector';
-        $cssSelectorIdentifier = new ElementIdentifier(IdentifierTypes::CSS_SELECTOR, $cssSelectorValue);
+        $cssSelectorValue = LiteralValue::createCssSelectorValue('.selector');
+        $cssSelectorIdentifier = new ElementIdentifier($cssSelectorValue);
 
         return [
             'wait-for css selector with null position double-quoted' => [
@@ -216,7 +214,6 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     'wait-for ".selector":3',
                     ActionTypes::WAIT_FOR,
                     new ElementIdentifier(
-                        IdentifierTypes::CSS_SELECTOR,
                         $cssSelectorValue,
                         3
                     ),
@@ -228,7 +225,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'wait-for page_import_name.elements.element_name',
                     ActionTypes::WAIT_FOR,
-                    new ReferenceIdentifier(
+                    new Identifier(
                         IdentifierTypes::PAGE_ELEMENT_REFERENCE,
                         new ObjectValue(
                             ValueTypes::PAGE_ELEMENT_REFERENCE,
@@ -245,7 +242,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'wait-for $elements.name',
                     ActionTypes::WAIT_FOR,
-                    new ReferenceIdentifier(
+                    new Identifier(
                         IdentifierTypes::ELEMENT_PARAMETER,
                         new ObjectValue(
                             ValueTypes::ELEMENT_PARAMETER,
@@ -284,11 +281,11 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
         return [
             'wait 1' => [
                 'actionString' => 'wait 1',
-                'expectedAction' => new WaitAction('wait 1', new LiteralValue('1')),
+                'expectedAction' => new WaitAction('wait 1', LiteralValue::createStringValue('1')),
             ],
             'wait 15' => [
                 'actionString' => 'wait 15',
-                'expectedAction' => new WaitAction('wait 15', new LiteralValue('15')),
+                'expectedAction' => new WaitAction('wait 15', LiteralValue::createStringValue('15')),
             ],
             'wait $data.name' => [
                 'actionString' => 'wait $data.name',
@@ -301,7 +298,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'wait no arguments' => [
                 'actionString' => 'wait',
-                'expectedAction' => new WaitAction('wait', new LiteralValue('')),
+                'expectedAction' => new WaitAction('wait', LiteralValue::createStringValue('')),
             ],
             'wait $env.DURATION' => [
                 'actionString' => 'wait $env.DURATION',
@@ -355,9 +352,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionStringForInputActionDataProvider(): array
     {
-        $cssSelectorValue = '.selector';
-        $cssSelectorIdentifier = new ElementIdentifier(IdentifierTypes::CSS_SELECTOR, $cssSelectorValue);
-        $scalarValue = new LiteralValue('value');
+        $cssSelectorValue = LiteralValue::createCssSelectorValue('.selector');
+        $cssSelectorIdentifier = new ElementIdentifier($cssSelectorValue);
+        $scalarValue = LiteralValue::createStringValue('value');
 
         return [
             'simple css selector, scalar value' => [
@@ -402,7 +399,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector" to "\"value\""',
                     $cssSelectorIdentifier,
-                    new LiteralValue('"value"'),
+                    LiteralValue::createStringValue('"value"'),
                     '".selector" to "\"value\""'
                 ),
             ],
@@ -411,10 +408,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector to value" to "value"',
                     new ElementIdentifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '.selector to value'
+                        LiteralValue::createCssSelectorValue('.selector to value')
                     ),
-                    new LiteralValue('value'),
+                    LiteralValue::createStringValue('value'),
                     '".selector to value" to "value"'
                 ),
             ],
@@ -423,10 +419,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set "//foo" to "value"',
                     new ElementIdentifier(
-                        IdentifierTypes::XPATH_EXPRESSION,
-                        '//foo'
+                        LiteralValue::createXpathExpressionValue('//foo')
                     ),
-                    new LiteralValue('value'),
+                    LiteralValue::createStringValue('value'),
                     '"//foo" to "value"'
                 ),
             ],
@@ -435,10 +430,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set "//a[ends-with(@href to value, \".pdf\")]" to "value"',
                     new ElementIdentifier(
-                        IdentifierTypes::XPATH_EXPRESSION,
-                        '//a[ends-with(@href to value, \".pdf\")]'
+                        LiteralValue::createXpathExpressionValue('//a[ends-with(@href to value, \".pdf\")]')
                     ),
-                    new LiteralValue('value'),
+                    LiteralValue::createStringValue('value'),
                     '"//a[ends-with(@href to value, \".pdf\")]" to "value"'
                 ),
             ],
@@ -474,10 +468,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector to value" "value"',
                     new ElementIdentifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '.selector to value'
+                        LiteralValue::createCssSelectorValue('.selector to value')
                     ),
-                    new LiteralValue('value'),
+                    LiteralValue::createStringValue('value'),
                     '".selector to value" "value"'
                 ),
             ],

@@ -19,7 +19,7 @@ use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\Identifier\ReferenceIdentifier;
+use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Test\Configuration;
@@ -136,7 +136,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                                 'url'
                             ),
                             AssertionComparisons::IS,
-                            new LiteralValue('http://example.com')
+                            LiteralValue::createStringValue('http://example.com')
                         ),
                     ]),
                     'query "example"' => new Step(
@@ -145,8 +145,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                                 'click ".form .submit"',
                                 ActionTypes::CLICK,
                                 new ElementIdentifier(
-                                    IdentifierTypes::CSS_SELECTOR,
-                                    '.form .submit'
+                                    LiteralValue::createCssSelectorValue('.form .submit')
                                 ),
                                 '".form .submit"'
                             ),
@@ -161,7 +160,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                                     'title'
                                 ),
                                 AssertionComparisons::IS,
-                                new LiteralValue('example - Example Domain')
+                                LiteralValue::createStringValue('example - Example Domain')
                             ),
                         ]
                     ),
@@ -189,7 +188,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             new InteractionAction(
                                 'click page_import_name.elements.button',
                                 ActionTypes::CLICK,
-                                new ReferenceIdentifier(
+                                new Identifier(
                                     IdentifierTypes::PAGE_ELEMENT_REFERENCE,
                                     new ObjectValue(
                                         ValueTypes::PAGE_ELEMENT_REFERENCE,
@@ -211,7 +210,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                                     'heading'
                                 ),
                                 AssertionComparisons::IS,
-                                new LiteralValue('example')
+                                LiteralValue::createStringValue('example')
                             ),
                         ]
                     ),
@@ -345,7 +344,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             'step_import_name',
                             ''
                         ))->withIdentifierCollection(new IdentifierCollection([
-                            'heading' => new ReferenceIdentifier(
+                            'heading' => new Identifier(
                                 IdentifierTypes::PAGE_ELEMENT_REFERENCE,
                                 new ObjectValue(
                                     ValueTypes::PAGE_ELEMENT_REFERENCE,

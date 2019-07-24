@@ -4,10 +4,11 @@ namespace webignition\BasilModelFactory;
 
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
+use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\PageElementReference\PageElementReference;
+use webignition\BasilModel\Value\LiteralValue;
 
 class IdentifierFactory
 {
@@ -100,8 +101,12 @@ class IdentifierFactory
         list($value, $position) = $this->extractValueAndPosition($identifierString);
         $value = trim($value, '"');
 
-        if (in_array($type, [IdentifierTypes::CSS_SELECTOR, IdentifierTypes::XPATH_EXPRESSION])) {
-            return new ElementIdentifier($type, $value, $position, $name);
+        if (IdentifierTypes::ELEMENT_SELECTOR === $type) {
+            $value = IdentifierFactory::isCssSelector($identifierString)
+                ? LiteralValue::createCssSelectorValue($value)
+                : LiteralValue::createXpathExpressionValue($value);
+
+            return new ElementIdentifier($value, $position, $name);
         }
 
         if (IdentifierTypes::PAGE_ELEMENT_REFERENCE === $type) {
@@ -112,10 +117,7 @@ class IdentifierFactory
             }
         }
 
-        $referenceIdentifier = new ReferenceIdentifier(
-            $type,
-            $this->valueFactory->createFromValueString($identifierString)
-        );
+        $referenceIdentifier = new Identifier($type, $this->valueFactory->createFromValueString($identifierString));
 
         if (null !== $name) {
             $referenceIdentifier = $referenceIdentifier->withName($name);
@@ -146,12 +148,8 @@ class IdentifierFactory
 
     private function deriveType(string $identifierString): string
     {
-        if (self::isXpathExpression($identifierString)) {
-            return IdentifierTypes::XPATH_EXPRESSION;
-        }
-
-        if (self::isCssSelector($identifierString)) {
-            return IdentifierTypes::CSS_SELECTOR;
+        if (self::isElementIdentifier($identifierString)) {
+            return IdentifierTypes::ELEMENT_SELECTOR;
         }
 
         if (self::isElementParameterReference($identifierString)) {

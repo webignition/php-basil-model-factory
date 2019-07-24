@@ -8,6 +8,7 @@ use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\ElementValueInterface;
 use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\LiteralValueInterface;
 use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueInterface;
@@ -43,7 +44,7 @@ class ValueFactory
         $valueString = trim($valueString);
 
         if ('' === $valueString) {
-            return new LiteralValue('');
+            return LiteralValue::createStringValue('');
         }
 
         $objectProperties = $this->findObjectProperties($valueString);
@@ -76,7 +77,26 @@ class ValueFactory
             }
         }
 
-        return new LiteralValue($valueString);
+        return LiteralValue::createStringValue($valueString);
+    }
+
+    public function createFromIdentifierString(string $identifierString): LiteralValueInterface
+    {
+        $identifierString = trim($identifierString);
+
+        if ('' === $identifierString) {
+            return LiteralValue::createStringValue('');
+        }
+
+        if (IdentifierFactory::isCssSelector($identifierString)) {
+            return LiteralValue::createCssSelectorValue($this->getQuotedValue($identifierString));
+        }
+
+        if (IdentifierFactory::isXpathExpression($identifierString)) {
+            return LiteralValue::createXpathExpressionValue($this->getQuotedValue($identifierString));
+        }
+
+        return LiteralValue::createStringValue($identifierString);
     }
 
     public function createFromIdentifier(IdentifierInterface $identifier): ElementValueInterface
