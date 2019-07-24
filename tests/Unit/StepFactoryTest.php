@@ -13,13 +13,16 @@ use webignition\BasilModel\Assertion\Assertion;
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
-use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
-use webignition\BasilModel\Value\Value;
+use webignition\BasilModel\Value\ElementValue;
+use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilDataStructure\Step as StepData;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
@@ -81,28 +84,19 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         new InteractionAction(
                             'click ".selector"',
                             ActionTypes::CLICK,
-                            new Identifier(
+                            new ElementIdentifier(
                                 IdentifierTypes::CSS_SELECTOR,
-                                new Value(
-                                    ValueTypes::STRING,
-                                    '.selector'
-                                )
+                                '.selector'
                             ),
                             '".selector"'
                         ),
                         new InputAction(
                             'set ".input" to "value"',
-                            new Identifier(
+                            new ElementIdentifier(
                                 IdentifierTypes::CSS_SELECTOR,
-                                new Value(
-                                    ValueTypes::STRING,
-                                    '.input'
-                                )
+                                '.input'
                             ),
-                            new Value(
-                                ValueTypes::STRING,
-                                'value'
-                            ),
+                            new LiteralValue('value'),
                             '".input" to "value"'
                         )
                     ],
@@ -122,25 +116,20 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     [
                         new Assertion(
                             '".selector" is "value"',
-                            new Identifier(
-                                IdentifierTypes::CSS_SELECTOR,
-                                new Value(
-                                    ValueTypes::STRING,
+                            new ElementValue(
+                                new ElementIdentifier(
+                                    IdentifierTypes::CSS_SELECTOR,
                                     '.selector'
                                 )
                             ),
                             AssertionComparisons::IS,
-                            new Value(
-                                ValueTypes::STRING,
-                                'value'
-                            )
+                            new LiteralValue('value')
                         ),
                         new Assertion(
                             '".input" exists',
-                            new Identifier(
-                                IdentifierTypes::CSS_SELECTOR,
-                                new Value(
-                                    ValueTypes::STRING,
+                            new ElementValue(
+                                new ElementIdentifier(
+                                    IdentifierTypes::CSS_SELECTOR,
                                     '.input'
                                 )
                             ),
@@ -149,7 +138,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     ]
                 ),
             ],
-            'page model element references' => [
+            'page element references' => [
                 'stepData' => new StepData([
                     StepData::KEY_ACTIONS => [
                         'click page_import_name.elements.element_name'
@@ -163,11 +152,13 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         new InteractionAction(
                             'click page_import_name.elements.element_name',
                             ActionTypes::CLICK,
-                            new Identifier(
-                                IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
-                                new Value(
-                                    ValueTypes::PAGE_MODEL_REFERENCE,
-                                    'page_import_name.elements.element_name'
+                            new ReferenceIdentifier(
+                                IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+                                new ObjectValue(
+                                    ValueTypes::PAGE_ELEMENT_REFERENCE,
+                                    'page_import_name.elements.element_name',
+                                    'page_import_name',
+                                    'element_name'
                                 )
                             ),
                             'page_import_name.elements.element_name'
@@ -176,12 +167,11 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     [
                         new Assertion(
                             'page_import_name.elements.element_name exists',
-                            new Identifier(
-                                IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
-                                new Value(
-                                    ValueTypes::PAGE_MODEL_REFERENCE,
-                                    'page_import_name.elements.element_name'
-                                )
+                            new ObjectValue(
+                                ValueTypes::PAGE_ELEMENT_REFERENCE,
+                                'page_import_name.elements.element_name',
+                                'page_import_name',
+                                'element_name'
                             ),
                             AssertionComparisons::EXISTS
                         ),
@@ -242,13 +232,14 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     'import_name',
                     ''
                 ))->withIdentifierCollection(new IdentifierCollection([
-                    'heading' => new Identifier(
-                        IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
-                        new Value(
-                            ValueTypes::PAGE_MODEL_REFERENCE,
-                            'page_import_name.elements.heading'
+                    'heading' => new ReferenceIdentifier(
+                        IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+                        new ObjectValue(
+                            ValueTypes::PAGE_ELEMENT_REFERENCE,
+                            'page_import_name.elements.heading',
+                            'page_import_name',
+                            'heading'
                         ),
-                        1,
                         'heading'
                     ),
                 ])),
@@ -270,12 +261,9 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             new InteractionAction(
                                 'click ".selector"',
                                 ActionTypes::CLICK,
-                                new Identifier(
+                                new ElementIdentifier(
                                     IdentifierTypes::CSS_SELECTOR,
-                                    new Value(
-                                        ValueTypes::STRING,
-                                        '.selector'
-                                    )
+                                    '.selector'
                                 ),
                                 '".selector"'
                             ),
@@ -283,10 +271,9 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         [
                             new Assertion(
                                 '".selector" exists',
-                                new Identifier(
-                                    IdentifierTypes::CSS_SELECTOR,
-                                    new Value(
-                                        ValueTypes::STRING,
+                                new ElementValue(
+                                    new ElementIdentifier(
+                                        IdentifierTypes::CSS_SELECTOR,
                                         '.selector'
                                     )
                                 ),
@@ -333,18 +320,6 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     ExceptionContextInterface::KEY_TEST_NAME => null,
                     ExceptionContextInterface::KEY_STEP_NAME => null,
                     ExceptionContextInterface::KEY_CONTENT => 'click page.element',
-                ]),
-            ],
-            'within assertion string' => [
-                'stepData' => new StepData([
-                    StepData::KEY_ASSERTIONS => [
-                        'page.element exists',
-                    ],
-                ]),
-                'expectedExceptionContext' => new ExceptionContext([
-                    ExceptionContextInterface::KEY_TEST_NAME => null,
-                    ExceptionContextInterface::KEY_STEP_NAME => null,
-                    ExceptionContextInterface::KEY_CONTENT => 'page.element exists',
                 ]),
             ],
         ];

@@ -111,7 +111,16 @@ class IdentifierFactory
             }
         }
 
-        return new ReferenceIdentifier($type, $this->valueFactory->createFromValueString($identifierString));
+        $referenceIdentifier = new ReferenceIdentifier(
+            $type,
+            $this->valueFactory->createFromValueString($identifierString)
+        );
+
+        if (null !== $name) {
+            $referenceIdentifier = $referenceIdentifier->withName($name);
+        }
+
+        return $referenceIdentifier;
     }
 
     public static function isCssSelector(string $identifierString): bool
