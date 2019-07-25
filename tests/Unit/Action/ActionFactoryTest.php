@@ -357,7 +357,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
         $scalarValue = LiteralValue::createStringValue('value');
 
         return [
-            'simple css selector, scalar value' => [
+            'css selector, scalar value' => [
                 'actionString' => 'set ".selector" to "value"',
                 'expectedAction' => new InputAction(
                     'set ".selector" to "value"',
@@ -366,7 +366,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" to "value"'
                 ),
             ],
-            'simple css selector, data parameter value' => [
+            'css selector, data parameter value' => [
                 'actionString' => 'set ".selector" to $data.name',
                 'expectedAction' => new InputAction(
                     'set ".selector" to $data.name',
@@ -380,7 +380,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" to $data.name'
                 ),
             ],
-            'simple css selector, element parameter value' => [
+            'css selector, element parameter value' => [
                 'actionString' => 'set ".selector" to $elements.name',
                 'expectedAction' => new InputAction(
                     'set ".selector" to $elements.name',
@@ -394,7 +394,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" to $elements.name'
                 ),
             ],
-            'simple css selector, escaped quotes scalar value' => [
+            'css selector, escaped quotes scalar value' => [
                 'actionString' => 'set ".selector" to "\"value\""',
                 'expectedAction' => new InputAction(
                     'set ".selector" to "\"value\""',
@@ -414,7 +414,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector to value" to "value"'
                 ),
             ],
-            'simple xpath expression, scalar value' => [
+            'xpath expression, scalar value' => [
                 'actionString' => 'set "//foo" to "value"',
                 'expectedAction' => new InputAction(
                     'set "//foo" to "value"',
@@ -528,9 +528,41 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'click invalid-page-element-reference',
                 'expectedExceptionMessage' => 'Malformed page element reference "invalid-page-element-reference"',
             ],
+            'click page object property' => [
+                'actionString' => 'click $page.title',
+                'expectedExceptionMessage' => 'Malformed page element reference "$page.title"',
+            ],
+            'click browser object property' => [
+                'actionString' => 'click $browser.size',
+                'expectedExceptionMessage' => 'Malformed page element reference "$browser.size"',
+            ],
+            'click data parameter' => [
+                'actionString' => 'click $data.key',
+                'expectedExceptionMessage' => 'Malformed page element reference "$data.key"',
+            ],
+            'click environment parameter' => [
+                'actionString' => 'click $env.KEY',
+                'expectedExceptionMessage' => 'Malformed page element reference "$env.KEY"',
+            ],
             'set malformed page element reference' => [
                 'actionString' => 'set invalid-page-element-reference to "value"',
                 'expectedExceptionMessage' => 'Malformed page element reference "invalid-page-element-reference"',
+            ],
+            'set page object property' => [
+                'actionString' => 'set $page.title to "value"',
+                'expectedExceptionMessage' => 'Malformed page element reference "$page.title"',
+            ],
+            'set browser object property' => [
+                'actionString' => 'set $browser.size to "value"',
+                'expectedExceptionMessage' => 'Malformed page element reference "$browser.size"',
+            ],
+            'set data parameter' => [
+                'actionString' => 'set $data.key to "value"',
+                'expectedExceptionMessage' => 'Malformed page element reference "$data.key"',
+            ],
+            'set environment parameter' => [
+                'actionString' => 'set $env.KEY to "value"',
+                'expectedExceptionMessage' => 'Malformed page element reference "$env.KEY"',
             ],
             'submit malformed page element reference' => [
                 'actionString' => 'submit invalid-page-element-reference',
