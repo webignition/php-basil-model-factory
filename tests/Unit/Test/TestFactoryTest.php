@@ -344,16 +344,15 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             'step_import_name',
                             ''
                         ))->withIdentifierCollection(new IdentifierCollection([
-                            'heading' => new Identifier(
+                            (new Identifier(
                                 IdentifierTypes::PAGE_ELEMENT_REFERENCE,
                                 new ObjectValue(
                                     ValueTypes::PAGE_ELEMENT_REFERENCE,
                                     'page_import_name.elements.heading',
                                     'page_import_name',
                                     'heading'
-                                ),
-                                'heading'
-                            )
+                                )
+                            ))->withName('heading')
                         ])),
                     ]
                 ),

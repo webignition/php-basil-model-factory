@@ -13,6 +13,7 @@ use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\IdentifierFactory;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
+use webignition\BasilModelFactory\Tests\Services\TestIdentifierFactory;
 
 class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -268,10 +269,12 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createReferencedElementDataProvider(): array
     {
-        $parentIdentifier = new ElementIdentifier(
-            LiteralValue::createCssSelectorValue('.parent'),
+        $parentIdentifier = TestIdentifierFactory::createElementIdentifier(
+            ValueTypes::CSS_SELECTOR,
+            '.parent',
             1,
-            'parent_element_name'
+            'parent_element_name',
+            null
         );
 
         $existingIdentifiers = [
@@ -283,88 +286,96 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'identifierString' => '"{{ parent_element_name }} .selector"',
                 'element_name' => 'element_name',
                 'existingIdentifiers' => [],
-                'expectedIdentifier' => (new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('.selector')
-                ))->withName('element_name'),
+                'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
+                    ValueTypes::CSS_SELECTOR,
+                    '.selector',
+                    1,
+                    'element_name'
+                ),
             ],
             'element reference with css selector, position null' => [
                 'identifierString' => '"{{ parent_element_name }} .selector"',
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
-                'expectedIdentifier' =>
-                    (new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.selector')
-                    ))
-                        ->withParentIdentifier($parentIdentifier)
-                        ->withName('element_name'),
+                'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
+                    ValueTypes::CSS_SELECTOR,
+                    '.selector',
+                    1,
+                    'element_name',
+                    $parentIdentifier
+                ),
             ],
             'element reference with css selector, position 1' => [
                 'identifierString' => '"{{ parent_element_name }} .selector":1',
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
-                'expectedIdentifier' =>
-                    (new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.selector')
-                    ))
-                        ->withParentIdentifier($parentIdentifier)
-                        ->withName('element_name'),
+                'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
+                    ValueTypes::CSS_SELECTOR,
+                    '.selector',
+                    1,
+                    'element_name',
+                    $parentIdentifier
+                ),
             ],
             'element reference with css selector, position 2' => [
                 'identifierString' => '"{{ parent_element_name }} .selector":2',
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
-                'expectedIdentifier' =>
-                    (new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.selector'),
-                        2
-                    ))
-                        ->withParentIdentifier($parentIdentifier)
-                        ->withName('element_name'),
+                'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
+                    ValueTypes::CSS_SELECTOR,
+                    '.selector',
+                    2,
+                    'element_name',
+                    $parentIdentifier
+                ),
             ],
             'invalid double element reference with css selector' => [
                 'identifierString' => '"{{ parent_element_name }} {{ another_element_name }} .selector"',
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
-                'expectedIdentifier' =>
-                    (new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('{{ another_element_name }} .selector')
-                    ))
-                        ->withParentIdentifier($parentIdentifier)
-                        ->withName('element_name'),
+                'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
+                    ValueTypes::CSS_SELECTOR,
+                    '{{ another_element_name }} .selector',
+                    1,
+                    'element_name',
+                    $parentIdentifier
+                ),
             ],
             'element reference with xpath expression, position null' => [
                 'identifierString' => '"{{ parent_element_name }} //foo"',
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
-                'expectedIdentifier' =>
-                    (new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//foo')
-                    ))
-                        ->withParentIdentifier($parentIdentifier)
-                        ->withName('element_name'),
+                'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
+                    ValueTypes::XPATH_EXPRESSION,
+                    '//foo',
+                    1,
+                    'element_name',
+                    $parentIdentifier
+                ),
             ],
             'element reference with xpath expression, position 1' => [
                 'identifierString' => '"{{ parent_element_name }} //foo":1',
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
-                'expectedIdentifier' =>
-                    (new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//foo')
-                    ))
-                        ->withParentIdentifier($parentIdentifier)
-                        ->withName('element_name'),
+                'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
+                    ValueTypes::XPATH_EXPRESSION,
+                    '//foo',
+                    1,
+                    'element_name',
+                    $parentIdentifier
+                ),
             ],
             'element reference with xpath expression, position 2' => [
                 'identifierString' => '"{{ parent_element_name }} //foo":2',
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
-                'expectedIdentifier' =>
-                    (new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//foo'),
-                        2
-                    ))
-                        ->withParentIdentifier($parentIdentifier)
-                        ->withName('element_name'),
+                'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
+                    ValueTypes::XPATH_EXPRESSION,
+                    '//foo',
+                    2,
+                    'element_name',
+                    $parentIdentifier
+                ),
             ],
         ];
     }
