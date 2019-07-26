@@ -51,7 +51,7 @@ class IdentifierFactory
      */
     public function createWithElementReference(
         string $identifierString,
-        ?string $elementName,
+        string $elementName,
         array $existingIdentifiers
     ): ?IdentifierInterface {
         $identifierString = trim($identifierString);
