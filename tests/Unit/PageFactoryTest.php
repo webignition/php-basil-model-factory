@@ -11,7 +11,9 @@ use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilDataStructure\Page as PageData;
 use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\PageFactory;
+use webignition\BasilModelFactory\Tests\Services\TestIdentifierFactory;
 
 class PageFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -40,8 +42,9 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromPageDataDataProvider(): array
     {
-        $parentIdentifier = new ElementIdentifier(
-            LiteralValue::createCssSelectorValue('.form'),
+        $parentIdentifier = TestIdentifierFactory::createElementIdentifier(
+            ValueTypes::CSS_SELECTOR,
+            '.form',
             1,
             'form'
         );
@@ -67,11 +70,10 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedPage' => new Page(
                     new Uri('http://example.com/'),
                     new IdentifierCollection([
-                        'css-selector' => new ElementIdentifier(
+                        'css-selector' => (new ElementIdentifier(
                             LiteralValue::createCssSelectorValue('.selector'),
-                            1,
-                            'css-selector'
-                        ),
+                            1
+                        ))->withName('css-selector'),
                     ])
                 ),
             ],
@@ -87,11 +89,13 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                     new Uri('http://example.com/'),
                     new IdentifierCollection([
                         'form' => $parentIdentifier,
-                        'form_field' => (new ElementIdentifier(
-                            LiteralValue::createCssSelectorValue('.field'),
+                        'form_field' => TestIdentifierFactory::createElementIdentifier(
+                            ValueTypes::CSS_SELECTOR,
+                            '.field',
                             1,
-                            'form_field'
-                        ))->withParentIdentifier($parentIdentifier),
+                            'form_field',
+                            $parentIdentifier
+                        ),
                     ])
                 ),
             ],

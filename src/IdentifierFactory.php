@@ -106,24 +106,24 @@ class IdentifierFactory
                 ? LiteralValue::createCssSelectorValue($value)
                 : LiteralValue::createXpathExpressionValue($value);
 
-            return new ElementIdentifier($value, $position, $name);
-        }
+            $identifier = new ElementIdentifier($value, $position);
+        } else {
+            if (IdentifierTypes::PAGE_ELEMENT_REFERENCE === $type) {
+                $pageElementReference = new PageElementReference($identifierString);
 
-        if (IdentifierTypes::PAGE_ELEMENT_REFERENCE === $type) {
-            $pageElementReference = new PageElementReference($identifierString);
-
-            if (!$pageElementReference->isValid()) {
-                throw new MalformedPageElementReferenceException($pageElementReference);
+                if (!$pageElementReference->isValid()) {
+                    throw new MalformedPageElementReferenceException($pageElementReference);
+                }
             }
-        }
 
-        $referenceIdentifier = new Identifier($type, $this->valueFactory->createFromValueString($identifierString));
+            $identifier = new Identifier($type, $this->valueFactory->createFromValueString($identifierString));
+        }
 
         if (null !== $name) {
-            $referenceIdentifier = $referenceIdentifier->withName($name);
+            $identifier = $identifier->withName($name);
         }
 
-        return $referenceIdentifier;
+        return $identifier;
     }
 
     public static function isCssSelector(string $identifierString): bool
