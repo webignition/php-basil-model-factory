@@ -253,10 +253,11 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreateWithElementReference(
         string $identifierString,
+        string $elementName,
         array $existingIdentifiers,
         IdentifierInterface $expectedIdentifier
     ) {
-        $identifier = $this->factory->createWithElementReference($identifierString, null, $existingIdentifiers);
+        $identifier = $this->factory->createWithElementReference($identifierString, $elementName, $existingIdentifiers);
 
         $this->assertInstanceOf(IdentifierInterface::class, $identifier);
 
@@ -270,78 +271,100 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
         $parentIdentifier = new ElementIdentifier(
             LiteralValue::createCssSelectorValue('.parent'),
             1,
-            'element_name'
+            'parent_element_name'
         );
 
         $existingIdentifiers = [
-            'element_name' => $parentIdentifier,
+            'parent_element_name' => $parentIdentifier,
         ];
 
         return [
             'element reference with css selector, position null, parent identifier not passed' => [
-                'identifierString' => '"{{ element_name }} .selector"',
+                'identifierString' => '"{{ parent_element_name }} .selector"',
+                'element_name' => 'element_name',
                 'existingIdentifiers' => [],
-                'expectedIdentifier' => new ElementIdentifier(
+                'expectedIdentifier' => (new ElementIdentifier(
                     LiteralValue::createCssSelectorValue('.selector')
-                ),
+                ))->withName('element_name'),
             ],
             'element reference with css selector, position null' => [
-                'identifierString' => '"{{ element_name }} .selector"',
+                'identifierString' => '"{{ parent_element_name }} .selector"',
+                'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
                         LiteralValue::createCssSelectorValue('.selector')
-                    ))->withParentIdentifier($parentIdentifier),
+                    ))
+                        ->withParentIdentifier($parentIdentifier)
+                        ->withName('element_name'),
             ],
             'element reference with css selector, position 1' => [
-                'identifierString' => '"{{ element_name }} .selector":1',
+                'identifierString' => '"{{ parent_element_name }} .selector":1',
+                'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
                         LiteralValue::createCssSelectorValue('.selector')
-                    ))->withParentIdentifier($parentIdentifier),
+                    ))
+                        ->withParentIdentifier($parentIdentifier)
+                        ->withName('element_name'),
             ],
             'element reference with css selector, position 2' => [
-                'identifierString' => '"{{ element_name }} .selector":2',
+                'identifierString' => '"{{ parent_element_name }} .selector":2',
+                'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
                         LiteralValue::createCssSelectorValue('.selector'),
                         2
-                    ))->withParentIdentifier($parentIdentifier),
+                    ))
+                        ->withParentIdentifier($parentIdentifier)
+                        ->withName('element_name'),
             ],
             'invalid double element reference with css selector' => [
-                'identifierString' => '"{{ element_name }} {{ another_element_name }} .selector"',
+                'identifierString' => '"{{ parent_element_name }} {{ another_element_name }} .selector"',
+                'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
                         LiteralValue::createCssSelectorValue('{{ another_element_name }} .selector')
-                    ))->withParentIdentifier($parentIdentifier),
+                    ))
+                        ->withParentIdentifier($parentIdentifier)
+                        ->withName('element_name'),
             ],
             'element reference with xpath expression, position null' => [
-                'identifierString' => '"{{ element_name }} //foo"',
+                'identifierString' => '"{{ parent_element_name }} //foo"',
+                'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
                         LiteralValue::createXpathExpressionValue('//foo')
-                    ))->withParentIdentifier($parentIdentifier),
+                    ))
+                        ->withParentIdentifier($parentIdentifier)
+                        ->withName('element_name'),
             ],
             'element reference with xpath expression, position 1' => [
-                'identifierString' => '"{{ element_name }} //foo":1',
+                'identifierString' => '"{{ parent_element_name }} //foo":1',
+                'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
                         LiteralValue::createXpathExpressionValue('//foo')
-                    ))->withParentIdentifier($parentIdentifier),
+                    ))
+                        ->withParentIdentifier($parentIdentifier)
+                        ->withName('element_name'),
             ],
             'element reference with xpath expression, position 2' => [
-                'identifierString' => '"{{ element_name }} //foo":2',
+                'identifierString' => '"{{ parent_element_name }} //foo":2',
+                'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' =>
                     (new ElementIdentifier(
                         LiteralValue::createXpathExpressionValue('//foo'),
                         2
-                    ))->withParentIdentifier($parentIdentifier),
+                    ))
+                        ->withParentIdentifier($parentIdentifier)
+                        ->withName('element_name'),
             ],
         ];
     }
@@ -354,8 +377,8 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateWithElementReferenceEmpty()
     {
-        $this->assertNull($this->factory->createWithElementReference('', null, []));
-        $this->assertNull($this->factory->createWithElementReference(' ', null, []));
+        $this->assertNull($this->factory->createWithElementReference('', 'element_name', []));
+        $this->assertNull($this->factory->createWithElementReference(' ', 'element_name', []));
     }
 
     public function testCreateForMalformedPageElementReference()

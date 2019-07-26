@@ -42,7 +42,7 @@ class IdentifierFactory
 
     /**
      * @param string $identifierString
-     * @param string|null $elementName
+     * @param string $elementName
      * @param IdentifierInterface[] $existingIdentifiers
      *
      * @return IdentifierInterface|null
@@ -51,7 +51,7 @@ class IdentifierFactory
      */
     public function createWithElementReference(
         string $identifierString,
-        ?string $elementName,
+        string $elementName,
         array $existingIdentifiers
     ): ?IdentifierInterface {
         $identifierString = trim($identifierString);
