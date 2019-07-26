@@ -42,7 +42,7 @@ class IdentifierFactory
 
     /**
      * @param string $identifierString
-     * @param string|null $elementName
+     * @param string $elementName
      * @param IdentifierInterface[] $existingIdentifiers
      *
      * @return IdentifierInterface|null
