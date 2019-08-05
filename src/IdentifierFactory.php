@@ -19,10 +19,6 @@ class IdentifierFactory
     const POSITION_REGEX = '/' . self::POSITION_PATTERN . '$/';
     const CSS_SELECTOR_REGEX = '/^"((?!\/).).+("|' . self::POSITION_PATTERN . ')$/';
     const XPATH_EXPRESSION_REGEX = '/^"\/.+("|' . self::POSITION_PATTERN . ')$/';
-    const DATA_PARAMETER_REGEX = '/^\$data\.+/';
-    const ELEMENT_PARAMETER_REGEX = '/^\$elements\.+/';
-    const PAGE_OBJECT_PARAMETER_REGEX = '/^\$page\.+/';
-    const BROWSER_OBJECT_PARAMETER_REGEX = '/^\$browser\.+/';
     const REFERENCED_ELEMENT_REGEX = '/^"{{.+/';
     const REFERENCED_ELEMENT_EXTRACTOR_REGEX = '/^".+?(?=(}}))}}/';
 
@@ -96,7 +92,7 @@ class IdentifierFactory
             return null;
         }
 
-        $type = $this->deriveType($identifierString);
+        $type = IdentifierTypeFinder::findType($identifierString);
 
         list($value, $position) = $this->extractValueAndPosition($identifierString);
         $value = trim($value, '"');
@@ -124,19 +120,6 @@ class IdentifierFactory
         }
 
         return $identifier;
-    }
-
-    private function deriveType(string $identifierString): string
-    {
-        if (IdentifierTypeFinder::isElementIdentifier($identifierString)) {
-            return IdentifierTypes::ELEMENT_SELECTOR;
-        }
-
-        if (IdentifierTypeFinder::isElementParameterReference($identifierString)) {
-            return IdentifierTypes::ELEMENT_PARAMETER;
-        }
-
-        return IdentifierTypes::PAGE_ELEMENT_REFERENCE;
     }
 
     private function extractValueAndPosition(string $identifier)
