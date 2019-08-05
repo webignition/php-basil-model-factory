@@ -117,6 +117,14 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(IdentifierTypes::PAGE_ELEMENT_REFERENCE, IdentifierTypeFinder::findType($identifierString));
     }
 
+    /**
+     * @dataProvider attributeIdentifierDataProvider
+     */
+    public function testFindTypeAttributeIdentifier(string $identifierString)
+    {
+        $this->assertSame(IdentifierTypes::ATTRIBUTE, IdentifierTypeFinder::findType($identifierString));
+    }
+
     public function cssSelectorDataProvider(): array
     {
         return [
