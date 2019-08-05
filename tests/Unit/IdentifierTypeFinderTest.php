@@ -20,6 +20,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider xPathExpressionDataProvider
      * @dataProvider elementParameterReferenceDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider attributeIdentifierDataProvider
      */
     public function testIsNotCssSelector(string $identifierString)
     {
@@ -38,6 +39,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider cssSelectorDataProvider
      * @dataProvider elementParameterReferenceDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider attributeIdentifierDataProvider
      */
     public function testIsNotXpathExpression(string $identifierString)
     {
@@ -56,6 +58,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider elementParameterReferenceDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider attributeIdentifierDataProvider
      */
     public function testIsNotElementIdentifier(string $identifierString)
     {
@@ -74,6 +77,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider cssSelectorDataProvider
      * @dataProvider xPathExpressionDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider attributeIdentifierDataProvider
      */
     public function testIsNotElementParameterReference(string $identifierString)
     {
@@ -159,6 +163,39 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'identifierString' => 'page_import_name.elements.element_name',
+            ],
+        ];
+    }
+
+    public function attributeIdentifierDataProvider(): array
+    {
+        return [
+            [
+                'identifierString' =>  '".selector".attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector .foo".attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector.foo".attribute_name',
+            ],
+            [
+                'identifierString' =>  '"#id".attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector[data-foo=bar]".attribute_name',
+            ],
+            [
+                'identifierString' =>  '"/body".attribute_name',
+            ],
+            [
+                'identifierString' =>  '"//foo".attribute_name',
+            ],
+            [
+                'identifierString' =>  '"//*[@id="id"]".attribute_name',
+            ],
+            [
+                'identifierString' =>  '"//hr[@class=\'edge\']".attribute_name',
             ],
         ];
     }
