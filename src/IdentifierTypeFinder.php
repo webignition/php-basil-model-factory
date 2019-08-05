@@ -2,6 +2,8 @@
 
 namespace webignition\BasilModelFactory;
 
+use webignition\BasilModel\Identifier\IdentifierTypes;
+
 class IdentifierTypeFinder
 {
     const POSITION_PATTERN = ':(-?[0-9]+|first|last)';
@@ -27,5 +29,18 @@ class IdentifierTypeFinder
     public static function isElementParameterReference(string $identifierString): bool
     {
         return 1 === preg_match(self::ELEMENT_PARAMETER_REGEX, $identifierString);
+    }
+
+    public static function findType(string $identifierString): string
+    {
+        if (IdentifierTypeFinder::isElementIdentifier($identifierString)) {
+            return IdentifierTypes::ELEMENT_SELECTOR;
+        }
+
+        if (IdentifierTypeFinder::isElementParameterReference($identifierString)) {
+            return IdentifierTypes::ELEMENT_PARAMETER;
+        }
+
+        return IdentifierTypes::PAGE_ELEMENT_REFERENCE;
     }
 }

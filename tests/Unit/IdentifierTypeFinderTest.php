@@ -3,6 +3,7 @@
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
+use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
 
 class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
@@ -18,6 +19,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider xPathExpressionDataProvider
      * @dataProvider elementParameterReferenceDataProvider
+     * @dataProvider pageElementReferenceDataProvider
      */
     public function testIsNotCssSelector(string $identifierString)
     {
@@ -35,6 +37,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider cssSelectorDataProvider
      * @dataProvider elementParameterReferenceDataProvider
+     * @dataProvider pageElementReferenceDataProvider
      */
     public function testIsNotXpathExpression(string $identifierString)
     {
@@ -52,6 +55,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider elementParameterReferenceDataProvider
+     * @dataProvider pageElementReferenceDataProvider
      */
     public function testIsNotElementIdentifier(string $identifierString)
     {
@@ -69,10 +73,36 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider cssSelectorDataProvider
      * @dataProvider xPathExpressionDataProvider
+     * @dataProvider pageElementReferenceDataProvider
      */
     public function testIsNotElementParameterReference(string $identifierString)
     {
         $this->assertFalse(IdentifierTypeFinder::isElementParameterReference($identifierString));
+    }
+
+    /**
+     * @dataProvider cssSelectorDataProvider
+     * @dataProvider xPathExpressionDataProvider
+     */
+    public function testFindTypeElementSelector(string $identifierString)
+    {
+        $this->assertSame(IdentifierTypes::ELEMENT_SELECTOR, IdentifierTypeFinder::findType($identifierString));
+    }
+
+    /**
+     * @dataProvider elementParameterReferenceDataProvider
+     */
+    public function testFindTypeElementParameterReference(string $identifierString)
+    {
+        $this->assertSame(IdentifierTypes::ELEMENT_PARAMETER, IdentifierTypeFinder::findType($identifierString));
+    }
+
+    /**
+     * @dataProvider pageElementReferenceDataProvider
+     */
+    public function testFindTypePageElementReference(string $identifierString)
+    {
+        $this->assertSame(IdentifierTypes::PAGE_ELEMENT_REFERENCE, IdentifierTypeFinder::findType($identifierString));
     }
 
     public function cssSelectorDataProvider(): array
@@ -120,6 +150,15 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'identifierString' =>  '$elements.element_name',
+            ],
+        ];
+    }
+
+    public function pageElementReferenceDataProvider(): array
+    {
+        return [
+            [
+                'identifierString' => 'page_import_name.elements.element_name',
             ],
         ];
     }
