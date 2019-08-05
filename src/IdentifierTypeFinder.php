@@ -60,12 +60,16 @@ class IdentifierTypeFinder
 
     public static function findType(string $identifierString): string
     {
-        if (IdentifierTypeFinder::isElementIdentifier($identifierString)) {
+        if (self::isElementIdentifier($identifierString)) {
             return IdentifierTypes::ELEMENT_SELECTOR;
         }
 
-        if (IdentifierTypeFinder::isElementParameterReference($identifierString)) {
+        if (self::isElementParameterReference($identifierString)) {
             return IdentifierTypes::ELEMENT_PARAMETER;
+        }
+
+        if (self::isAttributeIdentifier($identifierString)) {
+            return IdentifierTypes::ATTRIBUTE;
         }
 
         return IdentifierTypes::PAGE_ELEMENT_REFERENCE;
