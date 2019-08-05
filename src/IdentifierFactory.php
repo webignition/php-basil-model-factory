@@ -126,18 +126,13 @@ class IdentifierFactory
         return $identifier;
     }
 
-    public static function isElementParameterReference(string $identifierString): bool
-    {
-        return 1 === preg_match(self::ELEMENT_PARAMETER_REGEX, $identifierString);
-    }
-
     private function deriveType(string $identifierString): string
     {
         if (IdentifierTypeFinder::isElementIdentifier($identifierString)) {
             return IdentifierTypes::ELEMENT_SELECTOR;
         }
 
-        if (self::isElementParameterReference($identifierString)) {
+        if (IdentifierTypeFinder::isElementParameterReference($identifierString)) {
             return IdentifierTypes::ELEMENT_PARAMETER;
         }
 
