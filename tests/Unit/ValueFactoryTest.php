@@ -193,14 +193,4 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
-
-    public function testCreateFromIdentifier()
-    {
-        $identifier = new ElementIdentifier(LiteralValue::createCssSelectorValue('.selector'));
-
-        $value = $this->valueFactory->createFromIdentifier($identifier);
-
-        $this->assertInstanceOf(ElementValueInterface::class, $value);
-        $this->assertSame($identifier, $value->getIdentifier());
-    }
 }
