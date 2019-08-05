@@ -20,6 +20,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider xPathExpressionDataProvider
      * @dataProvider elementParameterReferenceDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider attributeIdentifierDataProvider
      */
     public function testIsNotCssSelector(string $identifierString)
     {
@@ -38,6 +39,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider cssSelectorDataProvider
      * @dataProvider elementParameterReferenceDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider attributeIdentifierDataProvider
      */
     public function testIsNotXpathExpression(string $identifierString)
     {
@@ -56,6 +58,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider elementParameterReferenceDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider attributeIdentifierDataProvider
      */
     public function testIsNotElementIdentifier(string $identifierString)
     {
@@ -74,10 +77,19 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider cssSelectorDataProvider
      * @dataProvider xPathExpressionDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider attributeIdentifierDataProvider
      */
     public function testIsNotElementParameterReference(string $identifierString)
     {
         $this->assertFalse(IdentifierTypeFinder::isElementParameterReference($identifierString));
+    }
+
+    /**
+     * @dataProvider attributeIdentifierDataProvider
+     */
+    public function testIsAttributeIdentifier(string $identifierString)
+    {
+        $this->assertTrue(IdentifierTypeFinder::isAttributeIdentifier($identifierString));
     }
 
     /**
@@ -123,6 +135,21 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
             [
                 'identifierString' =>  '".selector[data-foo=bar]"',
             ],
+            [
+                'identifierString' =>  '".selector":0',
+            ],
+            [
+                'identifierString' =>  '".selector":1',
+            ],
+            [
+                'identifierString' =>  '".selector":-1',
+            ],
+            [
+                'identifierString' =>  '".selector":first',
+            ],
+            [
+                'identifierString' =>  '".selector":last',
+            ],
         ];
     }
 
@@ -142,6 +169,21 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
             [
                 'identifierString' =>  '"//hr[@class=\'edge\']"',
             ],
+            [
+                'identifierString' =>  '"/body":0',
+            ],
+            [
+                'identifierString' =>  '"/body":1',
+            ],
+            [
+                'identifierString' =>  '"/body":-1',
+            ],
+            [
+                'identifierString' =>  '"/body":first',
+            ],
+            [
+                'identifierString' =>  '"/body":last',
+            ],
         ];
     }
 
@@ -159,6 +201,54 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'identifierString' => 'page_import_name.elements.element_name',
+            ],
+        ];
+    }
+
+    public function attributeIdentifierDataProvider(): array
+    {
+        return [
+            [
+                'identifierString' =>  '".selector".attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector .foo".attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector.foo".attribute_name',
+            ],
+            [
+                'identifierString' =>  '"#id".attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector[data-foo=bar]".attribute_name',
+            ],
+            [
+                'identifierString' =>  '"/body".attribute_name',
+            ],
+            [
+                'identifierString' =>  '"//foo".attribute_name',
+            ],
+            [
+                'identifierString' =>  '"//*[@id="id"]".attribute_name',
+            ],
+            [
+                'identifierString' =>  '"//hr[@class=\'edge\']".attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector":0.attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector":1.attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector":-1.attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector":first.attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector":last.attribute_name',
             ],
         ];
     }
