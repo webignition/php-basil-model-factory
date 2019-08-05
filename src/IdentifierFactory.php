@@ -102,7 +102,7 @@ class IdentifierFactory
         $value = trim($value, '"');
 
         if (IdentifierTypes::ELEMENT_SELECTOR === $type) {
-            $value = IdentifierFactory::isCssSelector($identifierString)
+            $value = IdentifierTypeFinder::isCssSelector($identifierString)
                 ? LiteralValue::createCssSelectorValue($value)
                 : LiteralValue::createXpathExpressionValue($value);
 
@@ -126,11 +126,6 @@ class IdentifierFactory
         return $identifier;
     }
 
-    public static function isCssSelector(string $identifierString): bool
-    {
-        return 1 === preg_match(self::CSS_SELECTOR_REGEX, $identifierString);
-    }
-
     public static function isXpathExpression(string $identifierString): bool
     {
         return 1 === preg_match(self::XPATH_EXPRESSION_REGEX, $identifierString);
@@ -138,7 +133,7 @@ class IdentifierFactory
 
     public static function isElementIdentifier(string $identifierString): bool
     {
-        return self::isCssSelector($identifierString) || self::isXpathExpression($identifierString);
+        return IdentifierTypeFinder::isCssSelector($identifierString) || self::isXpathExpression($identifierString);
     }
 
     public static function isElementParameterReference(string $identifierString): bool
