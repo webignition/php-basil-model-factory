@@ -29,50 +29,6 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
         $this->factory = IdentifierFactory::createFactory();
     }
 
-    public function testIsCssSelector()
-    {
-        $this->assertTrue(IdentifierFactory::isCssSelector('".selector"'));
-        $this->assertTrue(IdentifierFactory::isCssSelector('".selector .foo"'));
-        $this->assertTrue(IdentifierFactory::isCssSelector('"#id"'));
-        $this->assertFalse(IdentifierFactory::isCssSelector('"//foo"'));
-        $this->assertFalse(IdentifierFactory::isCssSelector('//foo'));
-        $this->assertFalse(IdentifierFactory::isCssSelector('page_import_name.foo.element_name'));
-        $this->assertFalse(IdentifierFactory::isCssSelector('$elements.element_name'));
-    }
-
-    public function testIsXpathExpression()
-    {
-        $this->assertFalse(IdentifierFactory::isXpathExpression('".selector"'));
-        $this->assertFalse(IdentifierFactory::isXpathExpression('".selector .foo"'));
-        $this->assertFalse(IdentifierFactory::isXpathExpression('"#id"'));
-        $this->assertTrue(IdentifierFactory::isXpathExpression('"//foo"'));
-        $this->assertFalse(IdentifierFactory::isXpathExpression('//foo'));
-        $this->assertFalse(IdentifierFactory::isXpathExpression('page_import_name.foo.element_name'));
-        $this->assertFalse(IdentifierFactory::isXpathExpression('$elements.element_name'));
-    }
-
-    public function testIsElementIdentifier()
-    {
-        $this->assertTrue(IdentifierFactory::isElementIdentifier('".selector"'));
-        $this->assertTrue(IdentifierFactory::isElementIdentifier('".selector .foo"'));
-        $this->assertTrue(IdentifierFactory::isElementIdentifier('"#id"'));
-        $this->assertTrue(IdentifierFactory::isElementIdentifier('"//foo"'));
-        $this->assertFalse(IdentifierFactory::isElementIdentifier('//foo'));
-        $this->assertFalse(IdentifierFactory::isElementIdentifier('page_import_name.foo.element_name'));
-        $this->assertFalse(IdentifierFactory::isElementIdentifier('$elements.element_name'));
-    }
-
-    public function testIsElementParameterReference()
-    {
-        $this->assertFalse(IdentifierFactory::isElementParameterReference('".selector"'));
-        $this->assertFalse(IdentifierFactory::isElementParameterReference('".selector .foo"'));
-        $this->assertFalse(IdentifierFactory::isElementParameterReference('"#id"'));
-        $this->assertFalse(IdentifierFactory::isElementParameterReference('"//foo"'));
-        $this->assertFalse(IdentifierFactory::isElementParameterReference('//foo'));
-        $this->assertFalse(IdentifierFactory::isElementParameterReference('page_import_name.foo.element_name'));
-        $this->assertTrue(IdentifierFactory::isElementParameterReference('$elements.element_name'));
-    }
-
     /**
      * @dataProvider createCssSelectorDataProvider
      * @dataProvider createXpathExpressionDataProvider

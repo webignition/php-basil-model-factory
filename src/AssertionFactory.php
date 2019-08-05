@@ -51,7 +51,7 @@ class AssertionFactory
         $examinedValue = null;
         $expectedValue = null;
 
-        if (IdentifierFactory::isElementIdentifier($identifierString)) {
+        if (IdentifierTypeFinder::isElementIdentifier($identifierString)) {
             $examinedValue = new ElementValue($this->identifierFactory->create($identifierString));
         } else {
             $examinedValue = $this->valueFactory->createFromValueString($identifierString);

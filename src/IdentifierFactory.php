@@ -19,10 +19,6 @@ class IdentifierFactory
     const POSITION_REGEX = '/' . self::POSITION_PATTERN . '$/';
     const CSS_SELECTOR_REGEX = '/^"((?!\/).).+("|' . self::POSITION_PATTERN . ')$/';
     const XPATH_EXPRESSION_REGEX = '/^"\/.+("|' . self::POSITION_PATTERN . ')$/';
-    const DATA_PARAMETER_REGEX = '/^\$data\.+/';
-    const ELEMENT_PARAMETER_REGEX = '/^\$elements\.+/';
-    const PAGE_OBJECT_PARAMETER_REGEX = '/^\$page\.+/';
-    const BROWSER_OBJECT_PARAMETER_REGEX = '/^\$browser\.+/';
     const REFERENCED_ELEMENT_REGEX = '/^"{{.+/';
     const REFERENCED_ELEMENT_EXTRACTOR_REGEX = '/^".+?(?=(}}))}}/';
 
@@ -96,13 +92,13 @@ class IdentifierFactory
             return null;
         }
 
-        $type = $this->deriveType($identifierString);
+        $type = IdentifierTypeFinder::findType($identifierString);
 
         list($value, $position) = $this->extractValueAndPosition($identifierString);
         $value = trim($value, '"');
 
         if (IdentifierTypes::ELEMENT_SELECTOR === $type) {
-            $value = IdentifierFactory::isCssSelector($identifierString)
+            $value = IdentifierTypeFinder::isCssSelector($identifierString)
                 ? LiteralValue::createCssSelectorValue($value)
                 : LiteralValue::createXpathExpressionValue($value);
 
@@ -124,39 +120,6 @@ class IdentifierFactory
         }
 
         return $identifier;
-    }
-
-    public static function isCssSelector(string $identifierString): bool
-    {
-        return 1 === preg_match(self::CSS_SELECTOR_REGEX, $identifierString);
-    }
-
-    public static function isXpathExpression(string $identifierString): bool
-    {
-        return 1 === preg_match(self::XPATH_EXPRESSION_REGEX, $identifierString);
-    }
-
-    public static function isElementIdentifier(string $identifierString): bool
-    {
-        return self::isCssSelector($identifierString) || self::isXpathExpression($identifierString);
-    }
-
-    public static function isElementParameterReference(string $identifierString): bool
-    {
-        return 1 === preg_match(self::ELEMENT_PARAMETER_REGEX, $identifierString);
-    }
-
-    private function deriveType(string $identifierString): string
-    {
-        if (self::isElementIdentifier($identifierString)) {
-            return IdentifierTypes::ELEMENT_SELECTOR;
-        }
-
-        if (self::isElementParameterReference($identifierString)) {
-            return IdentifierTypes::ELEMENT_PARAMETER;
-        }
-
-        return IdentifierTypes::PAGE_ELEMENT_REFERENCE;
     }
 
     private function extractValueAndPosition(string $identifier)
