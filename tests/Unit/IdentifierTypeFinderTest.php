@@ -85,6 +85,14 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @dataProvider attributeIdentifierDataProvider
+     */
+    public function testIsAttributeIdentifier(string $identifierString)
+    {
+        $this->assertTrue(IdentifierTypeFinder::isAttributeIdentifier($identifierString));
+    }
+
+    /**
      * @dataProvider cssSelectorDataProvider
      * @dataProvider xPathExpressionDataProvider
      */
@@ -127,6 +135,21 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
             [
                 'identifierString' =>  '".selector[data-foo=bar]"',
             ],
+            [
+                'identifierString' =>  '".selector":0',
+            ],
+            [
+                'identifierString' =>  '".selector":1',
+            ],
+            [
+                'identifierString' =>  '".selector":-1',
+            ],
+            [
+                'identifierString' =>  '".selector":first',
+            ],
+            [
+                'identifierString' =>  '".selector":last',
+            ],
         ];
     }
 
@@ -145,6 +168,21 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'identifierString' =>  '"//hr[@class=\'edge\']"',
+            ],
+            [
+                'identifierString' =>  '"/body":0',
+            ],
+            [
+                'identifierString' =>  '"/body":1',
+            ],
+            [
+                'identifierString' =>  '"/body":-1',
+            ],
+            [
+                'identifierString' =>  '"/body":first',
+            ],
+            [
+                'identifierString' =>  '"/body":last',
             ],
         ];
     }
@@ -196,6 +234,21 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'identifierString' =>  '"//hr[@class=\'edge\']".attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector":0.attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector":1.attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector":-1.attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector":first.attribute_name',
+            ],
+            [
+                'identifierString' =>  '".selector":last.attribute_name',
             ],
         ];
     }
