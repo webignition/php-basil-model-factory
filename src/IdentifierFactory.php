@@ -207,7 +207,7 @@ class IdentifierFactory
 
     private function extractAttributeNameAndElementIdentifier(string $identifier)
     {
-        $lastDotPosition = mb_strrpos($identifier, '.');
+        $lastDotPosition = (int) mb_strrpos($identifier, '.');
 
         $elementIdentifier = mb_substr($identifier, 0, $lastDotPosition);
         $attributeName = mb_substr($identifier, $lastDotPosition + 1);
