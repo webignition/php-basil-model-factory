@@ -29,17 +29,6 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
         $this->factory = IdentifierFactory::createFactory();
     }
 
-    public function testIsElementIdentifier()
-    {
-        $this->assertTrue(IdentifierFactory::isElementIdentifier('".selector"'));
-        $this->assertTrue(IdentifierFactory::isElementIdentifier('".selector .foo"'));
-        $this->assertTrue(IdentifierFactory::isElementIdentifier('"#id"'));
-        $this->assertTrue(IdentifierFactory::isElementIdentifier('"//foo"'));
-        $this->assertFalse(IdentifierFactory::isElementIdentifier('//foo'));
-        $this->assertFalse(IdentifierFactory::isElementIdentifier('page_import_name.foo.element_name'));
-        $this->assertFalse(IdentifierFactory::isElementIdentifier('$elements.element_name'));
-    }
-
     public function testIsElementParameterReference()
     {
         $this->assertFalse(IdentifierFactory::isElementParameterReference('".selector"'));

@@ -126,12 +126,6 @@ class IdentifierFactory
         return $identifier;
     }
 
-    public static function isElementIdentifier(string $identifierString): bool
-    {
-        return IdentifierTypeFinder::isCssSelector($identifierString) ||
-            IdentifierTypeFinder::isXpathExpression($identifierString);
-    }
-
     public static function isElementParameterReference(string $identifierString): bool
     {
         return 1 === preg_match(self::ELEMENT_PARAMETER_REGEX, $identifierString);
@@ -139,7 +133,7 @@ class IdentifierFactory
 
     private function deriveType(string $identifierString): string
     {
-        if (self::isElementIdentifier($identifierString)) {
+        if (IdentifierTypeFinder::isElementIdentifier($identifierString)) {
             return IdentifierTypes::ELEMENT_SELECTOR;
         }
 
