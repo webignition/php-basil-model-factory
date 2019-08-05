@@ -2,6 +2,7 @@
 
 namespace webignition\BasilModelFactory;
 
+use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\Identifier;
@@ -97,12 +98,24 @@ class IdentifierFactory
         list($value, $position) = $this->extractValueAndPosition($identifierString);
         $value = trim($value, '"');
 
+        $identifier = null;
+
         if (IdentifierTypes::ELEMENT_SELECTOR === $type) {
             $value = IdentifierTypeFinder::isCssSelector($identifierString)
                 ? LiteralValue::createCssSelectorValue($value)
                 : LiteralValue::createXpathExpressionValue($value);
 
             $identifier = new ElementIdentifier($value, $position);
+        } elseif (IdentifierTypes::ATTRIBUTE === $type) {
+            list($elementIdentifierString, $attributeName) = $this->extractAttributeNameAndElementIdentifier(
+                $identifierString
+            );
+
+            $elementIdentifier = $this->create($elementIdentifierString);
+
+            if ($elementIdentifier instanceof ElementIdentifierInterface) {
+                $identifier = new AttributeIdentifier($elementIdentifier, $attributeName);
+            }
         } else {
             if (IdentifierTypes::PAGE_ELEMENT_REFERENCE === $type) {
                 $pageElementReference = new PageElementReference($identifierString);
@@ -111,7 +124,9 @@ class IdentifierFactory
                     throw new MalformedPageElementReferenceException($pageElementReference);
                 }
             }
+        }
 
+        if (null === $identifier) {
             $identifier = new Identifier($type, $this->valueFactory->createFromValueString($identifierString));
         }
 
@@ -187,6 +202,19 @@ class IdentifierFactory
         return [
             $elementReference,
             $identifierString
+        ];
+    }
+
+    private function extractAttributeNameAndElementIdentifier(string $identifier)
+    {
+        $lastDotPosition = mb_strrpos($identifier, '.');
+
+        $elementIdentifier = mb_substr($identifier, 0, $lastDotPosition);
+        $attributeName = mb_substr($identifier, $lastDotPosition + 1);
+
+        return [
+            $elementIdentifier,
+            $attributeName
         ];
     }
 }

@@ -4,6 +4,7 @@
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
+use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
@@ -30,15 +31,14 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider createCssSelectorDataProvider
-     * @dataProvider createXpathExpressionDataProvider
-     * @dataProvider createElementParameterDataProvider
-     * @dataProvider createPageElementReferenceDataProvider
+     * @!dataProvider createCssSelectorDataProvider
+     * @!dataProvider createXpathExpressionDataProvider
+     * @!dataProvider createElementParameterDataProvider
+     * @!dataProvider createPageElementReferenceDataProvider
+     * @dataProvider createAttributeIdentifierDataProvider
      */
-    public function testCreateSuccess(
-        string $identifierString,
-        IdentifierInterface $expectedIdentifier
-    ) {
+    public function testCreateSuccess(string $identifierString, IdentifierInterface $expectedIdentifier)
+    {
         $identifier = $this->factory->create($identifierString);
 
         $this->assertInstanceOf(IdentifierInterface::class, $identifier);
@@ -200,6 +200,122 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                         'page_import_name',
                         'element_name'
                     )
+                ),
+            ],
+        ];
+    }
+
+    public function createAttributeIdentifierDataProvider(): array
+    {
+        return [
+            'attribute identifier: css class selector, position: null' => [
+                'identifierString' => '".listed-item".attribute_name',
+                'expectedIdentifier' => new AttributeIdentifier(
+                    new ElementIdentifier(
+                        LiteralValue::createCssSelectorValue('.listed-item'),
+                        1
+                    ),
+                    'attribute_name'
+                ),
+            ],
+            'attribute identifier: css class selector; position: 1' => [
+                'identifierString' => '".listed-item":1.attribute_name',
+                'expectedIdentifier' => new AttributeIdentifier(
+                    new ElementIdentifier(
+                        LiteralValue::createCssSelectorValue('.listed-item'),
+                        1
+                    ),
+                    'attribute_name'
+                ),
+            ],
+            'attribute identifier: css class selector; position: -1' => [
+                'identifierString' => '".listed-item":-1.attribute_name',
+                'expectedIdentifier' => new AttributeIdentifier(
+                    new ElementIdentifier(
+                        LiteralValue::createCssSelectorValue('.listed-item'),
+                        -1
+                    ),
+                    'attribute_name'
+                ),
+            ],
+            'attribute identifier: css class selector; position: first' => [
+                'identifierString' => '".listed-item":first.attribute_name',
+                'expectedIdentifier' => new AttributeIdentifier(
+                    new ElementIdentifier(
+                        LiteralValue::createCssSelectorValue('.listed-item'),
+                        1
+                    ),
+                    'attribute_name'
+                ),
+            ],
+            'attribute identifier: css class selector; position: last' => [
+                'identifierString' => '".listed-item":last.attribute_name',
+                'expectedIdentifier' => new AttributeIdentifier(
+                    new ElementIdentifier(
+                        LiteralValue::createCssSelectorValue('.listed-item'),
+                        -1
+                    ),
+                    'attribute_name'
+                ),
+            ],
+            'attribute identifier: xpath id selector' => [
+                'identifierString' => '"//*[@id="element-id"]".attribute_name',
+                'expectedIdentifier' => new AttributeIdentifier(
+                    new ElementIdentifier(
+                        LiteralValue::createXpathExpressionValue('//*[@id="element-id"]'),
+                        1
+                    ),
+                    'attribute_name'
+                ),
+            ],
+            'attribute identifier: xpath attribute selector, position: null' => [
+                'identifierString' => '"//input[@type="submit"]".attribute_name',
+                'expectedIdentifier' => new AttributeIdentifier(
+                    new ElementIdentifier(
+                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
+                        1
+                    ),
+                    'attribute_name'
+                ),
+            ],
+            'attribute identifier: xpath attribute selector; position: 1' => [
+                'identifierString' => '"//input[@type="submit"]":1.attribute_name',
+                'expectedIdentifier' => new AttributeIdentifier(
+                    new ElementIdentifier(
+                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
+                        1
+                    ),
+                    'attribute_name'
+                ),
+            ],
+            'attribute identifier: xpath attribute selector; position: -1' => [
+                'identifierString' => '"//input[@type="submit"]":-1.attribute_name',
+                'expectedIdentifier' => new AttributeIdentifier(
+                    new ElementIdentifier(
+                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
+                        -1
+                    ),
+                    'attribute_name'
+                ),
+            ],
+            'attribute identifier: xpath attribute selector; position: first' => [
+                'identifierString' => '"//input[@type="submit"]":first.attribute_name',
+                'expectedIdentifier' => new AttributeIdentifier(
+                    new ElementIdentifier(
+                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
+                        1
+                    ),
+                    'attribute_name'
+                ),
+            ],
+            'attribute identifier: xpath attribute selector; position: last' => [
+                'identifierString' => '"//input[@type="submit"]":last.attribute_name',
+                'expectedIdentifier' => new AttributeIdentifier(
+                    new ElementIdentifier(
+                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
+                        -1
+                    ),
+                    'attribute_name'
                 ),
             ],
         ];
