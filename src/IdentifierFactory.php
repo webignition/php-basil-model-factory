@@ -126,14 +126,10 @@ class IdentifierFactory
         return $identifier;
     }
 
-    public static function isXpathExpression(string $identifierString): bool
-    {
-        return 1 === preg_match(self::XPATH_EXPRESSION_REGEX, $identifierString);
-    }
-
     public static function isElementIdentifier(string $identifierString): bool
     {
-        return IdentifierTypeFinder::isCssSelector($identifierString) || self::isXpathExpression($identifierString);
+        return IdentifierTypeFinder::isCssSelector($identifierString) ||
+            IdentifierTypeFinder::isXpathExpression($identifierString);
     }
 
     public static function isElementParameterReference(string $identifierString): bool

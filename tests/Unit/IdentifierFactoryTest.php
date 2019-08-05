@@ -29,17 +29,6 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
         $this->factory = IdentifierFactory::createFactory();
     }
 
-    public function testIsXpathExpression()
-    {
-        $this->assertFalse(IdentifierFactory::isXpathExpression('".selector"'));
-        $this->assertFalse(IdentifierFactory::isXpathExpression('".selector .foo"'));
-        $this->assertFalse(IdentifierFactory::isXpathExpression('"#id"'));
-        $this->assertTrue(IdentifierFactory::isXpathExpression('"//foo"'));
-        $this->assertFalse(IdentifierFactory::isXpathExpression('//foo'));
-        $this->assertFalse(IdentifierFactory::isXpathExpression('page_import_name.foo.element_name'));
-        $this->assertFalse(IdentifierFactory::isXpathExpression('$elements.element_name'));
-    }
-
     public function testIsElementIdentifier()
     {
         $this->assertTrue(IdentifierFactory::isElementIdentifier('".selector"'));

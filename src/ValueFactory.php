@@ -89,7 +89,7 @@ class ValueFactory
             return LiteralValue::createCssSelectorValue($this->getQuotedValue($identifierString));
         }
 
-        if (IdentifierFactory::isXpathExpression($identifierString)) {
+        if (IdentifierTypeFinder::isXpathExpression($identifierString)) {
             return LiteralValue::createXpathExpressionValue($this->getQuotedValue($identifierString));
         }
 
