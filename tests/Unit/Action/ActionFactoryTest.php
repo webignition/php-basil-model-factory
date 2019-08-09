@@ -9,6 +9,7 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
+use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
@@ -357,7 +358,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
         $scalarValue = LiteralValue::createStringValue('value');
 
         return [
-            'css selector, scalar value' => [
+            'css element selector, scalar value' => [
                 'actionString' => 'set ".selector" to "value"',
                 'expectedAction' => new InputAction(
                     'set ".selector" to "value"',
@@ -366,7 +367,121 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" to "value"'
                 ),
             ],
-            'css selector, data parameter value' => [
+            'css element selector with position 1, scalar value' => [
+                'actionString' => 'set ".selector":1 to "value"',
+                'expectedAction' => new InputAction(
+                    'set ".selector":1 to "value"',
+                    $cssSelectorIdentifier,
+                    $scalarValue,
+                    '".selector":1 to "value"'
+                ),
+            ],
+            'css element selector with position 2, scalar value' => [
+                'actionString' => 'set ".selector":2 to "value"',
+                'expectedAction' => new InputAction(
+                    'set ".selector":2 to "value"',
+                    new ElementIdentifier(
+                        LiteralValue::createCssSelectorValue('.selector'),
+                        2
+                    ),
+                    $scalarValue,
+                    '".selector":2 to "value"'
+                ),
+            ],
+            'css element selector with position first, scalar value' => [
+                'actionString' => 'set ".selector":first to "value"',
+                'expectedAction' => new InputAction(
+                    'set ".selector":first to "value"',
+                    $cssSelectorIdentifier,
+                    $scalarValue,
+                    '".selector":first to "value"'
+                ),
+            ],
+            'css element selector with position last, scalar value' => [
+                'actionString' => 'set ".selector":last to "value"',
+                'expectedAction' => new InputAction(
+                    'set ".selector":last to "value"',
+                    new ElementIdentifier(
+                        LiteralValue::createCssSelectorValue('.selector'),
+                        -1
+                    ),
+                    $scalarValue,
+                    '".selector":last to "value"'
+                ),
+            ],
+            'css attribute selector, scalar value' => [
+                'actionString' => 'set ".selector".attribute_name to "value"',
+                'expectedAction' => new InputAction(
+                    'set ".selector".attribute_name to "value"',
+                    new AttributeIdentifier(
+                        new ElementIdentifier(
+                            LiteralValue::createCssSelectorValue('.selector')
+                        ),
+                        'attribute_name'
+                    ),
+                    $scalarValue,
+                    '".selector".attribute_name to "value"'
+                ),
+            ],
+            'css attribute selector with position 1, scalar value' => [
+                'actionString' => 'set ".selector":1.attribute_name to "value"',
+                'expectedAction' => new InputAction(
+                    'set ".selector":1.attribute_name to "value"',
+                    new AttributeIdentifier(
+                        new ElementIdentifier(
+                            LiteralValue::createCssSelectorValue('.selector')
+                        ),
+                        'attribute_name'
+                    ),
+                    $scalarValue,
+                    '".selector":1.attribute_name to "value"'
+                ),
+            ],
+            'css attribute selector with position 2, scalar value' => [
+                'actionString' => 'set ".selector":2.attribute_name to "value"',
+                'expectedAction' => new InputAction(
+                    'set ".selector":2.attribute_name to "value"',
+                    new AttributeIdentifier(
+                        new ElementIdentifier(
+                            LiteralValue::createCssSelectorValue('.selector'),
+                            2
+                        ),
+                        'attribute_name'
+                    ),
+                    $scalarValue,
+                    '".selector":2.attribute_name to "value"'
+                ),
+            ],
+            'css attribute selector with position first, scalar value' => [
+                'actionString' => 'set ".selector":first.attribute_name to "value"',
+                'expectedAction' => new InputAction(
+                    'set ".selector":first.attribute_name to "value"',
+                    new AttributeIdentifier(
+                        new ElementIdentifier(
+                            LiteralValue::createCssSelectorValue('.selector')
+                        ),
+                        'attribute_name'
+                    ),
+                    $scalarValue,
+                    '".selector":first.attribute_name to "value"'
+                ),
+            ],
+            'css attribute selector with position last, scalar value' => [
+                'actionString' => 'set ".selector":last.attribute_name to "value"',
+                'expectedAction' => new InputAction(
+                    'set ".selector":last.attribute_name to "value"',
+                    new AttributeIdentifier(
+                        new ElementIdentifier(
+                            LiteralValue::createCssSelectorValue('.selector'),
+                            -1
+                        ),
+                        'attribute_name'
+                    ),
+                    $scalarValue,
+                    '".selector":last.attribute_name to "value"'
+                ),
+            ],
+            'css element selector, data parameter value' => [
                 'actionString' => 'set ".selector" to $data.name',
                 'expectedAction' => new InputAction(
                     'set ".selector" to $data.name',
@@ -380,7 +495,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" to $data.name'
                 ),
             ],
-            'css selector, element parameter value' => [
+            'css element selector, element parameter value' => [
                 'actionString' => 'set ".selector" to $elements.name',
                 'expectedAction' => new InputAction(
                     'set ".selector" to $elements.name',
@@ -394,7 +509,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" to $elements.name'
                 ),
             ],
-            'css selector, escaped quotes scalar value' => [
+            'css element selector, escaped quotes scalar value' => [
                 'actionString' => 'set ".selector" to "\"value\""',
                 'expectedAction' => new InputAction(
                     'set ".selector" to "\"value\""',
@@ -403,7 +518,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" to "\"value\""'
                 ),
             ],
-            'css selector includes stop words, scalar value' => [
+            'css element selector includes stop words, scalar value' => [
                 'actionString' => 'set ".selector to value" to "value"',
                 'expectedAction' => new InputAction(
                     'set ".selector to value" to "value"',
