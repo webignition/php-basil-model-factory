@@ -5,13 +5,13 @@ namespace webignition\BasilModelFactory\Tests\Unit\IdentifierStringExtractor;
 
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
 use webignition\BasilModelFactory\Tests\DataProvider\LiteralParameterStringDataProviderTrait;
-use webignition\BasilModelFactory\Tests\DataProvider\ElementIdentifierStringDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\PageElementIdentifierStringDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\VariableParameterIdentifierStringDataProviderTrait;
 
 class IdentifierStringExtractorTest extends \PHPUnit\Framework\TestCase
 {
     use LiteralParameterStringDataProviderTrait;
-    use ElementIdentifierStringDataProviderTrait;
+    use PageElementIdentifierStringDataProviderTrait;
     use VariableParameterIdentifierStringDataProviderTrait;
 
     /**
@@ -29,7 +29,7 @@ class IdentifierStringExtractorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider extractFromStartDataProvider
      * @dataProvider literalParameterStringDataProvider
-     * @dataProvider elementIdentifierStringDataProvider
+     * @dataProvider pageElementIdentifierStringDataProvider
      * @dataProvider variableParameterIdentifierStringDataProvider
      */
     public function testExtractFromStart(string $string, string $expectedIdentifierString)

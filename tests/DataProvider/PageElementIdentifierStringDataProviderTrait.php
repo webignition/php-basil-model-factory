@@ -2,14 +2,50 @@
 
 namespace webignition\BasilModelFactory\Tests\DataProvider;
 
-trait ElementIdentifierStringDataProviderTrait
+trait PageElementIdentifierStringDataProviderTrait
 {
-    public function elementIdentifierStringDataProvider(): array
+    public function pageElementIdentifierStringDataProvider(): array
     {
         return [
             'quoted: assertion: whole-word quoted identifier' => [
                 'string' => '".selector" is "value"',
                 'expectedIdentifierString' => '".selector"',
+            ],
+            'quoted: assertion: whole-word quoted identifier with positive integer position' => [
+                'string' => '".selector":1 is "value"',
+                'expectedIdentifierString' => '".selector":1',
+            ],
+            'quoted: assertion: whole-word quoted identifier with negative integer position' => [
+                'string' => '".selector":-1 is "value"',
+                'expectedIdentifierString' => '".selector":-1',
+            ],
+            'quoted: assertion: whole-word quoted identifier with first position' => [
+                'string' => '".selector":first is "value"',
+                'expectedIdentifierString' => '".selector":first',
+            ],
+            'quoted: assertion: whole-word quoted identifier with last position' => [
+                'string' => '".selector":last is "value"',
+                'expectedIdentifierString' => '".selector":last',
+            ],
+            'quoted: assertion: whole-word quoted identifier with attribute name' => [
+                'string' => '".selector".attribute_name is "value"',
+                'expectedIdentifierString' => '".selector".attribute_name',
+            ],
+            'quoted: assertion: whole-word quoted identifier with positive integer position, attribute name' => [
+                'string' => '".selector":1.attribute_name is "value"',
+                'expectedIdentifierString' => '".selector":1.attribute_name',
+            ],
+            'quoted: assertion: whole-word quoted identifier with negative integer position, attribute name' => [
+                'string' => '".selector":-1.attribute_name is "value"',
+                'expectedIdentifierString' => '".selector":-1.attribute_name',
+            ],
+            'quoted: assertion: whole-word quoted identifier with first position, attribute name' => [
+                'string' => '".selector":first.attribute_name is "value"',
+                'expectedIdentifierString' => '".selector":first.attribute_name',
+            ],
+            'quoted: assertion: whole-word quoted identifier with last position, attribute name' => [
+                'string' => '".selector":last.attribute_name is "value"',
+                'expectedIdentifierString' => '".selector":last.attribute_name',
             ],
             'quoted: assertion: quoted identifier ending with comparison' => [
                 'string' => '".selector is" is "value"',
