@@ -18,7 +18,7 @@ class IdentifierStringExtractor
         );
 
         $identifierStringExtractor->addIdentifierStringTypeExtractor(
-            new QuotedIdentifierStringExtractor()
+            new PageElementIdentifierStringExtractor()
         );
 
         $identifierStringExtractor->addIdentifierStringTypeExtractor(

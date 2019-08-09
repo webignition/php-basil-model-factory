@@ -3,15 +3,15 @@
 
 namespace webignition\BasilModelFactory\Tests\Unit\IdentifierStringExtractor;
 
-use webignition\BasilModelFactory\IdentifierStringExtractor\QuotedIdentifierStringExtractor;
-use webignition\BasilModelFactory\Tests\DataProvider\QuotedIdentifierStringDataProviderTrait;
+use webignition\BasilModelFactory\IdentifierStringExtractor\PageElementIdentifierStringExtractor;
+use webignition\BasilModelFactory\Tests\DataProvider\PageElementIdentifierStringDataProviderTrait;
 
-class QuotedIdentifierStringExtractorTest extends \PHPUnit\Framework\TestCase
+class PageElementIdentifierStringExtractorTest extends \PHPUnit\Framework\TestCase
 {
-    use QuotedIdentifierStringDataProviderTrait;
+    use PageElementIdentifierStringDataProviderTrait;
 
     /**
-     * @var QuotedIdentifierStringExtractor
+     * @var PageElementIdentifierStringExtractor
      */
     private $extractor;
 
@@ -19,7 +19,7 @@ class QuotedIdentifierStringExtractorTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->extractor = new QuotedIdentifierStringExtractor();
+        $this->extractor = new PageElementIdentifierStringExtractor();
     }
 
     /**
@@ -56,7 +56,7 @@ class QuotedIdentifierStringExtractorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider quotedIdentifierStringDataProvider
+     * @dataProvider pageElementIdentifierStringDataProvider
      */
     public function testExtractFromStartReturnsString(string $string, string $expectedIdentifierString)
     {
