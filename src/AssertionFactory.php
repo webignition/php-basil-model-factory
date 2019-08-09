@@ -5,6 +5,10 @@ namespace webignition\BasilModelFactory;
 use webignition\BasilModel\Assertion\Assertion;
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
+use webignition\BasilModel\Identifier\AttributeIdentifier;
+use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
+use webignition\BasilModel\Identifier\ElementIdentifierInterface;
+use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
 
@@ -48,12 +52,27 @@ class AssertionFactory
         }
 
         $identifierString = $this->identifierStringExtractor->extractFromStart($assertionString);
+
         $examinedValue = null;
         $expectedValue = null;
 
         if (IdentifierTypeFinder::isElementIdentifier($identifierString)) {
-            $examinedValue = new ElementValue($this->identifierFactory->create($identifierString));
-        } else {
+            $elementIdentifier = $this->identifierFactory->create($identifierString);
+
+            if ($elementIdentifier instanceof ElementIdentifierInterface) {
+                $examinedValue = new ElementValue($elementIdentifier);
+            }
+        }
+
+        if (null === $examinedValue && IdentifierTypeFinder::isAttributeIdentifier($identifierString)) {
+            $attributeIdentifier = $this->identifierFactory->create($identifierString);
+
+            if ($attributeIdentifier instanceof AttributeIdentifierInterface) {
+                $examinedValue = new AttributeValue($attributeIdentifier);
+            }
+        }
+
+        if (null === $examinedValue) {
             $examinedValue = $this->valueFactory->createFromValueString($identifierString);
         }
 
