@@ -2,9 +2,9 @@
 
 namespace webignition\BasilModelFactory\Tests\DataProvider;
 
-trait QuotedIdentifierStringDataProviderTrait
+trait ElementIdentifierStringDataProviderTrait
 {
-    public function quotedIdentifierStringDataProvider(): array
+    public function elementIdentifierStringDataProvider(): array
     {
         return [
             'quoted: assertion: whole-word quoted identifier' => [
