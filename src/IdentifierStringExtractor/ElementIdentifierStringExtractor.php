@@ -2,7 +2,7 @@
 
 namespace webignition\BasilModelFactory\IdentifierStringExtractor;
 
-class QuotedIdentifierStringExtractor implements IdentifierStringTypeExtractorInterface
+class ElementIdentifierStringExtractor implements IdentifierStringTypeExtractorInterface
 {
     const DELIMITER = '"';
     const ESCAPED_DELIMITER = '\"';
