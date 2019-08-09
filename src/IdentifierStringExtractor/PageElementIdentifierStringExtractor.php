@@ -35,11 +35,10 @@ class PageElementIdentifierStringExtractor implements IdentifierStringTypeExtrac
             $remainder = mb_substr($remainder, 1);
             $position = $this->findPosition($remainder);
 
-            if (null !== $position) {
+            if (is_string($position)) {
                 $identifierString .= self::POSITION_DELIMITER . (string)$position;
+                $remainder = mb_substr($remainder, strlen($position));
             }
-
-            $remainder = mb_substr($remainder, strlen($position));
         }
 
         if (self::ATTRIBUTE_NAME_DELIMITER === $remainder[0]) {
@@ -69,7 +68,7 @@ class PageElementIdentifierStringExtractor implements IdentifierStringTypeExtrac
             }
         }
 
-        return $endingQuotePosition;
+        return (int) $endingQuotePosition;
     }
 
     private function findPosition(string $string): ?string
