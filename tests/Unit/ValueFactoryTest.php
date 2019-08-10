@@ -81,6 +81,15 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
                     'element_name'
                 ),
             ],
+            'attribute parameter' => [
+                'valueString' => '$elements.element_name.attribute_name',
+                'expectedValue' => new ObjectValue(
+                    ValueTypes::ATTRIBUTE_PARAMETER,
+                    '$elements.element_name.attribute_name',
+                    ObjectNames::ELEMENT,
+                    'element_name.attribute_name'
+                ),
+            ],
             'page property' => [
                 'valueString' => '$page.url',
                 'expectedValue' => new ObjectValue(

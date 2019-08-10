@@ -30,6 +30,7 @@ class ValueFactory
     const ELEMENT_PARAMETER_PREFIX = '$elements.';
     const PAGE_OBJECT_PARAMETER_PREFIX = '$page.';
     const BROWSER_OBJECT_PARAMETER_PREFIX = '$browser.';
+    const ELEMENT_NAME_ATTRIBUTE_NAME_DELIMITER = '.';
 
     public static function createFactory(): ValueFactory
     {
@@ -45,6 +46,7 @@ class ValueFactory
         }
 
         $objectProperties = $this->findObjectProperties($valueString);
+
         if (is_array($objectProperties)) {
             list($objectType, $objectName, $propertyName) = $objectProperties;
 
@@ -103,6 +105,11 @@ class ValueFactory
 
             if (mb_strpos($valueString, $objectPrefix) === 0) {
                 $propertyName = mb_substr($valueString, strlen($objectPrefix));
+
+                if (ValueTypes::ELEMENT_PARAMETER === $mappedType &&
+                    substr_count($propertyName, self::ELEMENT_NAME_ATTRIBUTE_NAME_DELIMITER) > 0) {
+                    $mappedType = ValueTypes::ATTRIBUTE_PARAMETER;
+                }
 
                 return [
                     $mappedType,
