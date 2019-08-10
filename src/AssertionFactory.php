@@ -5,7 +5,6 @@ namespace webignition\BasilModelFactory;
 use webignition\BasilModel\Assertion\Assertion;
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
-use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Value\AttributeValue;
@@ -85,9 +84,7 @@ class AssertionFactory
             $comparisonAndValueParts = explode(' ', $comparisonAndExpectedValue, 2);
             list($comparison, $valueString) = $comparisonAndValueParts;
 
-            if (in_array($comparison, AssertionComparisons::NO_VALUE_TYPES)) {
-                $expectedValue = null;
-            } else {
+            if (!in_array($comparison, AssertionComparisons::NO_VALUE_TYPES)) {
                 $expectedValue = $this->valueFactory->createFromValueString($valueString);
             }
         }
