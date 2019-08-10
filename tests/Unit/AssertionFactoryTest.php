@@ -243,6 +243,39 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     )
                 ),
             ],
+            'css element selector, is, attribute parameter' => [
+                'actionString' => '".selector" is $elements.element_name.attribute_name',
+                'expectedAssertion' => new Assertion(
+                    '".selector" is $elements.element_name.attribute_name',
+                    $cssSelectorElementValue,
+                    AssertionComparisons::IS,
+                    new ObjectValue(
+                        ValueTypes::ATTRIBUTE_PARAMETER,
+                        '$elements.element_name.attribute_name',
+                        ObjectNames::ELEMENT,
+                        'element_name.attribute_name'
+                    )
+                ),
+            ],
+            'css attribute selector selector, is, attribute value' => [
+                'actionString' => '".selector".data-heading-title is $elements.element_name.attribute_name',
+                'expectedAssertion' => new Assertion(
+                    '".selector".data-heading-title is $elements.element_name.attribute_name',
+                    new AttributeValue(
+                        new AttributeIdentifier(
+                            new ElementIdentifier(LiteralValue::createCssSelectorValue('.selector')),
+                            'data-heading-title'
+                        )
+                    ),
+                    AssertionComparisons::IS,
+                    new ObjectValue(
+                        ValueTypes::ATTRIBUTE_PARAMETER,
+                        '$elements.element_name.attribute_name',
+                        ObjectNames::ELEMENT,
+                        'element_name.attribute_name'
+                    )
+                ),
+            ],
             'css element selector, is, escaped quotes scalar value' => [
                 'assertionString' => '".selector" is "\"value\""',
                 'expectedAssertion' => new Assertion(
