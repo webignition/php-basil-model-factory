@@ -15,6 +15,7 @@ use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\Action\ActionFactory;
@@ -102,7 +103,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                         new ObjectValue(
                             ValueTypes::ELEMENT_PARAMETER,
                             '$elements.name',
-                            'elements',
+                            ObjectNames::ELEMENT,
                             'name'
                         )
                     ),
@@ -175,7 +176,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                         new ObjectValue(
                             ValueTypes::ELEMENT_PARAMETER,
                             '$elements.name',
-                            'elements',
+                            ObjectNames::ELEMENT,
                             'name'
                         )
                     ),
@@ -248,7 +249,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                         new ObjectValue(
                             ValueTypes::ELEMENT_PARAMETER,
                             '$elements.name',
-                            'elements',
+                            ObjectNames::ELEMENT,
                             'name'
                         )
                     ),
@@ -293,7 +294,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new WaitAction('wait $data.name', new ObjectValue(
                     ValueTypes::DATA_PARAMETER,
                     '$data.name',
-                    'data',
+                    ObjectNames::DATA,
                     'name'
                 )),
             ],
@@ -489,24 +490,38 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     new ObjectValue(
                         ValueTypes::DATA_PARAMETER,
                         '$data.name',
-                        'data',
+                        ObjectNames::DATA,
                         'name'
                     ),
                     '".selector" to $data.name'
                 ),
             ],
             'css element selector, element parameter value' => [
-                'actionString' => 'set ".selector" to $elements.name',
+                'actionString' => 'set ".selector" to $elements.element_name',
                 'expectedAction' => new InputAction(
-                    'set ".selector" to $elements.name',
+                    'set ".selector" to $elements.element_name',
                     $cssSelectorIdentifier,
                     new ObjectValue(
                         ValueTypes::ELEMENT_PARAMETER,
-                        '$elements.name',
-                        'elements',
-                        'name'
+                        '$elements.element_name',
+                        ObjectNames::ELEMENT,
+                        'element_name'
                     ),
-                    '".selector" to $elements.name'
+                    '".selector" to $elements.element_name'
+                ),
+            ],
+            'css element selector, attribute parameter value' => [
+                'actionString' => 'set ".selector" to $elements.element_name.attribute_name',
+                'expectedAction' => new InputAction(
+                    'set ".selector" to $elements.element_name.attribute_name',
+                    $cssSelectorIdentifier,
+                    new ObjectValue(
+                        ValueTypes::ATTRIBUTE_PARAMETER,
+                        '$elements.element_name.attribute_name',
+                        ObjectNames::ELEMENT,
+                        'element_name.attribute_name'
+                    ),
+                    '".selector" to $elements.element_name.attribute_name'
                 ),
             ],
             'css element selector, escaped quotes scalar value' => [
