@@ -7,6 +7,7 @@ use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
+use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\PageElementReference\PageElementReference;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
@@ -65,20 +66,17 @@ class InputActionTypeFactory extends AbstractActionTypeFactory implements Action
             return new InputAction($actionString, null, null, $arguments);
         }
 
-        $identifier = $this->identifierFactory->create($identifierString);
-
-        if (!in_array($identifier->getType(), [
+        $identifier = $this->identifierFactory->create($identifierString, [
             IdentifierTypes::ELEMENT_PARAMETER,
             IdentifierTypes::PAGE_ELEMENT_REFERENCE,
             IdentifierTypes::ELEMENT_SELECTOR,
-        ])) {
+        ]);
+
+        if (!$identifier instanceof IdentifierInterface) {
             throw new MalformedPageElementReferenceException(
                 new PageElementReference($identifierString)
             );
         }
-
-//        var_dump($identifier);
-//        exit();
 
         $trimmedStopWord = trim(self::IDENTIFIER_STOP_WORD);
         $endsWithStopStringRegex = '/(( ' . $trimmedStopWord . ' )|( ' . $trimmedStopWord . '))$/';
