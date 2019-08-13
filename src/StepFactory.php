@@ -6,38 +6,28 @@ use webignition\BasilContextAwareException\ExceptionContext\ExceptionContextInte
 use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\IdentifierInterface;
+use webignition\BasilModel\PageElementReference\PageElementReference;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilDataStructure\Step as StepData;
 use webignition\BasilModelFactory\Action\ActionFactory;
-use webignition\BasilModelFactory\Identifier\IdentifierFactory;
+use webignition\BasilModelFactory\Identifier\PageElementReferenceIdentifierFactory;
 
 class StepFactory
 {
-    /**
-     * @var ActionFactory
-     */
     private $actionFactory;
-
-    /**
-     * @var AssertionFactory
-     */
     private $assertionFactory;
-
-    /**
-     * @var IdentifierFactory
-     */
-    private $identifierFactory;
+    private $pageElementReferenceIdentifierFactory;
 
     public function __construct(
         ActionFactory $actionFactory,
         AssertionFactory $assertionFactory,
-        IdentifierFactory $identifierFactory
+        PageElementReferenceIdentifierFactory $pageElementReferenceIdentifierFactory
     ) {
         $this->actionFactory = $actionFactory;
         $this->assertionFactory = $assertionFactory;
-        $this->identifierFactory = $identifierFactory;
+        $this->pageElementReferenceIdentifierFactory = $pageElementReferenceIdentifierFactory;
     }
 
     public static function createFactory(): StepFactory
@@ -45,7 +35,7 @@ class StepFactory
         return new StepFactory(
             ActionFactory::createFactory(),
             AssertionFactory::createFactory(),
-            IdentifierFactory::createFactory()
+            PageElementReferenceIdentifierFactory::createFactory()
         );
     }
 
@@ -113,11 +103,15 @@ class StepFactory
         $elementIdentifiers = [];
 
         foreach ($stepData->getElements() as $elementName => $elementIdentifierString) {
-            $elementIdentifier = $this->identifierFactory->create($elementIdentifierString);
+            $elementIdentifier = $this->pageElementReferenceIdentifierFactory->create($elementIdentifierString);
 
             if ($elementIdentifier instanceof IdentifierInterface) {
                 $elementIdentifier = $elementIdentifier->withName($elementName);
                 $elementIdentifiers[] = $elementIdentifier;
+            } else {
+                throw new MalformedPageElementReferenceException(
+                    new PageElementReference($elementIdentifierString)
+                );
             }
         }
 

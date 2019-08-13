@@ -5,6 +5,7 @@ namespace webignition\BasilModelFactory\Action;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InteractionAction;
+use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 
@@ -44,6 +45,12 @@ class InteractionActionTypeFactory extends AbstractActionTypeFactory implements 
      */
     protected function doCreateForActionType(string $actionString, string $type, string $arguments): ActionInterface
     {
-        return new InteractionAction($actionString, $type, $this->identifierFactory->create($arguments), $arguments);
+        $identifier = $this->identifierFactory->create($arguments, [
+            IdentifierTypes::ELEMENT_PARAMETER,
+            IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+            IdentifierTypes::ELEMENT_SELECTOR,
+        ]);
+
+        return new InteractionAction($actionString, $type, $identifier, $arguments);
     }
 }

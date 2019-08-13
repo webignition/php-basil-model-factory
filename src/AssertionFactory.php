@@ -9,31 +9,36 @@ use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\ElementValue;
-use webignition\BasilModelFactory\Identifier\IdentifierFactory;
+use webignition\BasilModelFactory\Identifier\AttributeIdentifierFactory;
+use webignition\BasilModelFactory\Identifier\ElementIdentifierFactory;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
 
 class AssertionFactory
 {
-    private $identifierFactory;
     private $valueFactory;
     private $identifierStringExtractor;
+    private $elementIdentifierFactory;
+    private $attributeIdentifierFactory;
 
     public function __construct(
-        IdentifierFactory $identifierFactory,
         ValueFactory $valueFactory,
-        IdentifierStringExtractor $identifierStringExtractor
+        IdentifierStringExtractor $identifierStringExtractor,
+        ElementIdentifierFactory $elementIdentifierFactory,
+        AttributeIdentifierFactory $attributeIdentifierFactory
     ) {
-        $this->identifierFactory = $identifierFactory;
         $this->valueFactory = $valueFactory;
         $this->identifierStringExtractor = $identifierStringExtractor;
+        $this->elementIdentifierFactory = $elementIdentifierFactory;
+        $this->attributeIdentifierFactory = $attributeIdentifierFactory;
     }
 
     public static function createFactory(): AssertionFactory
     {
         return new AssertionFactory(
-            IdentifierFactory::createFactory(),
             ValueFactory::createFactory(),
-            IdentifierStringExtractor::create()
+            IdentifierStringExtractor::create(),
+            ElementIdentifierFactory::createFactory(),
+            AttributeIdentifierFactory::createFactory()
         );
     }
 
@@ -57,7 +62,7 @@ class AssertionFactory
         $expectedValue = null;
 
         if (IdentifierTypeFinder::isElementIdentifier($identifierString)) {
-            $elementIdentifier = $this->identifierFactory->create($identifierString);
+            $elementIdentifier = $this->elementIdentifierFactory->create($identifierString);
 
             if ($elementIdentifier instanceof ElementIdentifierInterface) {
                 $examinedValue = new ElementValue($elementIdentifier);
@@ -65,7 +70,7 @@ class AssertionFactory
         }
 
         if (null === $examinedValue && IdentifierTypeFinder::isAttributeIdentifier($identifierString)) {
-            $attributeIdentifier = $this->identifierFactory->create($identifierString);
+            $attributeIdentifier = $this->attributeIdentifierFactory->create($identifierString);
 
             if ($attributeIdentifier instanceof AttributeIdentifierInterface) {
                 $examinedValue = new AttributeValue($attributeIdentifier);

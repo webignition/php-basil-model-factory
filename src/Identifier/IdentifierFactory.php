@@ -4,6 +4,7 @@ namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
+use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 
 class IdentifierFactory
@@ -84,12 +85,18 @@ class IdentifierFactory
 
     /**
      * @param string $identifierString
+     * @param array $allowedTypes
      *
      * @return IdentifierInterface|null
      *
      * @throws MalformedPageElementReferenceException
      */
-    public function create(string $identifierString): ?IdentifierInterface
+    public function create(string $identifierString, array $allowedTypes = [
+        IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+        IdentifierTypes::ELEMENT_PARAMETER,
+        IdentifierTypes::ELEMENT_SELECTOR,
+        IdentifierTypes::ATTRIBUTE
+    ]): ?IdentifierInterface
     {
         $identifierString = trim($identifierString);
 
@@ -100,7 +107,11 @@ class IdentifierFactory
         $identifierTypeFactory = $this->findIdentifierTypeFactory($identifierString);
 
         if ($identifierTypeFactory instanceof IdentifierTypeFactoryInterface) {
-            return $identifierTypeFactory->create($identifierString);
+            $identifier = $identifierTypeFactory->create($identifierString);
+
+            return $identifier instanceof IdentifierInterface && in_array($identifier->getType(), $allowedTypes)
+                ? $identifier
+                : null;
         }
 
         return null;
