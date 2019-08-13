@@ -15,7 +15,7 @@ class ElementIdentifierFactory implements IdentifierTypeFactoryInterface
     const POSITION_PATTERN = ':(-?[0-9]+|first|last)';
     const POSITION_REGEX = '/' . self::POSITION_PATTERN . '$/';
 
-    public static function createFactory(): IdentifierTypeFactoryInterface
+    public static function createFactory(): ElementIdentifierFactory
     {
         return new ElementIdentifierFactory();
     }
