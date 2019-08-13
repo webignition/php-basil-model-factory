@@ -2,14 +2,11 @@
 
 namespace webignition\BasilModelFactory\Identifier;
 
-use webignition\BasilModel\Identifier\AttributeIdentifier;
-use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\PageElementReference\PageElementReference;
-use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\ValueFactory;
@@ -27,10 +24,14 @@ class IdentifierFactory
     const REFERENCED_ELEMENT_EXTRACTOR_REGEX = '/^".+?(?=(}}))}}/';
 
     private $valueFactory;
+    private $elementIdentifierFactory;
+    private $attributeIdentifierFactory;
 
     public function __construct(ValueFactory $valueFactory)
     {
         $this->valueFactory = $valueFactory;
+        $this->elementIdentifierFactory = ElementIdentifierFactory::createFactory();
+        $this->attributeIdentifierFactory = AttributeIdentifierFactory::createFactory();
     }
 
     public static function createFactory()
@@ -98,34 +99,21 @@ class IdentifierFactory
 
         $type = IdentifierTypeFinder::findType($identifierString);
 
-        list($value, $position) = $this->extractValueAndPosition($identifierString);
-        $value = trim($value, '"');
+        if (IdentifierTypes::ELEMENT_SELECTOR === $type) {
+            return $this->elementIdentifierFactory->create($identifierString, $name);
+        }
+
+        if (IdentifierTypes::ATTRIBUTE === $type) {
+            return $this->attributeIdentifierFactory->create($identifierString, $name);
+        }
 
         $identifier = null;
 
-        if (IdentifierTypes::ELEMENT_SELECTOR === $type) {
-            $value = IdentifierTypeFinder::isCssSelector($identifierString)
-                ? LiteralValue::createCssSelectorValue($value)
-                : LiteralValue::createXpathExpressionValue($value);
+        if (IdentifierTypes::PAGE_ELEMENT_REFERENCE === $type) {
+            $pageElementReference = new PageElementReference($identifierString);
 
-            $identifier = new ElementIdentifier($value, $position);
-        } elseif (IdentifierTypes::ATTRIBUTE === $type) {
-            list($elementIdentifierString, $attributeName) = $this->extractAttributeNameAndElementIdentifier(
-                $identifierString
-            );
-
-            $elementIdentifier = $this->create($elementIdentifierString);
-
-            if ($elementIdentifier instanceof ElementIdentifierInterface) {
-                $identifier = new AttributeIdentifier($elementIdentifier, $attributeName);
-            }
-        } else {
-            if (IdentifierTypes::PAGE_ELEMENT_REFERENCE === $type) {
-                $pageElementReference = new PageElementReference($identifierString);
-
-                if (!$pageElementReference->isValid()) {
-                    throw new MalformedPageElementReferenceException($pageElementReference);
-                }
+            if (!$pageElementReference->isValid()) {
+                throw new MalformedPageElementReferenceException($pageElementReference);
             }
         }
 
@@ -205,19 +193,6 @@ class IdentifierFactory
         return [
             $elementReference,
             $identifierString
-        ];
-    }
-
-    private function extractAttributeNameAndElementIdentifier(string $identifier)
-    {
-        $lastDotPosition = (int) mb_strrpos($identifier, '.');
-
-        $elementIdentifier = mb_substr($identifier, 0, $lastDotPosition);
-        $attributeName = mb_substr($identifier, $lastDotPosition + 1);
-
-        return [
-            $elementIdentifier,
-            $attributeName
         ];
     }
 }
