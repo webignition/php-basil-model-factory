@@ -5,12 +5,10 @@ namespace webignition\BasilModelFactory\Identifier;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\PageElementReference\PageElementReference;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
-use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\ValueFactory;
 
-class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInterface
+class ElementParameterIdentifierFactory implements IdentifierTypeFactoryInterface
 {
     private $valueFactory;
 
@@ -21,7 +19,7 @@ class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInte
 
     public static function createFactory()
     {
-        return new PageElementReferenceIdentifierFactory(
+        return new ElementParameterIdentifierFactory(
             ValueFactory::createFactory()
         );
     }
@@ -32,7 +30,7 @@ class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInte
             return false;
         }
 
-        return IdentifierTypes::PAGE_ELEMENT_REFERENCE === IdentifierTypeFinder::findType($identifierString);
+        return IdentifierTypes::ELEMENT_PARAMETER === IdentifierTypeFinder::findType($identifierString);
     }
 
     /**
@@ -40,8 +38,6 @@ class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInte
      * @param string|null $name
      *
      * @return IdentifierInterface|null
-     *
-     * @throws MalformedPageElementReferenceException
      */
     public function create(string $identifierString, ?string $name = null): ?IdentifierInterface
     {
@@ -50,14 +46,9 @@ class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInte
         }
 
         $identifierString = trim($identifierString);
-        $pageElementReference = new PageElementReference($identifierString);
-
-        if (!$pageElementReference->isValid()) {
-            throw new MalformedPageElementReferenceException($pageElementReference);
-        }
 
         $identifier = new Identifier(
-            IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+            IdentifierTypes::ELEMENT_PARAMETER,
             $this->valueFactory->createFromValueString($identifierString)
         );
 
