@@ -12,11 +12,10 @@ interface IdentifierTypeFactoryInterface
 
     /**
      * @param string $identifierString
-     * @param string|null $name
      *
      * @return IdentifierInterface|null
      *
      * @throws MalformedPageElementReferenceException
      */
-    public function create(string $identifierString, ?string $name = null): ?IdentifierInterface;
+    public function create(string $identifierString): ?IdentifierInterface;
 }

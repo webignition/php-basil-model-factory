@@ -30,13 +30,12 @@ class PageElementReferenceIdentifierFactory extends AbstractValueBasedIdentifier
 
     /**
      * @param string $identifierString
-     * @param string|null $name
      *
      * @return IdentifierInterface|null
      *
      * @throws MalformedPageElementReferenceException
      */
-    public function create(string $identifierString, ?string $name = null): ?IdentifierInterface
+    public function create(string $identifierString): ?IdentifierInterface
     {
         if (!$this->handles($identifierString)) {
             return null;
@@ -49,6 +48,6 @@ class PageElementReferenceIdentifierFactory extends AbstractValueBasedIdentifier
             throw new MalformedPageElementReferenceException($pageElementReference);
         }
 
-        return $this->createForType($identifierString, IdentifierTypes::PAGE_ELEMENT_REFERENCE, $name);
+        return $this->createForType($identifierString, IdentifierTypes::PAGE_ELEMENT_REFERENCE);
     }
 }

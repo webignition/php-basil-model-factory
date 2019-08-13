@@ -68,7 +68,11 @@ class IdentifierFactory
         }
 
         $parentIdentifier = $existingIdentifiers[$parentIdentifierName] ?? null;
-        $identifier = $this->create($identifierString, $elementName);
+        $identifier = $this->create($identifierString);
+
+        if ($identifier instanceof IdentifierInterface) {
+            $identifier = $identifier->withName($elementName);
+        }
 
         if ($identifier instanceof ElementIdentifierInterface &&
             $parentIdentifier instanceof ElementIdentifierInterface) {
@@ -80,16 +84,13 @@ class IdentifierFactory
 
     /**
      * @param string $identifierString
-     * @param string|null $name
      *
      * @return IdentifierInterface|null
      *
      * @throws MalformedPageElementReferenceException
      */
-    public function create(
-        string $identifierString,
-        ?string $name = null
-    ): ?IdentifierInterface {
+    public function create(string $identifierString): ?IdentifierInterface
+    {
         $identifierString = trim($identifierString);
 
         if (empty($identifierString)) {
@@ -99,7 +100,7 @@ class IdentifierFactory
         $identifierTypeFactory = $this->findIdentifierTypeFactory($identifierString);
 
         if ($identifierTypeFactory instanceof IdentifierTypeFactoryInterface) {
-            return $identifierTypeFactory->create($identifierString, $name);
+            return $identifierTypeFactory->create($identifierString);
         }
 
         return null;

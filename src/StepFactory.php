@@ -113,9 +113,10 @@ class StepFactory
         $elementIdentifiers = [];
 
         foreach ($stepData->getElements() as $elementName => $elementIdentifierString) {
-            $elementIdentifier = $this->identifierFactory->create($elementIdentifierString, $elementName);
+            $elementIdentifier = $this->identifierFactory->create($elementIdentifierString);
 
             if ($elementIdentifier instanceof IdentifierInterface) {
+                $elementIdentifier = $elementIdentifier->withName($elementName);
                 $elementIdentifiers[] = $elementIdentifier;
             }
         }
