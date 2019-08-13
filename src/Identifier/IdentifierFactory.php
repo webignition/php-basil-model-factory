@@ -8,13 +8,6 @@ use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 
 class IdentifierFactory
 {
-    const POSITION_FIRST = 'first';
-    const POSITION_LAST = 'last';
-
-    const POSITION_PATTERN = ':(-?[0-9]+|first|last)';
-    const POSITION_REGEX = '/' . self::POSITION_PATTERN . '$/';
-    const CSS_SELECTOR_REGEX = '/^"((?!\/).).+("|' . self::POSITION_PATTERN . ')$/';
-    const XPATH_EXPRESSION_REGEX = '/^"\/.+("|' . self::POSITION_PATTERN . ')$/';
     const REFERENCED_ELEMENT_REGEX = '/^"{{.+/';
     const REFERENCED_ELEMENT_EXTRACTOR_REGEX = '/^".+?(?=(}}))}}/';
 
@@ -123,37 +116,6 @@ class IdentifierFactory
         return null;
     }
 
-    private function extractValueAndPosition(string $identifier)
-    {
-        $positionMatches = [];
-
-        preg_match(self::POSITION_REGEX, $identifier, $positionMatches);
-
-        $position = 1;
-
-        if (empty($positionMatches)) {
-            $quotedValue = $identifier;
-        } else {
-            $quotedValue = (string) preg_replace(self::POSITION_REGEX, '', $identifier);
-
-            $positionMatch = $positionMatches[0];
-            $positionString = ltrim($positionMatch, ':');
-
-            if (self::POSITION_FIRST === $positionString) {
-                $position = 1;
-            } elseif (self::POSITION_LAST === $positionString) {
-                $position = -1;
-            } else {
-                $position = (int) $positionString;
-            }
-        }
-
-        return [
-            $quotedValue,
-            $position,
-        ];
-    }
-
     private function extractElementReferenceAndIdentifierString(string $identifier)
     {
         $elementReferenceMatches = [];
@@ -173,8 +135,10 @@ class IdentifierFactory
         $identifierString = $identifierStringPart;
         $position = null;
 
-        if (preg_match(self::POSITION_REGEX, $identifierString)) {
-            list($identifierString, $position) = $this->extractValueAndPosition($identifierString);
+        if (preg_match(IdentifierStringValueAndPositionExtractor::POSITION_REGEX, $identifierString)) {
+            list($identifierString, $position) = IdentifierStringValueAndPositionExtractor::extractValueAndPosition(
+                $identifierString
+            );
         }
 
         if ('"' === $identifierString[-1] && '"' !== $identifierString[0]) {
