@@ -9,7 +9,7 @@ class IdentifierStringValueAndPositionExtractor
     const POSITION_PATTERN = ':(-?[0-9]+|first|last)';
     const POSITION_REGEX = '/' . self::POSITION_PATTERN . '$/';
 
-    public static function extractValueAndPosition(string $identifierString)
+    public static function extract(string $identifierString)
     {
         $positionMatches = [];
 

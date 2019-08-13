@@ -32,7 +32,7 @@ class ElementIdentifierFactory implements IdentifierTypeFactoryInterface
 
         $identifierString = trim($identifierString);
 
-        list($value, $position) = IdentifierStringValueAndPositionExtractor::extractValueAndPosition($identifierString);
+        list($value, $position) = IdentifierStringValueAndPositionExtractor::extract($identifierString);
         $value = trim($value, '"');
 
         $value = IdentifierTypeFinder::isCssSelector($identifierString)

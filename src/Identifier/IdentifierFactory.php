@@ -132,14 +132,7 @@ class IdentifierFactory
 
         $elementReference = trim($elementReference, '{} ');
 
-        $identifierString = $identifierStringPart;
-        $position = null;
-
-        if (preg_match(IdentifierStringValueAndPositionExtractor::POSITION_REGEX, $identifierString)) {
-            list($identifierString, $position) = IdentifierStringValueAndPositionExtractor::extractValueAndPosition(
-                $identifierString
-            );
-        }
+        list($identifierString, $position) = IdentifierStringValueAndPositionExtractor::extract($identifierStringPart);
 
         if ('"' === $identifierString[-1] && '"' !== $identifierString[0]) {
             $identifierString = '"' . $identifierString;
