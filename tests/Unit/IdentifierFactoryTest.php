@@ -31,10 +31,10 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @!dataProvider createCssSelectorDataProvider
-     * @!dataProvider createXpathExpressionDataProvider
-     * @!dataProvider createElementParameterDataProvider
-     * @!dataProvider createPageElementReferenceDataProvider
+     * @dataProvider createCssSelectorDataProvider
+     * @dataProvider createXpathExpressionDataProvider
+     * @dataProvider createElementParameterDataProvider
+     * @dataProvider createPageElementReferenceDataProvider
      * @dataProvider createAttributeIdentifierDataProvider
      */
     public function testCreateSuccess(string $identifierString, IdentifierInterface $expectedIdentifier)
