@@ -6,7 +6,6 @@ use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\PageElementReference\PageElementReference;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\ValueFactory;
@@ -26,12 +25,14 @@ class IdentifierFactory
     private $valueFactory;
     private $elementIdentifierFactory;
     private $attributeIdentifierFactory;
+    private $pageElementReferenceIdentifierFactory;
 
     public function __construct(ValueFactory $valueFactory)
     {
         $this->valueFactory = $valueFactory;
         $this->elementIdentifierFactory = ElementIdentifierFactory::createFactory();
         $this->attributeIdentifierFactory = AttributeIdentifierFactory::createFactory();
+        $this->pageElementReferenceIdentifierFactory = PageElementReferenceIdentifierFactory::createFactory();
     }
 
     public static function createFactory()
@@ -110,11 +111,7 @@ class IdentifierFactory
         $identifier = null;
 
         if (IdentifierTypes::PAGE_ELEMENT_REFERENCE === $type) {
-            $pageElementReference = new PageElementReference($identifierString);
-
-            if (!$pageElementReference->isValid()) {
-                throw new MalformedPageElementReferenceException($pageElementReference);
-            }
+            return $this->pageElementReferenceIdentifierFactory->create($identifierString, $name);
         }
 
         if (null === $identifier) {
