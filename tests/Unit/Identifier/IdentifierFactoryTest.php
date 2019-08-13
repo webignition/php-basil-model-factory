@@ -14,10 +14,21 @@ use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
+use webignition\BasilModelFactory\Tests\DataProvider\AttributeIdentifierDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\CssSelectorIdentifierDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\ElementParameterIdentifierDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\PageElementReferenceIdentifierDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\XpathExpressionIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\Services\TestIdentifierFactory;
 
 class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
 {
+    use CssSelectorIdentifierDataProviderTrait;
+    use XpathExpressionIdentifierDataProviderTrait;
+    use ElementParameterIdentifierDataProviderTrait;
+    use PageElementReferenceIdentifierDataProviderTrait;
+    use AttributeIdentifierDataProviderTrait;
+
     /**
      * @var IdentifierFactory
      */
@@ -31,11 +42,11 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider createCssSelectorDataProvider
-     * @dataProvider createXpathExpressionDataProvider
-     * @dataProvider createElementParameterDataProvider
-     * @dataProvider createPageElementReferenceDataProvider
-     * @dataProvider createAttributeIdentifierDataProvider
+     * @dataProvider cssSelectorIdentifierDataProvider
+     * @dataProvider xpathExpressionIdentifierDataProvider
+     * @dataProvider elementParameterIdentifierDataProvider
+     * @dataProvider pageElementReferenceIdentifierDataProvider
+     * @dataProvider attributeIdentifierDataProvider
      */
     public function testCreateSuccess(string $identifierString, IdentifierInterface $expectedIdentifier)
     {
@@ -43,282 +54,6 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf(IdentifierInterface::class, $identifier);
         $this->assertEquals($expectedIdentifier, $identifier);
-    }
-
-    public function createCssSelectorDataProvider(): array
-    {
-        return [
-            'css id selector' => [
-                'identifierString' => '"#element-id"',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('#element-id'),
-                    1
-                ),
-            ],
-            'css class selector, position: null' => [
-                'identifierString' => '".listed-item"',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('.listed-item'),
-                    1
-                ),
-            ],
-            'css class selector; position: 1' => [
-                'identifierString' => '".listed-item":1',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('.listed-item'),
-                    1
-                ),
-            ],
-            'css class selector; position: 3' => [
-                'identifierString' => '".listed-item":3',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('.listed-item'),
-                    3
-                ),
-            ],
-            'css class selector; position: -1' => [
-                'identifierString' => '".listed-item":-1',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('.listed-item'),
-                    -1
-                ),
-            ],
-            'css class selector; position: -3' => [
-                'identifierString' => '".listed-item":-3',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('.listed-item'),
-                    -3
-                ),
-            ],
-            'css class selector; position: first' => [
-                'identifierString' => '".listed-item":first',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('.listed-item'),
-                    1
-                ),
-            ],
-            'css class selector; position: last' => [
-                'identifierString' => '".listed-item":last',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('.listed-item'),
-                    -1
-                ),
-            ],
-        ];
-    }
-
-    public function createXpathExpressionDataProvider(): array
-    {
-        return [
-            'xpath id selector' => [
-                'identifierString' => '"//*[@id="element-id"]"',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createXpathExpressionValue('//*[@id="element-id"]'),
-                    1
-                ),
-            ],
-            'xpath attribute selector, position: null' => [
-                'identifierString' => '"//input[@type="submit"]"',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                    1
-                ),
-            ],
-            'xpath attribute selector; position: 1' => [
-                'identifierString' => '"//input[@type="submit"]":1',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                    1
-                ),
-            ],
-            'xpath attribute selector; position: 3' => [
-                'identifierString' => '"//input[@type="submit"]":3',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                    3
-                ),
-            ],
-            'xpath attribute selector; position: -1' => [
-                'identifierString' => '"//input[@type="submit"]":-1',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                    -1
-                ),
-            ],
-            'xpath attribute selector; position: -3' => [
-                'identifierString' => '"//input[@type="submit"]":-3',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                    -3
-                ),
-            ],
-            'xpath attribute selector; position: first' => [
-                'identifierString' => '"//input[@type="submit"]":first',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                    1
-                ),
-            ],
-            'xpath attribute selector; position: last' => [
-                'identifierString' => '"//input[@type="submit"]":last',
-                'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                    -1
-                ),
-            ],
-        ];
-    }
-
-    public function createElementParameterDataProvider(): array
-    {
-        return [
-            'element parameter' => [
-                'identifierString' => '$elements.name',
-                'expectedIdentifier' => new Identifier(
-                    IdentifierTypes::ELEMENT_PARAMETER,
-                    new ObjectValue(
-                        ValueTypes::ELEMENT_PARAMETER,
-                        '$elements.name',
-                        'elements',
-                        'name'
-                    )
-                ),
-            ],
-        ];
-    }
-
-    public function createPageElementReferenceDataProvider(): array
-    {
-        return [
-            'page model element reference' => [
-                'identifierString' => 'page_import_name.elements.element_name',
-                'expectedIdentifier' => new Identifier(
-                    IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-                    new ObjectValue(
-                        ValueTypes::PAGE_ELEMENT_REFERENCE,
-                        'page_import_name.elements.element_name',
-                        'page_import_name',
-                        'element_name'
-                    )
-                ),
-            ],
-        ];
-    }
-
-    public function createAttributeIdentifierDataProvider(): array
-    {
-        return [
-            'attribute identifier: css class selector, position: null' => [
-                'identifierString' => '".listed-item".attribute_name',
-                'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.listed-item'),
-                        1
-                    ),
-                    'attribute_name'
-                ),
-            ],
-            'attribute identifier: css class selector; position: 1' => [
-                'identifierString' => '".listed-item":1.attribute_name',
-                'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.listed-item'),
-                        1
-                    ),
-                    'attribute_name'
-                ),
-            ],
-            'attribute identifier: css class selector; position: -1' => [
-                'identifierString' => '".listed-item":-1.attribute_name',
-                'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.listed-item'),
-                        -1
-                    ),
-                    'attribute_name'
-                ),
-            ],
-            'attribute identifier: css class selector; position: first' => [
-                'identifierString' => '".listed-item":first.attribute_name',
-                'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.listed-item'),
-                        1
-                    ),
-                    'attribute_name'
-                ),
-            ],
-            'attribute identifier: css class selector; position: last' => [
-                'identifierString' => '".listed-item":last.attribute_name',
-                'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.listed-item'),
-                        -1
-                    ),
-                    'attribute_name'
-                ),
-            ],
-            'attribute identifier: xpath id selector' => [
-                'identifierString' => '"//*[@id="element-id"]".attribute_name',
-                'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//*[@id="element-id"]'),
-                        1
-                    ),
-                    'attribute_name'
-                ),
-            ],
-            'attribute identifier: xpath attribute selector, position: null' => [
-                'identifierString' => '"//input[@type="submit"]".attribute_name',
-                'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                        1
-                    ),
-                    'attribute_name'
-                ),
-            ],
-            'attribute identifier: xpath attribute selector; position: 1' => [
-                'identifierString' => '"//input[@type="submit"]":1.attribute_name',
-                'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                        1
-                    ),
-                    'attribute_name'
-                ),
-            ],
-            'attribute identifier: xpath attribute selector; position: -1' => [
-                'identifierString' => '"//input[@type="submit"]":-1.attribute_name',
-                'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                        -1
-                    ),
-                    'attribute_name'
-                ),
-            ],
-            'attribute identifier: xpath attribute selector; position: first' => [
-                'identifierString' => '"//input[@type="submit"]":first.attribute_name',
-                'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                        1
-                    ),
-                    'attribute_name'
-                ),
-            ],
-            'attribute identifier: xpath attribute selector; position: last' => [
-                'identifierString' => '"//input[@type="submit"]":last.attribute_name',
-                'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                        -1
-                    ),
-                    'attribute_name'
-                ),
-            ],
-        ];
     }
 
     /**
