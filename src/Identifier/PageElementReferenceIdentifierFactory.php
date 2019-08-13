@@ -2,7 +2,6 @@
 
 namespace webignition\BasilModelFactory\Identifier;
 
-use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\PageElementReference\PageElementReference;
@@ -10,15 +9,9 @@ use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\ValueFactory;
 
-class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInterface
+class PageElementReferenceIdentifierFactory extends AbstractValueBasedIdentifierFactory implements
+    IdentifierTypeFactoryInterface
 {
-    private $valueFactory;
-
-    public function __construct(ValueFactory $valueFactory)
-    {
-        $this->valueFactory = $valueFactory;
-    }
-
     public static function createFactory()
     {
         return new PageElementReferenceIdentifierFactory(
@@ -56,15 +49,6 @@ class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInte
             throw new MalformedPageElementReferenceException($pageElementReference);
         }
 
-        $identifier = new Identifier(
-            IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-            $this->valueFactory->createFromValueString($identifierString)
-        );
-
-        if (null !== $name) {
-            $identifier = $identifier->withName($name);
-        }
-
-        return $identifier;
+        return $this->createForType($identifierString, IdentifierTypes::PAGE_ELEMENT_REFERENCE, $name);
     }
 }
