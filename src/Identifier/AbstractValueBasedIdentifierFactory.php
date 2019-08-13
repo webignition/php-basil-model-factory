@@ -15,14 +15,8 @@ abstract class AbstractValueBasedIdentifierFactory
         $this->valueFactory = $valueFactory;
     }
 
-    protected function createForType(string $identifierString, string $type, ?string $name = null): IdentifierInterface
+    protected function createForType(string $identifierString, string $type): IdentifierInterface
     {
-        $identifier = new Identifier($type, $this->valueFactory->createFromValueString($identifierString));
-
-        if (null !== $name) {
-            $identifier = $identifier->withName($name);
-        }
-
-        return $identifier;
+        return new Identifier($type, $this->valueFactory->createFromValueString($identifierString));
     }
 }

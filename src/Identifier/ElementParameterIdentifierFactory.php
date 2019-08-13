@@ -28,11 +28,10 @@ class ElementParameterIdentifierFactory extends AbstractValueBasedIdentifierFact
 
     /**
      * @param string $identifierString
-     * @param string|null $name
      *
      * @return IdentifierInterface|null
      */
-    public function create(string $identifierString, ?string $name = null): ?IdentifierInterface
+    public function create(string $identifierString): ?IdentifierInterface
     {
         if (!$this->handles($identifierString)) {
             return null;
@@ -40,6 +39,6 @@ class ElementParameterIdentifierFactory extends AbstractValueBasedIdentifierFact
 
         $identifierString = trim($identifierString);
 
-        return $this->createForType($identifierString, IdentifierTypes::ELEMENT_PARAMETER, $name);
+        return $this->createForType($identifierString, IdentifierTypes::ELEMENT_PARAMETER);
     }
 }

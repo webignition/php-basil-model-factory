@@ -33,7 +33,7 @@ class AttributeIdentifierFactory implements IdentifierTypeFactoryInterface
         return IdentifierTypes::ATTRIBUTE === IdentifierTypeFinder::findType($identifierString);
     }
 
-    public function create(string $identifierString, ?string $name = null): ?IdentifierInterface
+    public function create(string $identifierString): ?IdentifierInterface
     {
         if (!$this->handles($identifierString)) {
             return null;
@@ -50,10 +50,6 @@ class AttributeIdentifierFactory implements IdentifierTypeFactoryInterface
 
         if ($elementIdentifier instanceof ElementIdentifierInterface) {
             $identifier = new AttributeIdentifier($elementIdentifier, $attributeName);
-
-            if (null !== $name) {
-                $identifier = $identifier->withName($name);
-            }
         }
 
         return $identifier;

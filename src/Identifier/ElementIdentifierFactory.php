@@ -24,7 +24,7 @@ class ElementIdentifierFactory implements IdentifierTypeFactoryInterface
         return IdentifierTypes::ELEMENT_SELECTOR === IdentifierTypeFinder::findType($identifierString);
     }
 
-    public function create(string $identifierString, ?string $name = null): ?IdentifierInterface
+    public function create(string $identifierString): ?IdentifierInterface
     {
         if (!$this->handles($identifierString)) {
             return null;
@@ -39,12 +39,6 @@ class ElementIdentifierFactory implements IdentifierTypeFactoryInterface
             ? LiteralValue::createCssSelectorValue($value)
             : LiteralValue::createXpathExpressionValue($value);
 
-        $identifier = new ElementIdentifier($value, $position);
-
-        if (null !== $name) {
-            $identifier = $identifier->withName($name);
-        }
-
-        return $identifier;
+        return new ElementIdentifier($value, $position);
     }
 }
