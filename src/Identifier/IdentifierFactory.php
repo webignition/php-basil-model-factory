@@ -3,12 +3,8 @@
 namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
-use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
-use webignition\BasilModelFactory\ValueFactory;
 
 class IdentifierFactory
 {
@@ -22,24 +18,33 @@ class IdentifierFactory
     const REFERENCED_ELEMENT_REGEX = '/^"{{.+/';
     const REFERENCED_ELEMENT_EXTRACTOR_REGEX = '/^".+?(?=(}}))}}/';
 
-    private $valueFactory;
-    private $elementIdentifierFactory;
-    private $attributeIdentifierFactory;
-    private $pageElementReferenceIdentifierFactory;
+    /**
+     * @var IdentifierTypeFactoryInterface[]
+     */
+    private $identifierTypeFactories = [];
 
-    public function __construct(ValueFactory $valueFactory)
+    public function __construct(array $identifierTypeFactories = [])
     {
-        $this->valueFactory = $valueFactory;
-        $this->elementIdentifierFactory = ElementIdentifierFactory::createFactory();
-        $this->attributeIdentifierFactory = AttributeIdentifierFactory::createFactory();
-        $this->pageElementReferenceIdentifierFactory = PageElementReferenceIdentifierFactory::createFactory();
+        foreach ($identifierTypeFactories as $identifierTypeFactory) {
+            if ($identifierTypeFactory instanceof IdentifierTypeFactoryInterface) {
+                $this->addIdentifierTypeFactory($identifierTypeFactory);
+            }
+        }
     }
 
     public static function createFactory()
     {
-        return new IdentifierFactory(
-            ValueFactory::createFactory()
-        );
+        return new IdentifierFactory([
+            ElementIdentifierFactory::createFactory(),
+            AttributeIdentifierFactory::createFactory(),
+            ElementParameterIdentifierFactory::createFactory(),
+            PageElementReferenceIdentifierFactory::createFactory(),
+        ]);
+    }
+
+    public function addIdentifierTypeFactory(IdentifierTypeFactoryInterface $identifierTypeFactory)
+    {
+        $this->identifierTypeFactories[] = $identifierTypeFactory;
     }
 
     /**
@@ -98,31 +103,24 @@ class IdentifierFactory
             return null;
         }
 
-        $type = IdentifierTypeFinder::findType($identifierString);
+        $identifierTypeFactory = $this->findIdentifierTypeFactory($identifierString);
 
-        if (IdentifierTypes::ELEMENT_SELECTOR === $type) {
-            return $this->elementIdentifierFactory->create($identifierString, $name);
+        if ($identifierTypeFactory instanceof IdentifierTypeFactoryInterface) {
+            return $identifierTypeFactory->create($identifierString, $name);
         }
 
-        if (IdentifierTypes::ATTRIBUTE === $type) {
-            return $this->attributeIdentifierFactory->create($identifierString, $name);
+        return null;
+    }
+
+    private function findIdentifierTypeFactory(string $identifierString): ?IdentifierTypeFactoryInterface
+    {
+        foreach ($this->identifierTypeFactories as $identifierTypeFactory) {
+            if ($identifierTypeFactory->handles($identifierString)) {
+                return $identifierTypeFactory;
+            }
         }
 
-        $identifier = null;
-
-        if (IdentifierTypes::PAGE_ELEMENT_REFERENCE === $type) {
-            return $this->pageElementReferenceIdentifierFactory->create($identifierString, $name);
-        }
-
-        if (null === $identifier) {
-            $identifier = new Identifier($type, $this->valueFactory->createFromValueString($identifierString));
-        }
-
-        if (null !== $name) {
-            $identifier = $identifier->withName($name);
-        }
-
-        return $identifier;
+        return null;
     }
 
     private function extractValueAndPosition(string $identifier)
