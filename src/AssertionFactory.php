@@ -9,6 +9,7 @@ use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\ElementValue;
+use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
 
 class AssertionFactory

@@ -1,6 +1,6 @@
 <?php
 
-namespace webignition\BasilModelFactory;
+namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
@@ -10,6 +10,9 @@ use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\PageElementReference\PageElementReference;
 use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModelFactory\IdentifierTypeFinder;
+use webignition\BasilModelFactory\MalformedPageElementReferenceException;
+use webignition\BasilModelFactory\ValueFactory;
 
 class IdentifierFactory
 {
