@@ -5,8 +5,6 @@ namespace webignition\BasilModelFactory\Action;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
-use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\PageElementReference\PageElementReference;
