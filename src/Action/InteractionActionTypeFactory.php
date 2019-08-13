@@ -5,7 +5,7 @@ namespace webignition\BasilModelFactory\Action;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InteractionAction;
-use webignition\BasilModelFactory\IdentifierFactory;
+use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 
 class InteractionActionTypeFactory extends AbstractActionTypeFactory implements ActionTypeFactoryInterface
