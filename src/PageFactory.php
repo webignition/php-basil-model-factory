@@ -5,6 +5,7 @@ namespace webignition\BasilModelFactory;
 use Nyholm\Psr7\Uri;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\IdentifierInterface;
+use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilDataStructure\Page as PageData;
@@ -35,6 +36,7 @@ class PageFactory
      * @return PageInterface
      *
      * @throws MalformedPageElementReferenceException
+     * @throws InvalidPageElementIdentifierException
      */
     public function createFromPageData(PageData $pageData): PageInterface
     {
@@ -51,6 +53,10 @@ class PageFactory
                 $elementName,
                 $elementIdentifiers
             );
+
+            if (null !== $identifier && IdentifierTypes::ELEMENT_SELECTOR !== $identifier->getType()) {
+                throw new InvalidPageElementIdentifierException($identifier);
+            }
 
             if ($identifier instanceof IdentifierInterface) {
                 $elementIdentifiers[$elementName] = $identifier;
