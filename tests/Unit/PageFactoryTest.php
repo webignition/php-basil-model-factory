@@ -12,6 +12,7 @@ use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilDataStructure\Page as PageData;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModelFactory\InvalidPageElementIdentifierException;
 use webignition\BasilModelFactory\PageFactory;
 use webignition\BasilModelFactory\Tests\Services\TestIdentifierFactory;
 
@@ -98,6 +99,65 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                         ),
                     ])
                 ),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider createFromPageDataThrowsInvalidPageElementIdentifierExceptionDataProvider
+     */
+    public function testCreateFromPageDataThrowsInvalidPageElementIdentifierException(
+        PageData $pageData,
+        string $expectedExceptionMessage
+    ) {
+        $this->expectException(InvalidPageElementIdentifierException::class);
+        $this->expectExceptionMessage($expectedExceptionMessage);
+
+        $this->pageFactory->createFromPageData($pageData);
+    }
+
+    public function createFromPageDataThrowsInvalidPageElementIdentifierExceptionDataProvider(): array
+    {
+        return [
+            'page element reference' => [
+                'pageData' => new PageData([
+                    PageData::KEY_URL => 'http://example.com/',
+                    PageData::KEY_ELEMENTS => [
+                        'name' => 'page_import_name.elements.element_name',
+                    ],
+                ]),
+                'expectedExceptionMessage' =>
+                    'Invalid page element identifier "page_import_name.elements.element_name"',
+            ],
+            'element parameter' => [
+                'pageData' => new PageData([
+                    PageData::KEY_URL => 'http://example.com/',
+                    PageData::KEY_ELEMENTS => [
+                        'name' => '$elements.element_name',
+                    ],
+                ]),
+                'expectedExceptionMessage' =>
+                    'Invalid page element identifier "$elements.element_name"',
+            ],
+            'attribute parameter' => [
+                'pageData' => new PageData([
+                    PageData::KEY_URL => 'http://example.com/',
+                    PageData::KEY_ELEMENTS => [
+                        'name' => '$elements.element_name.attribute_name',
+                    ],
+                ]),
+                'expectedExceptionMessage' =>
+                    'Invalid page element identifier "$elements.element_name.attribute_name"',
+            ],
+            'attribute selector' => [
+                'pageData' => new PageData([
+                    PageData::KEY_URL => 'http://example.com/',
+                    PageData::KEY_ELEMENTS => [
+                        'name' => '".selector".attribute_name',
+                    ],
+                ]),
+                'expectedExceptionMessage' =>
+                    'Invalid page element identifier "".selector".attribute_name"',
             ],
         ];
     }
