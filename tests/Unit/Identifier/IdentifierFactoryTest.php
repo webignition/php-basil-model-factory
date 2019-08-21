@@ -13,7 +13,7 @@ use webignition\BasilModelFactory\Tests\DataProvider\CssSelectorIdentifierDataPr
 use webignition\BasilModelFactory\Tests\DataProvider\ElementParameterIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\PageElementReferenceIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\XpathExpressionIdentifierDataProviderTrait;
-use webignition\BasilModelFactory\Tests\Services\TestIdentifierFactory;
+use webignition\BasilTestIdentifierFactory\TestIdentifierFactory;
 
 class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
 {

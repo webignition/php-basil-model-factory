@@ -14,7 +14,7 @@ use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\InvalidPageElementIdentifierException;
 use webignition\BasilModelFactory\PageFactory;
-use webignition\BasilModelFactory\Tests\Services\TestIdentifierFactory;
+use webignition\BasilTestIdentifierFactory\TestIdentifierFactory;
 
 class PageFactoryTest extends \PHPUnit\Framework\TestCase
 {
