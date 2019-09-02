@@ -6,7 +6,7 @@ namespace webignition\BasilModelFactory\Tests\Unit;
 
 use Nyholm\Psr7\Uri;
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Identifier\IdentifierCollection;
+use webignition\BasilModel\Identifier\ElementIdentifierCollection;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilDataStructure\Page as PageData;
@@ -46,20 +46,20 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
         $parentIdentifier = TestIdentifierFactory::createElementIdentifier(
             ValueTypes::CSS_SELECTOR,
             '.form',
-            null,
+            1,
             'form'
         );
 
         return [
             'empty page data' => [
                 'pageData' => new PageData([]),
-                'expectedPage' => new Page(new Uri(''), new IdentifierCollection()),
+                'expectedPage' => new Page(new Uri(''), new ElementIdentifierCollection()),
             ],
             'has url, empty elements data' => [
                 'pageData' => new PageData([
                     PageData::KEY_URL => 'http://example.com/',
                 ]),
-                'expectedPage' => new Page(new Uri('http://example.com/'), new IdentifierCollection()),
+                'expectedPage' => new Page(new Uri('http://example.com/'), new ElementIdentifierCollection()),
             ],
             'single element identifier' => [
                 'pageData' => new PageData([
@@ -70,7 +70,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                 ]),
                 'expectedPage' => new Page(
                     new Uri('http://example.com/'),
-                    new IdentifierCollection([
+                    new ElementIdentifierCollection([
                         'css-selector' => (new ElementIdentifier(
                             LiteralValue::createCssSelectorValue('.selector')
                         ))->withName('css-selector'),
@@ -87,7 +87,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                 ]),
                 'expectedPage' => new Page(
                     new Uri('http://example.com/'),
-                    new IdentifierCollection([
+                    new ElementIdentifierCollection([
                         'form' => $parentIdentifier,
                         'form_field' => TestIdentifierFactory::createElementIdentifier(
                             ValueTypes::CSS_SELECTOR,
