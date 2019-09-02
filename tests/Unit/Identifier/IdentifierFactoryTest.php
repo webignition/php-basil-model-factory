@@ -90,7 +90,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
                     ValueTypes::CSS_SELECTOR,
                     '.selector',
-                    1,
+                    null,
                     'element_name'
                 ),
             ],
@@ -101,7 +101,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
                     ValueTypes::CSS_SELECTOR,
                     '.selector',
-                    1,
+                    null,
                     'element_name',
                     $parentIdentifier
                 ),
@@ -137,7 +137,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
                     ValueTypes::CSS_SELECTOR,
                     '{{ another_element_name }} .selector',
-                    1,
+                    null,
                     'element_name',
                     $parentIdentifier
                 ),
@@ -149,7 +149,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
                     ValueTypes::XPATH_EXPRESSION,
                     '//foo',
-                    1,
+                    null,
                     'element_name',
                     $parentIdentifier
                 ),

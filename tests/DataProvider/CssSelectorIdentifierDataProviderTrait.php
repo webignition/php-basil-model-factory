@@ -13,15 +13,13 @@ trait CssSelectorIdentifierDataProviderTrait
             'css id selector' => [
                 'identifierString' => '"#element-id"',
                 'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('#element-id'),
-                    1
+                    LiteralValue::createCssSelectorValue('#element-id')
                 ),
             ],
             'css class selector, position: null' => [
                 'identifierString' => '".listed-item"',
                 'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('.listed-item'),
-                    1
+                    LiteralValue::createCssSelectorValue('.listed-item')
                 ),
             ],
             'css class selector; position: 1' => [

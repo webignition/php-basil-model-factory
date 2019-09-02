@@ -48,9 +48,15 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
             LiteralValue::createCssSelectorValue('.selector')
         );
 
+        $cssSelectorIdentifierWithPosition1 = new ElementIdentifier(
+            LiteralValue::createCssSelectorValue('.selector'),
+            1
+        );
+
         $literalValue = LiteralValue::createStringValue('value');
 
         $cssSelectorElementValue = new ElementValue($cssSelectorIdentifier);
+        $cssSelectorWithPosition1ElementValue = new ElementValue($cssSelectorIdentifierWithPosition1);
 
         return [
             'css element selector, is, scalar value' => [
@@ -66,7 +72,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'assertionString' => '".selector":1 is "value"',
                 'expectedAssertion' => new Assertion(
                     '".selector":1 is "value"',
-                    $cssSelectorElementValue,
+                    $cssSelectorWithPosition1ElementValue,
                     AssertionComparisons::IS,
                     $literalValue
                 ),
@@ -87,7 +93,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'assertionString' => '".selector":first is "value"',
                 'expectedAssertion' => new Assertion(
                     '".selector":first is "value"',
-                    $cssSelectorElementValue,
+                    $cssSelectorWithPosition1ElementValue,
                     AssertionComparisons::IS,
                     $literalValue
                 ),
@@ -124,7 +130,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector":1.attribute_name is "value"',
                     new AttributeValue(
                         new AttributeIdentifier(
-                            new ElementIdentifier(LiteralValue::createCssSelectorValue('.selector')),
+                            $cssSelectorIdentifierWithPosition1,
                             'attribute_name'
                         )
                     ),
@@ -152,7 +158,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector":first.attribute_name is "value"',
                     new AttributeValue(
                         new AttributeIdentifier(
-                            new ElementIdentifier(LiteralValue::createCssSelectorValue('.selector')),
+                            $cssSelectorIdentifierWithPosition1,
                             'attribute_name'
                         )
                     ),

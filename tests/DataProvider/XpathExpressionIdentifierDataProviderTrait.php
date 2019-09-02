@@ -13,15 +13,13 @@ trait XpathExpressionIdentifierDataProviderTrait
             'xpath id selector' => [
                 'identifierString' => '"//*[@id="element-id"]"',
                 'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createXpathExpressionValue('//*[@id="element-id"]'),
-                    1
+                    LiteralValue::createXpathExpressionValue('//*[@id="element-id"]')
                 ),
             ],
             'xpath attribute selector, position: null' => [
                 'identifierString' => '"//input[@type="submit"]"',
                 'expectedIdentifier' => new ElementIdentifier(
-                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                    1
+                    LiteralValue::createXpathExpressionValue('//input[@type="submit"]')
                 ),
             ],
             'xpath attribute selector; position: 1' => [
