@@ -355,6 +355,10 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $cssSelectorValue = LiteralValue::createCssSelectorValue('.selector');
         $cssSelectorIdentifier = new ElementIdentifier($cssSelectorValue);
+        $cssSelectorIdentifierWithPosition1 = new ElementIdentifier(
+            LiteralValue::createCssSelectorValue('.selector'),
+            1
+        );
         $scalarValue = LiteralValue::createStringValue('value');
 
         return [
@@ -405,7 +409,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set ".selector":1 to "value"',
                 'expectedAction' => new InputAction(
                     'set ".selector":1 to "value"',
-                    $cssSelectorIdentifier,
+                    $cssSelectorIdentifierWithPosition1,
                     $scalarValue,
                     '".selector":1 to "value"'
                 ),
@@ -426,7 +430,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set ".selector":first to "value"',
                 'expectedAction' => new InputAction(
                     'set ".selector":first to "value"',
-                    $cssSelectorIdentifier,
+                    $cssSelectorIdentifierWithPosition1,
                     $scalarValue,
                     '".selector":first to "value"'
                 ),

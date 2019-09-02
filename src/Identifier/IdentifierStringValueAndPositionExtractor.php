@@ -15,7 +15,7 @@ class IdentifierStringValueAndPositionExtractor
 
         preg_match(self::POSITION_REGEX, $identifierString, $positionMatches);
 
-        $position = 1;
+        $position = null;
 
         if (empty($positionMatches)) {
             $quotedValue = $identifierString;

@@ -46,7 +46,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
         $parentIdentifier = TestIdentifierFactory::createElementIdentifier(
             ValueTypes::CSS_SELECTOR,
             '.form',
-            1,
+            null,
             'form'
         );
 
@@ -72,8 +72,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                     new Uri('http://example.com/'),
                     new IdentifierCollection([
                         'css-selector' => (new ElementIdentifier(
-                            LiteralValue::createCssSelectorValue('.selector'),
-                            1
+                            LiteralValue::createCssSelectorValue('.selector')
                         ))->withName('css-selector'),
                     ])
                 ),
@@ -93,7 +92,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                         'form_field' => TestIdentifierFactory::createElementIdentifier(
                             ValueTypes::CSS_SELECTOR,
                             '.field',
-                            1,
+                            null,
                             'form_field',
                             $parentIdentifier
                         ),

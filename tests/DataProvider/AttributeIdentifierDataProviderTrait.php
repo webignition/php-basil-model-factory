@@ -10,24 +10,27 @@ trait AttributeIdentifierDataProviderTrait
 {
     public function attributeIdentifierDataProvider(): array
     {
+        $cssSelectorElementIdentifier = new ElementIdentifier(
+            LiteralValue::createCssSelectorValue('.listed-item')
+        );
+
+        $cssSelectorElementIdentifierWithPosition1 = new ElementIdentifier(
+            LiteralValue::createCssSelectorValue('.listed-item'),
+            1
+        );
+
         return [
             'attribute identifier: css class selector, position: null' => [
                 'identifierString' => '".listed-item".attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.listed-item'),
-                        1
-                    ),
+                    $cssSelectorElementIdentifier,
                     'attribute_name'
                 ),
             ],
             'attribute identifier: css class selector; position: 1' => [
                 'identifierString' => '".listed-item":1.attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.listed-item'),
-                        1
-                    ),
+                    $cssSelectorElementIdentifierWithPosition1,
                     'attribute_name'
                 ),
             ],
@@ -44,10 +47,7 @@ trait AttributeIdentifierDataProviderTrait
             'attribute identifier: css class selector; position: first' => [
                 'identifierString' => '".listed-item":first.attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
-                    new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.listed-item'),
-                        1
-                    ),
+                    $cssSelectorElementIdentifierWithPosition1,
                     'attribute_name'
                 ),
             ],
@@ -65,8 +65,7 @@ trait AttributeIdentifierDataProviderTrait
                 'identifierString' => '"//*[@id="element-id"]".attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
                     new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//*[@id="element-id"]'),
-                        1
+                        LiteralValue::createXpathExpressionValue('//*[@id="element-id"]')
                     ),
                     'attribute_name'
                 ),
@@ -75,8 +74,7 @@ trait AttributeIdentifierDataProviderTrait
                 'identifierString' => '"//input[@type="submit"]".attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
                     new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
-                        1
+                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]')
                     ),
                     'attribute_name'
                 ),
