@@ -3,8 +3,8 @@
 namespace webignition\BasilModelFactory;
 
 use Nyholm\Psr7\Uri;
-use webignition\BasilModel\Identifier\IdentifierCollection;
-use webignition\BasilModel\Identifier\IdentifierInterface;
+use webignition\BasilModel\Identifier\ElementIdentifierCollection;
+use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
@@ -45,6 +45,23 @@ class PageFactory
 
         $uri = new Uri($uriString);
 
+        $elementIdentifiers = $this->createElementIdentifiers($elementData);
+        $elementIdentifiers = $this->resolveNonPositionedParentIdentifiers($elementIdentifiers);
+
+        return new Page($uri, $elementIdentifiers);
+    }
+
+    /**
+     * @param array $elementData
+     *
+     * @return ElementIdentifierCollection
+     *
+     * @throws InvalidPageElementIdentifierException
+     * @throws MalformedPageElementReferenceException
+     */
+    private function createElementIdentifiers(array $elementData): ElementIdentifierCollection
+    {
+        /** @var ElementIdentifierInterface[] $elementIdentifiers */
         $elementIdentifiers = [];
 
         foreach ($elementData as $elementName => $identifierString) {
@@ -58,11 +75,53 @@ class PageFactory
                 throw new InvalidPageElementIdentifierException($identifier);
             }
 
-            if ($identifier instanceof IdentifierInterface) {
+            if ($identifier instanceof ElementIdentifierInterface) {
                 $elementIdentifiers[$elementName] = $identifier;
             }
         }
 
-        return new Page($uri, new IdentifierCollection($elementIdentifiers));
+        return new ElementIdentifierCollection($elementIdentifiers);
+    }
+
+    /**
+     * @param ElementIdentifierCollection $elementIdentifiers
+     *
+     * @return ElementIdentifierCollection]
+     */
+    private function resolveNonPositionedParentIdentifiers(
+        ElementIdentifierCollection $elementIdentifiers
+    ): ElementIdentifierCollection {
+        foreach ($elementIdentifiers as $identifier) {
+            $isParentIdentifier = $this->isParentIdentifier($identifier, $elementIdentifiers);
+            $hasPosition = null !== $identifier->getPosition();
+
+            if ($isParentIdentifier && !$hasPosition) {
+                $elementIdentifiers = $elementIdentifiers->replace(
+                    $identifier,
+                    $identifier->withPosition(1)
+                );
+            }
+        }
+
+        $elementIdentifiers->rewind();
+
+        return $elementIdentifiers;
+    }
+
+    private function isParentIdentifier(
+        ElementIdentifierInterface $identifier,
+        ElementIdentifierCollection $elementIdentifiers
+    ): bool {
+        foreach ($elementIdentifiers as $elementIdentifier) {
+            if ($elementIdentifier instanceof ElementIdentifierInterface) {
+                $parentIdentifier = $elementIdentifier->getParentIdentifier();
+
+                if (null !== $parentIdentifier) {
+                    return $parentIdentifier === $identifier;
+                }
+            }
+        }
+
+        return false;
     }
 }
