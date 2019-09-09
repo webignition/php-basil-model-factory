@@ -12,11 +12,13 @@ use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\Value\XpathExpression;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 
@@ -50,7 +52,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionStringForClickActionDataProvider(): array
     {
-        $cssSelectorValue = LiteralValue::createCssSelectorValue('.selector');
+        $cssSelectorValue = new CssSelector('.selector');
         $cssSelectorIdentifier = new ElementIdentifier($cssSelectorValue);
 
         return [
@@ -123,7 +125,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionStringForSubmitActionDataProvider(): array
     {
-        $cssSelectorValue = LiteralValue::createCssSelectorValue('.selector');
+        $cssSelectorValue = new CssSelector('.selector');
         $cssSelectorIdentifier = new ElementIdentifier($cssSelectorValue);
 
         return [
@@ -196,7 +198,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionStringForWaitForActionDataProvider(): array
     {
-        $cssSelectorValue = LiteralValue::createCssSelectorValue('.selector');
+        $cssSelectorValue = new CssSelector('.selector');
         $cssSelectorIdentifier = new ElementIdentifier($cssSelectorValue);
 
         return [
@@ -282,11 +284,11 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
         return [
             'wait 1' => [
                 'actionString' => 'wait 1',
-                'expectedAction' => new WaitAction('wait 1', LiteralValue::createStringValue('1')),
+                'expectedAction' => new WaitAction('wait 1', new LiteralValue('1')),
             ],
             'wait 15' => [
                 'actionString' => 'wait 15',
-                'expectedAction' => new WaitAction('wait 15', LiteralValue::createStringValue('15')),
+                'expectedAction' => new WaitAction('wait 15', new LiteralValue('15')),
             ],
             'wait $data.name' => [
                 'actionString' => 'wait $data.name',
@@ -299,7 +301,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'wait no arguments' => [
                 'actionString' => 'wait',
-                'expectedAction' => new WaitAction('wait', LiteralValue::createStringValue('')),
+                'expectedAction' => new WaitAction('wait', new LiteralValue('')),
             ],
             'wait $env.DURATION' => [
                 'actionString' => 'wait $env.DURATION',
@@ -353,13 +355,13 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionStringForInputActionDataProvider(): array
     {
-        $cssSelectorValue = LiteralValue::createCssSelectorValue('.selector');
+        $cssSelectorValue = new CssSelector('.selector');
         $cssSelectorIdentifier = new ElementIdentifier($cssSelectorValue);
         $cssSelectorIdentifierWithPosition1 = new ElementIdentifier(
-            LiteralValue::createCssSelectorValue('.selector'),
+            new CssSelector('.selector'),
             1
         );
-        $scalarValue = LiteralValue::createStringValue('value');
+        $scalarValue = new LiteralValue('value');
 
         return [
             'css element selector, scalar value' => [
@@ -419,7 +421,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector":2 to "value"',
                     new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.selector'),
+                        new CssSelector('.selector'),
                         2
                     ),
                     $scalarValue,
@@ -440,7 +442,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector":last to "value"',
                     new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.selector'),
+                        new CssSelector('.selector'),
                         -1
                     ),
                     $scalarValue,
@@ -494,7 +496,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector" to "\"value\""',
                     $cssSelectorIdentifier,
-                    LiteralValue::createStringValue('"value"'),
+                    new LiteralValue('"value"'),
                     '".selector" to "\"value\""'
                 ),
             ],
@@ -503,9 +505,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector to value" to "value"',
                     new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.selector to value')
+                        new CssSelector('.selector to value')
                     ),
-                    LiteralValue::createStringValue('value'),
+                    new LiteralValue('value'),
                     '".selector to value" to "value"'
                 ),
             ],
@@ -514,9 +516,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set "//foo" to "value"',
                     new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//foo')
+                        new XpathExpression('//foo')
                     ),
-                    LiteralValue::createStringValue('value'),
+                    new LiteralValue('value'),
                     '"//foo" to "value"'
                 ),
             ],
@@ -525,9 +527,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set "//a[ends-with(@href to value, \".pdf\")]" to "value"',
                     new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//a[ends-with(@href to value, \".pdf\")]')
+                        new XpathExpression('//a[ends-with(@href to value, \".pdf\")]')
                     ),
-                    LiteralValue::createStringValue('value'),
+                    new LiteralValue('value'),
                     '"//a[ends-with(@href to value, \".pdf\")]" to "value"'
                 ),
             ],
@@ -563,9 +565,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector to value" "value"',
                     new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.selector to value')
+                        new CssSelector('.selector to value')
                     ),
-                    LiteralValue::createStringValue('value'),
+                    new LiteralValue('value'),
                     '".selector to value" "value"'
                 ),
             ],

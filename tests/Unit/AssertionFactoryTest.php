@@ -10,11 +10,13 @@ use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Value\AttributeValue;
+use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\Value\XpathExpression;
 use webignition\BasilModelFactory\AssertionFactory;
 
 class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
@@ -45,15 +47,15 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
     public function createFromAssertionString(): array
     {
         $cssSelectorIdentifier = new ElementIdentifier(
-            LiteralValue::createCssSelectorValue('.selector')
+            new CssSelector('.selector')
         );
 
         $cssSelectorIdentifierWithPosition1 = new ElementIdentifier(
-            LiteralValue::createCssSelectorValue('.selector'),
+            new CssSelector('.selector'),
             1
         );
 
-        $literalValue = LiteralValue::createStringValue('value');
+        $literalValue = new LiteralValue('value');
 
         $cssSelectorElementValue = new ElementValue($cssSelectorIdentifier);
         $cssSelectorWithPosition1ElementValue = new ElementValue($cssSelectorIdentifierWithPosition1);
@@ -82,7 +84,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAssertion' => new Assertion(
                     '".selector":2 is "value"',
                     new ElementValue(new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.selector'),
+                        new CssSelector('.selector'),
                         2
                     )),
                     AssertionComparisons::IS,
@@ -103,7 +105,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAssertion' => new Assertion(
                     '".selector":last is "value"',
                     new ElementValue(new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.selector'),
+                        new CssSelector('.selector'),
                         -1
                     )),
                     AssertionComparisons::IS,
@@ -116,7 +118,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector".attribute_name is "value"',
                     new AttributeValue(
                         new AttributeIdentifier(
-                            new ElementIdentifier(LiteralValue::createCssSelectorValue('.selector')),
+                            new ElementIdentifier(new CssSelector('.selector')),
                             'attribute_name'
                         )
                     ),
@@ -144,7 +146,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector":2.attribute_name is "value"',
                     new AttributeValue(
                         new AttributeIdentifier(
-                            new ElementIdentifier(LiteralValue::createCssSelectorValue('.selector'), 2),
+                            new ElementIdentifier(new CssSelector('.selector'), 2),
                             'attribute_name'
                         )
                     ),
@@ -172,7 +174,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector":last.attribute_name is "value"',
                     new AttributeValue(
                         new AttributeIdentifier(
-                            new ElementIdentifier(LiteralValue::createCssSelectorValue('.selector'), -1),
+                            new ElementIdentifier(new CssSelector('.selector'), -1),
                             'attribute_name'
                         )
                     ),
@@ -186,7 +188,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '"{{ reference }} .selector" is "value"',
                     new ElementValue(
                         new ElementIdentifier(
-                            LiteralValue::createCssSelectorValue('{{ reference }} .selector')
+                            new CssSelector('{{ reference }} .selector')
                         )
                     ),
                     AssertionComparisons::IS,
@@ -269,7 +271,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector".data-heading-title is $elements.element_name.attribute_name',
                     new AttributeValue(
                         new AttributeIdentifier(
-                            new ElementIdentifier(LiteralValue::createCssSelectorValue('.selector')),
+                            new ElementIdentifier(new CssSelector('.selector')),
                             'data-heading-title'
                         )
                     ),
@@ -288,7 +290,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" is "\"value\""',
                     $cssSelectorElementValue,
                     AssertionComparisons::IS,
-                    LiteralValue::createStringValue('"value"')
+                    new LiteralValue('"value"')
                 ),
             ],
             'css element selector, is, lacking value' => [
@@ -397,7 +399,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector is is-not exists not-exists includes excludes matches foo" is "value"',
                     new ElementValue(
                         new ElementIdentifier(
-                            LiteralValue::createCssSelectorValue(
+                            new CssSelector(
                                 '.selector is is-not exists not-exists includes excludes matches foo'
                             )
                         )
@@ -412,7 +414,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '"//foo" is "value"',
                     new ElementValue(
                         new ElementIdentifier(
-                            LiteralValue::createXpathExpressionValue('//foo')
+                            new XpathExpression('//foo')
                         )
                     ),
                     AssertionComparisons::IS,
@@ -426,7 +428,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '"//a[ends-with(@href is exists not-exists matches includes excludes, \".pdf\")]" is "value"',
                     new ElementValue(
                         new ElementIdentifier(
-                            LiteralValue::createXpathExpressionValue(
+                            new XpathExpression(
                                 '//a[ends-with(@href is exists not-exists matches includes excludes, \".pdf\")]'
                             )
                         )
@@ -474,7 +476,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                         'url'
                     ),
                     AssertionComparisons::IS,
-                    LiteralValue::createStringValue('http://example.com/')
+                    new LiteralValue('http://example.com/')
                 ),
             ],
             'browser object parameter, is, scalar value' => [
@@ -488,7 +490,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                         'size'
                     ),
                     AssertionComparisons::IS,
-                    LiteralValue::createStringValue('1024,768')
+                    new LiteralValue('1024,768')
                 ),
             ],
         ];

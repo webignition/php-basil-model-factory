@@ -20,6 +20,7 @@ use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
+use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectValue;
@@ -85,16 +86,16 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             'click ".selector"',
                             ActionTypes::CLICK,
                             new ElementIdentifier(
-                                LiteralValue::createCssSelectorValue('.selector')
+                                new CssSelector('.selector')
                             ),
                             '".selector"'
                         ),
                         new InputAction(
                             'set ".input" to "value"',
                             new ElementIdentifier(
-                                LiteralValue::createCssSelectorValue('.input')
+                                new CssSelector('.input')
                             ),
-                            LiteralValue::createStringValue('value'),
+                            new LiteralValue('value'),
                             '".input" to "value"'
                         )
                     ],
@@ -116,17 +117,17 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             '".selector" is "value"',
                             new ElementValue(
                                 new ElementIdentifier(
-                                    LiteralValue::createCssSelectorValue('.selector')
+                                    new CssSelector('.selector')
                                 )
                             ),
                             AssertionComparisons::IS,
-                            LiteralValue::createStringValue('value')
+                            new LiteralValue('value')
                         ),
                         new Assertion(
                             '".input" exists',
                             new ElementValue(
                                 new ElementIdentifier(
-                                    LiteralValue::createCssSelectorValue('.input')
+                                    new CssSelector('.input')
                                 )
                             ),
                             AssertionComparisons::EXISTS
@@ -257,7 +258,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                                 'click ".selector"',
                                 ActionTypes::CLICK,
                                 new ElementIdentifier(
-                                    LiteralValue::createCssSelectorValue('.selector')
+                                    new CssSelector('.selector')
                                 ),
                                 '".selector"'
                             ),
@@ -267,7 +268,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                                 '".selector" exists',
                                 new ElementValue(
                                     new ElementIdentifier(
-                                        LiteralValue::createCssSelectorValue('.selector')
+                                        new CssSelector('.selector')
                                     )
                                 ),
                                 AssertionComparisons::EXISTS

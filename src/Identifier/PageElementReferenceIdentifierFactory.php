@@ -4,19 +4,17 @@ namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\PageElementReference\PageElementReference;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
+use webignition\BasilModel\PageElementReference\PageElementReference as PageElementReferenceModel;
+use webignition\BasilModel\Value\PageElementReference as PageElementReferenceValue;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
-use webignition\BasilModelFactory\ValueFactory;
 
-class PageElementReferenceIdentifierFactory extends AbstractValueBasedIdentifierFactory implements
-    IdentifierTypeFactoryInterface
+class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInterface
 {
     public static function createFactory()
     {
-        return new PageElementReferenceIdentifierFactory(
-            ValueFactory::createFactory()
-        );
+        return new PageElementReferenceIdentifierFactory();
     }
 
     public function handles(string $identifierString): bool
@@ -42,12 +40,19 @@ class PageElementReferenceIdentifierFactory extends AbstractValueBasedIdentifier
         }
 
         $identifierString = trim($identifierString);
-        $pageElementReference = new PageElementReference($identifierString);
+        $pageElementReference = new PageElementReferenceModel($identifierString);
 
         if (!$pageElementReference->isValid()) {
             throw new MalformedPageElementReferenceException($pageElementReference);
         }
 
-        return $this->createForType($identifierString, IdentifierTypes::PAGE_ELEMENT_REFERENCE);
+        return new ReferenceIdentifier(
+            IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+            new PageElementReferenceValue(
+                $identifierString,
+                $pageElementReference->getImportName(),
+                $pageElementReference->getElementName()
+            )
+        );
     }
 }

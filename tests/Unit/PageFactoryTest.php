@@ -10,7 +10,7 @@ use webignition\BasilModel\Identifier\ElementIdentifierCollection;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilDataStructure\Page as PageData;
-use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\InvalidPageElementIdentifierException;
 use webignition\BasilModelFactory\PageFactory;
@@ -72,7 +72,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                     new Uri('http://example.com/'),
                     new ElementIdentifierCollection([
                         'css-selector' => (new ElementIdentifier(
-                            LiteralValue::createCssSelectorValue('.selector')
+                            new CssSelector('.selector')
                         ))->withName('css-selector'),
                     ])
                 ),

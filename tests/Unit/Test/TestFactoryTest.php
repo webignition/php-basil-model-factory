@@ -26,6 +26,7 @@ use webignition\BasilModel\Test\Configuration;
 use webignition\BasilModel\Test\Test;
 use webignition\BasilModel\Test\TestInterface;
 use webignition\BasilDataStructure\Test\Test as TestData;
+use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
@@ -136,7 +137,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                                 'url'
                             ),
                             AssertionComparisons::IS,
-                            LiteralValue::createStringValue('http://example.com')
+                            new LiteralValue('http://example.com')
                         ),
                     ]),
                     'query "example"' => new Step(
@@ -145,7 +146,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                                 'click ".form .submit"',
                                 ActionTypes::CLICK,
                                 new ElementIdentifier(
-                                    LiteralValue::createCssSelectorValue('.form .submit')
+                                    new CssSelector('.form .submit')
                                 ),
                                 '".form .submit"'
                             ),
@@ -160,7 +161,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                                     'title'
                                 ),
                                 AssertionComparisons::IS,
-                                LiteralValue::createStringValue('example - Example Domain')
+                                new LiteralValue('example - Example Domain')
                             ),
                         ]
                     ),
@@ -210,7 +211,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                                     'heading'
                                 ),
                                 AssertionComparisons::IS,
-                                LiteralValue::createStringValue('example')
+                                new LiteralValue('example')
                             ),
                         ]
                     ),

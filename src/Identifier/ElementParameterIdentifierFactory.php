@@ -4,17 +4,16 @@ namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
+use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
-use webignition\BasilModelFactory\ValueFactory;
+use webignition\BasilModelFactory\ValueTypes;
 
-class ElementParameterIdentifierFactory extends AbstractValueBasedIdentifierFactory implements
-    IdentifierTypeFactoryInterface
+class ElementParameterIdentifierFactory implements IdentifierTypeFactoryInterface
 {
     public static function createFactory()
     {
-        return new ElementParameterIdentifierFactory(
-            ValueFactory::createFactory()
-        );
+        return new ElementParameterIdentifierFactory();
     }
 
     public function handles(string $identifierString): bool
@@ -39,6 +38,15 @@ class ElementParameterIdentifierFactory extends AbstractValueBasedIdentifierFact
 
         $identifierString = trim($identifierString);
 
-        return $this->createForType($identifierString, IdentifierTypes::ELEMENT_PARAMETER);
+        $elementReferenceProperty = preg_replace(
+            '/^\$' . ValueTypes::TYPE_ELEMENT_PARAMETER . '\./',
+            '',
+            $identifierString
+        );
+
+        return new ReferenceIdentifier(
+            IdentifierTypes::ELEMENT_PARAMETER,
+            new ElementReference($identifierString, $elementReferenceProperty)
+        );
     }
 }
