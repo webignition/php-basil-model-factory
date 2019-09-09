@@ -10,14 +10,15 @@ use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
+use webignition\BasilModel\Value\AttributeReference;
 use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\DataParameter;
+use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
-use webignition\BasilModel\Value\ObjectNames;
-use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModel\Value\XpathExpression;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
@@ -82,10 +83,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'click page_import_name.elements.element_name',
                     ActionTypes::CLICK,
-                    new Identifier(
+                    new ReferenceIdentifier(
                         IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-                        new ObjectValue(
-                            ValueTypes::PAGE_ELEMENT_REFERENCE,
+                        new PageElementReference(
                             'page_import_name.elements.element_name',
                             'page_import_name',
                             'element_name'
@@ -99,14 +99,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'click $elements.name',
                     ActionTypes::CLICK,
-                    new Identifier(
+                    new ReferenceIdentifier(
                         IdentifierTypes::ELEMENT_PARAMETER,
-                        new ObjectValue(
-                            ValueTypes::ELEMENT_PARAMETER,
-                            '$elements.name',
-                            ObjectNames::ELEMENT,
-                            'name'
-                        )
+                        new ElementReference('$elements.name', 'name')
                     ),
                     '$elements.name'
                 ),
@@ -155,10 +150,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'submit page_import_name.elements.element_name',
                     ActionTypes::SUBMIT,
-                    new Identifier(
+                    new ReferenceIdentifier(
                         IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-                        new ObjectValue(
-                            ValueTypes::PAGE_ELEMENT_REFERENCE,
+                        new PageElementReference(
                             'page_import_name.elements.element_name',
                             'page_import_name',
                             'element_name'
@@ -172,14 +166,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'submit $elements.name',
                     ActionTypes::SUBMIT,
-                    new Identifier(
+                    new ReferenceIdentifier(
                         IdentifierTypes::ELEMENT_PARAMETER,
-                        new ObjectValue(
-                            ValueTypes::ELEMENT_PARAMETER,
-                            '$elements.name',
-                            ObjectNames::ELEMENT,
-                            'name'
-                        )
+                        new ElementReference('$elements.name', 'name')
                     ),
                     '$elements.name'
                 ),
@@ -228,10 +217,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'wait-for page_import_name.elements.element_name',
                     ActionTypes::WAIT_FOR,
-                    new Identifier(
+                    new ReferenceIdentifier(
                         IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-                        new ObjectValue(
-                            ValueTypes::PAGE_ELEMENT_REFERENCE,
+                        new PageElementReference(
                             'page_import_name.elements.element_name',
                             'page_import_name',
                             'element_name'
@@ -245,14 +233,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'wait-for $elements.name',
                     ActionTypes::WAIT_FOR,
-                    new Identifier(
+                    new ReferenceIdentifier(
                         IdentifierTypes::ELEMENT_PARAMETER,
-                        new ObjectValue(
-                            ValueTypes::ELEMENT_PARAMETER,
-                            '$elements.name',
-                            ObjectNames::ELEMENT,
-                            'name'
-                        )
+                        new ElementReference('$elements.name', 'name')
                     ),
                     '$elements.name'
                 ),
@@ -292,10 +275,8 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'wait $data.name' => [
                 'actionString' => 'wait $data.name',
-                'expectedAction' => new WaitAction('wait $data.name', new ObjectValue(
-                    ValueTypes::DATA_PARAMETER,
+                'expectedAction' => new WaitAction('wait $data.name', new DataParameter(
                     '$data.name',
-                    ObjectNames::DATA,
                     'name'
                 )),
             ],
@@ -377,10 +358,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set page_import_name.elements.element_name to "value"',
                 'expectedAction' => new InputAction(
                     'set page_import_name.elements.element_name to "value"',
-                    new Identifier(
+                    new ReferenceIdentifier(
                         IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-                        new ObjectValue(
-                            ValueTypes::PAGE_ELEMENT_REFERENCE,
+                        new PageElementReference(
                             'page_import_name.elements.element_name',
                             'page_import_name',
                             'element_name'
@@ -394,14 +374,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set $elements.element_name to "value"',
                 'expectedAction' => new InputAction(
                     'set $elements.element_name to "value"',
-                    new Identifier(
+                    new ReferenceIdentifier(
                         IdentifierTypes::ELEMENT_PARAMETER,
-                        new ObjectValue(
-                            ValueTypes::ELEMENT_PARAMETER,
-                            '$elements.element_name',
-                            ObjectNames::ELEMENT,
-                            'element_name'
-                        )
+                        new ElementReference('$elements.element_name', 'element_name')
                     ),
                     $scalarValue,
                     '$elements.element_name to "value"'
@@ -454,12 +429,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector" to $data.name',
                     $cssSelectorIdentifier,
-                    new ObjectValue(
-                        ValueTypes::DATA_PARAMETER,
-                        '$data.name',
-                        ObjectNames::DATA,
-                        'name'
-                    ),
+                    new DataParameter('$data.name', 'name'),
                     '".selector" to $data.name'
                 ),
             ],
@@ -468,12 +438,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector" to $elements.element_name',
                     $cssSelectorIdentifier,
-                    new ObjectValue(
-                        ValueTypes::ELEMENT_PARAMETER,
-                        '$elements.element_name',
-                        ObjectNames::ELEMENT,
-                        'element_name'
-                    ),
+                    new ElementReference('$elements.element_name', 'element_name'),
                     '".selector" to $elements.element_name'
                 ),
             ],
@@ -482,10 +447,8 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector" to $elements.element_name.attribute_name',
                     $cssSelectorIdentifier,
-                    new ObjectValue(
-                        ValueTypes::ATTRIBUTE_PARAMETER,
+                    new AttributeReference(
                         '$elements.element_name.attribute_name',
-                        ObjectNames::ELEMENT,
                         'element_name.attribute_name'
                     ),
                     '".selector" to $elements.element_name.attribute_name'
