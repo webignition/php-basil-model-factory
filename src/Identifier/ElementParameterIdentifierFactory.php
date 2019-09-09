@@ -44,8 +44,12 @@ class ElementParameterIdentifierFactory implements IdentifierTypeFactoryInterfac
             $identifierString
         );
 
+        $identifierType = 0 === substr_count($elementReferenceProperty, '.')
+            ? IdentifierTypes::ELEMENT_PARAMETER
+            : IdentifierTypes::ATTRIBUTE;
+
         return new ReferenceIdentifier(
-            IdentifierTypes::ELEMENT_PARAMETER,
+            $identifierType,
             new ElementReference($identifierString, $elementReferenceProperty)
         );
     }

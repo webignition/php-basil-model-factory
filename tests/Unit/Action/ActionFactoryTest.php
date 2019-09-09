@@ -608,6 +608,10 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set invalid-page-element-reference to "value"',
                 'expectedExceptionMessage' => 'Malformed page element reference "invalid-page-element-reference"',
             ],
+            'set attribute' => [
+                'actionString' => 'set $elements.element.attribute to "value"',
+                'expectedExceptionMessage' => 'Malformed page element reference "$elements.element.attribute"',
+            ],
             'set page object property' => [
                 'actionString' => 'set $page.title to "value"',
                 'expectedExceptionMessage' => 'Malformed page element reference "$page.title"',
