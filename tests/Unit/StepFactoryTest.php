@@ -14,17 +14,17 @@ use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
+use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\LiteralValue;
-use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilDataStructure\Step as StepData;
+use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\StepFactory;
 
@@ -85,16 +85,16 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             'click ".selector"',
                             ActionTypes::CLICK,
                             new ElementIdentifier(
-                                LiteralValue::createCssSelectorValue('.selector')
+                                new CssSelector('.selector')
                             ),
                             '".selector"'
                         ),
                         new InputAction(
                             'set ".input" to "value"',
                             new ElementIdentifier(
-                                LiteralValue::createCssSelectorValue('.input')
+                                new CssSelector('.input')
                             ),
-                            LiteralValue::createStringValue('value'),
+                            new LiteralValue('value'),
                             '".input" to "value"'
                         )
                     ],
@@ -116,17 +116,17 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             '".selector" is "value"',
                             new ElementValue(
                                 new ElementIdentifier(
-                                    LiteralValue::createCssSelectorValue('.selector')
+                                    new CssSelector('.selector')
                                 )
                             ),
                             AssertionComparisons::IS,
-                            LiteralValue::createStringValue('value')
+                            new LiteralValue('value')
                         ),
                         new Assertion(
                             '".input" exists',
                             new ElementValue(
                                 new ElementIdentifier(
-                                    LiteralValue::createCssSelectorValue('.input')
+                                    new CssSelector('.input')
                                 )
                             ),
                             AssertionComparisons::EXISTS
@@ -148,10 +148,9 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         new InteractionAction(
                             'click page_import_name.elements.element_name',
                             ActionTypes::CLICK,
-                            new Identifier(
+                            new ReferenceIdentifier(
                                 IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-                                new ObjectValue(
-                                    ValueTypes::PAGE_ELEMENT_REFERENCE,
+                                new PageElementReference(
                                     'page_import_name.elements.element_name',
                                     'page_import_name',
                                     'element_name'
@@ -163,8 +162,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     [
                         new Assertion(
                             'page_import_name.elements.element_name exists',
-                            new ObjectValue(
-                                ValueTypes::PAGE_ELEMENT_REFERENCE,
+                            new PageElementReference(
                                 'page_import_name.elements.element_name',
                                 'page_import_name',
                                 'element_name'
@@ -228,10 +226,9 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     'import_name',
                     ''
                 ))->withIdentifierCollection(new IdentifierCollection([
-                    (new Identifier(
+                    (new ReferenceIdentifier(
                         IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-                        new ObjectValue(
-                            ValueTypes::PAGE_ELEMENT_REFERENCE,
+                        new PageElementReference(
                             'page_import_name.elements.heading',
                             'page_import_name',
                             'heading'
@@ -257,7 +254,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                                 'click ".selector"',
                                 ActionTypes::CLICK,
                                 new ElementIdentifier(
-                                    LiteralValue::createCssSelectorValue('.selector')
+                                    new CssSelector('.selector')
                                 ),
                                 '".selector"'
                             ),
@@ -267,7 +264,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                                 '".selector" exists',
                                 new ElementValue(
                                     new ElementIdentifier(
-                                        LiteralValue::createCssSelectorValue('.selector')
+                                        new CssSelector('.selector')
                                     )
                                 ),
                                 AssertionComparisons::EXISTS

@@ -4,18 +4,19 @@ namespace webignition\BasilModelFactory\Tests\DataProvider;
 
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\XpathExpression;
 
 trait AttributeIdentifierDataProviderTrait
 {
     public function attributeIdentifierDataProvider(): array
     {
         $cssSelectorElementIdentifier = new ElementIdentifier(
-            LiteralValue::createCssSelectorValue('.listed-item')
+            new CssSelector('.listed-item')
         );
 
         $cssSelectorElementIdentifierWithPosition1 = new ElementIdentifier(
-            LiteralValue::createCssSelectorValue('.listed-item'),
+            new CssSelector('.listed-item'),
             1
         );
 
@@ -38,7 +39,7 @@ trait AttributeIdentifierDataProviderTrait
                 'identifierString' => '".listed-item":-1.attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
                     new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.listed-item'),
+                        new CssSelector('.listed-item'),
                         -1
                     ),
                     'attribute_name'
@@ -55,7 +56,7 @@ trait AttributeIdentifierDataProviderTrait
                 'identifierString' => '".listed-item":last.attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
                     new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.listed-item'),
+                        new CssSelector('.listed-item'),
                         -1
                     ),
                     'attribute_name'
@@ -65,7 +66,7 @@ trait AttributeIdentifierDataProviderTrait
                 'identifierString' => '"//*[@id="element-id"]".attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
                     new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//*[@id="element-id"]')
+                        new XpathExpression('//*[@id="element-id"]')
                     ),
                     'attribute_name'
                 ),
@@ -74,7 +75,7 @@ trait AttributeIdentifierDataProviderTrait
                 'identifierString' => '"//input[@type="submit"]".attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
                     new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]')
+                        new XpathExpression('//input[@type="submit"]')
                     ),
                     'attribute_name'
                 ),
@@ -83,7 +84,7 @@ trait AttributeIdentifierDataProviderTrait
                 'identifierString' => '"//input[@type="submit"]":1.attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
                     new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
+                        new XpathExpression('//input[@type="submit"]'),
                         1
                     ),
                     'attribute_name'
@@ -93,7 +94,7 @@ trait AttributeIdentifierDataProviderTrait
                 'identifierString' => '"//input[@type="submit"]":-1.attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
                     new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
+                        new XpathExpression('//input[@type="submit"]'),
                         -1
                     ),
                     'attribute_name'
@@ -103,7 +104,7 @@ trait AttributeIdentifierDataProviderTrait
                 'identifierString' => '"//input[@type="submit"]":first.attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
                     new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
+                        new XpathExpression('//input[@type="submit"]'),
                         1
                     ),
                     'attribute_name'
@@ -113,7 +114,7 @@ trait AttributeIdentifierDataProviderTrait
                 'identifierString' => '"//input[@type="submit"]":last.attribute_name',
                 'expectedIdentifier' => new AttributeIdentifier(
                     new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//input[@type="submit"]'),
+                        new XpathExpression('//input[@type="submit"]'),
                         -1
                     ),
                     'attribute_name'

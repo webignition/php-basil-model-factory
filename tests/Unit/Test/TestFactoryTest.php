@@ -19,16 +19,17 @@ use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Test\Configuration;
 use webignition\BasilModel\Test\Test;
 use webignition\BasilModel\Test\TestInterface;
 use webignition\BasilDataStructure\Test\Test as TestData;
+use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\LiteralValue;
-use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\Value\PageElementReference;
+use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\Test\TestFactory;
 
@@ -129,14 +130,9 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                     'verify page is open' => new Step([], [
                         new Assertion(
                             '$page.url is "http://example.com"',
-                            new ObjectValue(
-                                ValueTypes::PAGE_OBJECT_PROPERTY,
-                                '$page.url',
-                                'page',
-                                'url'
-                            ),
+                            new PageProperty('$page.url', 'url'),
                             AssertionComparisons::IS,
-                            LiteralValue::createStringValue('http://example.com')
+                            new LiteralValue('http://example.com')
                         ),
                     ]),
                     'query "example"' => new Step(
@@ -145,7 +141,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                                 'click ".form .submit"',
                                 ActionTypes::CLICK,
                                 new ElementIdentifier(
-                                    LiteralValue::createCssSelectorValue('.form .submit')
+                                    new CssSelector('.form .submit')
                                 ),
                                 '".form .submit"'
                             ),
@@ -153,14 +149,9 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                         [
                             new Assertion(
                                 '$page.title is "example - Example Domain"',
-                                new ObjectValue(
-                                    ValueTypes::PAGE_OBJECT_PROPERTY,
-                                    '$page.title',
-                                    'page',
-                                    'title'
-                                ),
+                                new PageProperty('$page.title', 'title'),
                                 AssertionComparisons::IS,
-                                LiteralValue::createStringValue('example - Example Domain')
+                                new LiteralValue('example - Example Domain')
                             ),
                         ]
                     ),
@@ -188,10 +179,9 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             new InteractionAction(
                                 'click page_import_name.elements.button',
                                 ActionTypes::CLICK,
-                                new Identifier(
+                                new ReferenceIdentifier(
                                     IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-                                    new ObjectValue(
-                                        ValueTypes::PAGE_ELEMENT_REFERENCE,
+                                    new PageElementReference(
                                         'page_import_name.elements.button',
                                         'page_import_name',
                                         'button'
@@ -203,14 +193,13 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                         [
                             new Assertion(
                                 'page_import_name.elements.heading is "example"',
-                                new ObjectValue(
-                                    ValueTypes::PAGE_ELEMENT_REFERENCE,
+                                new PageElementReference(
                                     'page_import_name.elements.heading',
                                     'page_import_name',
                                     'heading'
                                 ),
                                 AssertionComparisons::IS,
-                                LiteralValue::createStringValue('example')
+                                new LiteralValue('example')
                             ),
                         ]
                     ),
@@ -344,10 +333,9 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             'step_import_name',
                             ''
                         ))->withIdentifierCollection(new IdentifierCollection([
-                            (new Identifier(
+                            (new ReferenceIdentifier(
                                 IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-                                new ObjectValue(
-                                    ValueTypes::PAGE_ELEMENT_REFERENCE,
+                                new PageElementReference(
                                     'page_import_name.elements.heading',
                                     'page_import_name',
                                     'heading'

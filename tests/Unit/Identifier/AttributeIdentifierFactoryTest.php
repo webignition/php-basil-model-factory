@@ -14,21 +14,23 @@ use webignition\BasilModelFactory\Tests\DataProvider\ElementParameterDataProvide
 use webignition\BasilModelFactory\Tests\DataProvider\ElementParameterIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\PageElementReferenceDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\PageElementReferenceIdentifierDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\UnhandledIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\XpathExpressionDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\XpathExpressionIdentifierDataProviderTrait;
 
 class AttributeIdentifierFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    use CssSelectorDataProviderTrait;
-    use XpathExpressionDataProviderTrait;
-    use ElementParameterDataProviderTrait;
-    use PageElementReferenceDataProviderTrait;
-    use AttributeIdentifierStringDataProviderTrait;
-    use CssSelectorIdentifierDataProviderTrait;
-    use XpathExpressionIdentifierDataProviderTrait;
-    use ElementParameterIdentifierDataProviderTrait;
-    use PageElementReferenceIdentifierDataProviderTrait;
     use AttributeIdentifierDataProviderTrait;
+    use AttributeIdentifierStringDataProviderTrait;
+    use CssSelectorDataProviderTrait;
+    use CssSelectorIdentifierDataProviderTrait;
+    use ElementParameterDataProviderTrait;
+    use ElementParameterIdentifierDataProviderTrait;
+    use PageElementReferenceDataProviderTrait;
+    use PageElementReferenceIdentifierDataProviderTrait;
+    use UnhandledIdentifierDataProviderTrait;
+    use XpathExpressionDataProviderTrait;
+    use XpathExpressionIdentifierDataProviderTrait;
 
     /**
      * @var AttributeIdentifierFactory
@@ -55,6 +57,7 @@ class AttributeIdentifierFactoryTest extends \PHPUnit\Framework\TestCase
      * @dataProvider xpathExpressionDataProvider
      * @dataProvider elementParameterDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider unhandledIdentifierDataProvider
      */
     public function testHandlesDoesNotHandle(string $identifierString)
     {

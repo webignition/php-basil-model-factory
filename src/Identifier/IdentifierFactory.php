@@ -99,11 +99,6 @@ class IdentifierFactory
     ]): ?IdentifierInterface
     {
         $identifierString = trim($identifierString);
-
-        if (empty($identifierString)) {
-            return null;
-        }
-
         $identifierTypeFactory = $this->findIdentifierTypeFactory($identifierString);
 
         if ($identifierTypeFactory instanceof IdentifierTypeFactoryInterface) {

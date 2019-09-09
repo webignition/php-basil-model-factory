@@ -2,10 +2,9 @@
 
 namespace webignition\BasilModelFactory\Tests\DataProvider;
 
-use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
+use webignition\BasilModel\Value\PageElementReference;
 
 trait PageElementReferenceIdentifierDataProviderTrait
 {
@@ -14,10 +13,9 @@ trait PageElementReferenceIdentifierDataProviderTrait
         return [
             'page model element reference' => [
                 'identifierString' => 'page_import_name.elements.element_name',
-                'expectedIdentifier' => new Identifier(
+                'expectedIdentifier' => new ReferenceIdentifier(
                     IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-                    new ObjectValue(
-                        ValueTypes::PAGE_ELEMENT_REFERENCE,
+                    new PageElementReference(
                         'page_import_name.elements.element_name',
                         'page_import_name',
                         'element_name'
