@@ -11,7 +11,6 @@ use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilDataStructure\Page as PageData;
 use webignition\BasilModel\Value\CssSelector;
-use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\InvalidPageElementIdentifierException;
 use webignition\BasilModelFactory\PageFactory;
 use webignition\BasilTestIdentifierFactory\TestIdentifierFactory;
@@ -44,8 +43,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
     public function createFromPageDataDataProvider(): array
     {
         $parentIdentifier = TestIdentifierFactory::createElementIdentifier(
-            ValueTypes::CSS_SELECTOR,
-            '.form',
+            new CssSelector('.form'),
             1,
             'form'
         );
@@ -90,8 +88,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                     new ElementIdentifierCollection([
                         'form' => $parentIdentifier,
                         'form_field' => TestIdentifierFactory::createElementIdentifier(
-                            ValueTypes::CSS_SELECTOR,
-                            '.field',
+                            new CssSelector('.field'),
                             null,
                             'form_field',
                             $parentIdentifier
