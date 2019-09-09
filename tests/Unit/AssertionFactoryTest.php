@@ -9,13 +9,16 @@ use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Value\AttributeReference;
 use webignition\BasilModel\Value\AttributeValue;
+use webignition\BasilModel\Value\BrowserProperty;
 use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\DataParameter;
+use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\LiteralValue;
-use webignition\BasilModel\Value\ObjectNames;
-use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\Value\PageElementReference;
+use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModel\Value\XpathExpression;
 use webignition\BasilModelFactory\AssertionFactory;
 
@@ -201,12 +204,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" is $data.name',
                     $cssSelectorElementValue,
                     AssertionComparisons::IS,
-                    new ObjectValue(
-                        ValueTypes::DATA_PARAMETER,
-                        '$data.name',
-                        'data',
-                        'name'
-                    )
+                    new DataParameter('$data.name', 'name')
                 ),
             ],
             'css element selector, is, element parameter value' => [
@@ -215,12 +213,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" is $elements.name',
                     $cssSelectorElementValue,
                     AssertionComparisons::IS,
-                    new ObjectValue(
-                        ValueTypes::ELEMENT_PARAMETER,
-                        '$elements.name',
-                        'elements',
-                        'name'
-                    )
+                    new ElementReference('$elements.name', 'name')
                 ),
             ],
             'css element selector, is, page object value' => [
@@ -229,12 +222,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" is $page.url',
                     $cssSelectorElementValue,
                     AssertionComparisons::IS,
-                    new ObjectValue(
-                        ValueTypes::PAGE_OBJECT_PROPERTY,
-                        '$page.url',
-                        'page',
-                        'url'
-                    )
+                    new PageProperty('$page.url', 'url')
                 ),
             ],
             'css element selector, is, browser object value' => [
@@ -243,12 +231,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" is $browser.size',
                     $cssSelectorElementValue,
                     AssertionComparisons::IS,
-                    new ObjectValue(
-                        ValueTypes::BROWSER_OBJECT_PROPERTY,
-                        '$browser.size',
-                        'browser',
-                        'size'
-                    )
+                    new BrowserProperty('$browser.size', 'size')
                 ),
             ],
             'css element selector, is, attribute parameter' => [
@@ -257,10 +240,8 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" is $elements.element_name.attribute_name',
                     $cssSelectorElementValue,
                     AssertionComparisons::IS,
-                    new ObjectValue(
-                        ValueTypes::ATTRIBUTE_PARAMETER,
+                    new AttributeReference(
                         '$elements.element_name.attribute_name',
-                        ObjectNames::ELEMENT,
                         'element_name.attribute_name'
                     )
                 ),
@@ -276,10 +257,8 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                         )
                     ),
                     AssertionComparisons::IS,
-                    new ObjectValue(
-                        ValueTypes::ATTRIBUTE_PARAMETER,
+                    new AttributeReference(
                         '$elements.element_name.attribute_name',
-                        ObjectNames::ELEMENT,
                         'element_name.attribute_name'
                     )
                 ),
@@ -441,8 +420,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'assertionString' => 'page_import_name.elements.element_name is "value"',
                 'expectedAssertion' => new Assertion(
                     'page_import_name.elements.element_name is "value"',
-                    new ObjectValue(
-                        ValueTypes::PAGE_ELEMENT_REFERENCE,
+                    new PageElementReference(
                         'page_import_name.elements.element_name',
                         'page_import_name',
                         'element_name'
@@ -455,12 +433,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => '$elements.name is "value"',
                 'expectedAssertion' => new Assertion(
                     '$elements.name is "value"',
-                    new ObjectValue(
-                        ValueTypes::ELEMENT_PARAMETER,
-                        '$elements.name',
-                        ObjectNames::ELEMENT,
-                        'name'
-                    ),
+                    new ElementReference('$elements.name', 'name'),
                     AssertionComparisons::IS,
                     $literalValue
                 ),
@@ -469,12 +442,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => '$page.url is "http://example.com/"',
                 'expectedAssertion' => new Assertion(
                     '$page.url is "http://example.com/"',
-                    new ObjectValue(
-                        ValueTypes::PAGE_OBJECT_PROPERTY,
-                        '$page.url',
-                        ObjectNames::PAGE,
-                        'url'
-                    ),
+                    new PageProperty('$page.url', 'url'),
                     AssertionComparisons::IS,
                     new LiteralValue('http://example.com/')
                 ),
@@ -483,12 +451,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => '$browser.size is 1024,768',
                 'expectedAssertion' => new Assertion(
                     '$browser.size is 1024,768',
-                    new ObjectValue(
-                        ValueTypes::BROWSER_OBJECT_PROPERTY,
-                        '$browser.size',
-                        ObjectNames::BROWSER,
-                        'size'
-                    ),
+                    new BrowserProperty('$browser.size', 'size'),
                     AssertionComparisons::IS,
                     new LiteralValue('1024,768')
                 ),
