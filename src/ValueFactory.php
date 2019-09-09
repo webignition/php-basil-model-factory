@@ -133,7 +133,7 @@ class ValueFactory
         return str_replace('\\"', '"', $valueString);
     }
 
-    private function createObjectValue(string $type, string $reference, string $value): ?ValueInterface
+    private function createObjectValue(string $type, string $reference, string $value): ValueInterface
     {
         if (ValueTypes::TYPE_DATA_PARAMETER === $type) {
             return new DataParameter($reference, $value);
@@ -155,11 +155,7 @@ class ValueFactory
             return new BrowserProperty($reference, $value);
         }
 
-        if (ValueTypes::TYPE_ENVIRONMENT_PARAMETER === $type) {
-            return $this->createEnvironmentValue($reference, $value);
-        }
-
-        return null;
+        return $this->createEnvironmentValue($reference, $value);
     }
 
     private function createEnvironmentValue(string $valueString, string $propertyName)

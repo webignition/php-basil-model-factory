@@ -38,7 +38,7 @@ class ElementParameterIdentifierFactory implements IdentifierTypeFactoryInterfac
 
         $identifierString = trim($identifierString);
 
-        $elementReferenceProperty = preg_replace(
+        $elementReferenceProperty = (string) preg_replace(
             '/^\$' . ValueTypes::TYPE_ELEMENT_PARAMETER . '\./',
             '',
             $identifierString
