@@ -3,15 +3,18 @@
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
-use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Value\ElementValueInterface;
+use webignition\BasilModel\Value\AttributeReference;
+use webignition\BasilModel\Value\BrowserProperty;
+use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\DataParameter;
+use webignition\BasilModel\Value\ElementExpressionInterface;
+use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
-use webignition\BasilModel\Value\LiteralValueInterface;
-use webignition\BasilModel\Value\ObjectNames;
-use webignition\BasilModel\Value\ObjectValue;
+use webignition\BasilModel\Value\PageElementReference;
+use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModel\Value\ValueInterface;
-use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\Value\XpathExpression;
 use webignition\BasilModelFactory\ValueFactory;
 
 class ValueFactoryTest extends \PHPUnit\Framework\TestCase
@@ -45,73 +48,59 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
         return [
             'empty' => [
                 'valueString' => '',
-                'expectedValue' => LiteralValue::createStringValue(''),
+                'expectedValue' => new LiteralValue(''),
             ],
             'quoted string' => [
                 'valueString' => '"value"',
-                'expectedValue' => LiteralValue::createStringValue('value'),
+                'expectedValue' => new LiteralValue('value'),
             ],
             'unquoted string' => [
                 'valueString' => 'value',
-                'expectedValue' => LiteralValue::createStringValue('value'),
+                'expectedValue' => new LiteralValue('value'),
             ],
             'quoted string wrapped with escaped quotes' => [
                 'valueString' => '"\"value\""',
-                'expectedValue' => LiteralValue::createStringValue('"value"'),
+                'expectedValue' => new LiteralValue('"value"'),
             ],
             'quoted string containing escaped quotes' => [
                 'valueString' => '"v\"alu\"e"',
-                'expectedValue' => LiteralValue::createStringValue('v"alu"e'),
+                'expectedValue' => new LiteralValue('v"alu"e'),
             ],
             'data parameter' => [
                 'valueString' => '$data.data_name',
-                'expectedValue' => new ObjectValue(
-                    ValueTypes::DATA_PARAMETER,
-                    '$data.data_name',
-                    ObjectNames::DATA,
-                    'data_name'
-                ),
+                'expectedValue' => new DataParameter('$data.data_name', 'data_name'),
             ],
             'element parameter' => [
                 'valueString' => '$elements.element_name',
-                'expectedValue' => new ObjectValue(
-                    ValueTypes::ELEMENT_PARAMETER,
+                'expectedValue' => new ElementReference(
                     '$elements.element_name',
-                    ObjectNames::ELEMENT,
                     'element_name'
                 ),
             ],
             'attribute parameter' => [
                 'valueString' => '$elements.element_name.attribute_name',
-                'expectedValue' => new ObjectValue(
-                    ValueTypes::ATTRIBUTE_PARAMETER,
+                'expectedValue' => new AttributeReference(
                     '$elements.element_name.attribute_name',
-                    ObjectNames::ELEMENT,
                     'element_name.attribute_name'
                 ),
             ],
             'page property' => [
                 'valueString' => '$page.url',
-                'expectedValue' => new ObjectValue(
-                    ValueTypes::PAGE_OBJECT_PROPERTY,
+                'expectedValue' => new PageProperty(
                     '$page.url',
-                    ObjectNames::PAGE,
                     'url'
                 ),
             ],
             'browser property' => [
                 'valueString' => '$browser.size',
-                'expectedValue' => new ObjectValue(
-                    ValueTypes::BROWSER_OBJECT_PROPERTY,
+                'expectedValue' => new BrowserProperty(
                     '$browser.size',
-                    ObjectNames::BROWSER,
                     'size'
                 ),
             ],
             'page element reference' => [
                 'valueString' => 'page_import_name.elements.element_name',
-                'expectedValue' => new ObjectValue(
-                    ValueTypes::PAGE_ELEMENT_REFERENCE,
+                'expectedValue' => new PageElementReference(
                     'page_import_name.elements.element_name',
                     'page_import_name',
                     'element_name'
@@ -119,11 +108,11 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'page element reference string' => [
                 'valueString' => '"page_import_name.elements.element_name"',
-                'expectedValue' => LiteralValue::createStringValue('page_import_name.elements.element_name'),
+                'expectedValue' => new LiteralValue('page_import_name.elements.element_name'),
             ],
             'page element reference string with escaped quotes' => [
                 'valueString' => '"\"page_import_name.elements.element_name\""',
-                'expectedValue' => LiteralValue::createStringValue('"page_import_name.elements.element_name"'),
+                'expectedValue' => new LiteralValue('"page_import_name.elements.element_name"'),
             ],
             'environment parameter, no default' => [
                 'valueString' => '$env.KEY',
@@ -166,7 +155,7 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'malformed page element reference' => [
                 'valueString' => 'page_import_name.foo.element_name',
-                'expectedValue' => LiteralValue::createStringValue('page_import_name.foo.element_name'),
+                'expectedValue' => new LiteralValue('page_import_name.foo.element_name'),
             ],
         ];
     }
@@ -174,11 +163,13 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider createFromIdentifierStringDataProvider
      */
-    public function testCreateFromIdentifierString(string $identifierString, LiteralValueInterface $expectedValue)
-    {
-        $value = $this->valueFactory->createFromIdentifierString($identifierString);
+    public function testCreateFromIdentifierString(
+        string $identifierString,
+        ?ElementExpressionInterface $expectedElementExpression
+    ) {
+        $elementExpression = $this->valueFactory->createFromIdentifierString($identifierString);
 
-        $this->assertEquals($expectedValue, $value);
+        $this->assertEquals($expectedElementExpression, $elementExpression);
     }
 
     public function createFromIdentifierStringDataProvider(): array
@@ -186,19 +177,19 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
         return [
             'empty' => [
                 'identifierString' => '',
-                'expectedValue' => LiteralValue::createStringValue(''),
+                'expectedElementExpression' => null,
             ],
             'css selector' => [
                 'identifierString' => '".selector"',
-                'expectedValue' => LiteralValue::createCssSelectorValue('.selector'),
+                'expectedElementExpression' => new CssSelector('.selector'),
             ],
             'xpath expression' => [
                 'identifierString' => '"//foo"',
-                'expectedValue' => LiteralValue::createXpathExpressionValue('//foo'),
+                'expectedElementExpression' => new XpathExpression('//foo'),
             ],
             'non-selector' => [
                 'identifierString' => 'value',
-                'expectedValue' => LiteralValue::createStringValue('value'),
+                'expectedElementExpression' => null,
             ],
         ];
     }
