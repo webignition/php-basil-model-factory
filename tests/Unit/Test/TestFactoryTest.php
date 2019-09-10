@@ -18,7 +18,6 @@ use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
@@ -179,8 +178,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             new InteractionAction(
                                 'click page_import_name.elements.button',
                                 ActionTypes::CLICK,
-                                new ReferenceIdentifier(
-                                    IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+                                ReferenceIdentifier::createPageElementReferenceIdentifier(
                                     new PageElementReference(
                                         'page_import_name.elements.button',
                                         'page_import_name',
@@ -333,8 +331,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             'step_import_name',
                             ''
                         ))->withIdentifierCollection(new IdentifierCollection([
-                            (new ReferenceIdentifier(
-                                IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+                            (ReferenceIdentifier::createPageElementReferenceIdentifier(
                                 new PageElementReference(
                                     'page_import_name.elements.heading',
                                     'page_import_name',

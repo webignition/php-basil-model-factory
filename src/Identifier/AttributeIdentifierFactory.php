@@ -5,8 +5,8 @@ namespace webignition\BasilModelFactory\Identifier;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
+use webignition\BasilModelFactory\IdentifierTypes;
 
 class AttributeIdentifierFactory implements IdentifierTypeFactoryInterface
 {
@@ -30,7 +30,7 @@ class AttributeIdentifierFactory implements IdentifierTypeFactoryInterface
             return false;
         }
 
-        return IdentifierTypes::ATTRIBUTE === IdentifierTypeFinder::findType($identifierString);
+        return IdentifierTypes::ATTRIBUTE_REFERENCE === IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
     }
 
     public function create(string $identifierString): ?IdentifierInterface

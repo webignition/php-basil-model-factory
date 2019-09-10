@@ -3,17 +3,18 @@
 namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
+use webignition\BasilModel\Value\AttributeReference;
 use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
+use webignition\BasilModelFactory\IdentifierTypes;
 use webignition\BasilModelFactory\ValueTypes;
 
-class ElementParameterIdentifierFactory implements IdentifierTypeFactoryInterface
+class ElementReferenceIdentifierFactory implements IdentifierTypeFactoryInterface
 {
     public static function createFactory()
     {
-        return new ElementParameterIdentifierFactory();
+        return new ElementReferenceIdentifierFactory();
     }
 
     public function handles(string $identifierString): bool
@@ -22,7 +23,7 @@ class ElementParameterIdentifierFactory implements IdentifierTypeFactoryInterfac
             return false;
         }
 
-        return IdentifierTypeFinder::TYPE_ELEMENT_REFERENCE === IdentifierTypeFinder::findType($identifierString);
+        return IdentifierTypes::ELEMENT_REFERENCE === IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
     }
 
     /**
@@ -44,13 +45,14 @@ class ElementParameterIdentifierFactory implements IdentifierTypeFactoryInterfac
             $identifierString
         );
 
-        $identifierType = 0 === substr_count($elementReferenceProperty, '.')
-            ? IdentifierTypes::ELEMENT_PARAMETER
-            : IdentifierTypes::ATTRIBUTE;
+        if (0 === substr_count($elementReferenceProperty, '.')) {
+            return ReferenceIdentifier::createElementReferenceIdentifier(
+                new ElementReference($identifierString, $elementReferenceProperty)
+            );
+        }
 
-        return new ReferenceIdentifier(
-            $identifierType,
-            new ElementReference($identifierString, $elementReferenceProperty)
+        return ReferenceIdentifier::createAttributeReferenceIdentifier(
+            new AttributeReference($identifierString, $elementReferenceProperty)
         );
     }
 }

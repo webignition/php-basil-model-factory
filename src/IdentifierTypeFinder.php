@@ -2,7 +2,10 @@
 
 namespace webignition\BasilModelFactory;
 
-use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Identifier\ElementIdentifierInterface;
+use webignition\BasilModel\Identifier\IdentifierInterface;
+use webignition\BasilModel\Identifier\ReferenceIdentifierInterface;
+use webignition\BasilModel\Identifier\ReferenceIdentifierTypes;
 
 class IdentifierTypeFinder
 {
@@ -48,28 +51,49 @@ class IdentifierTypeFinder
         return self::isCssSelector($identifierString) || self::isXpathExpression($identifierString);
     }
 
-    public static function isAttributeIdentifier(string $identifierString): bool
+    public static function isAttributeReference(string $identifierString): bool
     {
         return 1 === preg_match(self::ATTRIBUTE_IDENTIFIER_REGEX, $identifierString);
     }
 
-    public static function isElementParameterReference(string $identifierString): bool
+    public static function isElementReference(string $identifierString): bool
     {
         return 1 === preg_match(self::ELEMENT_PARAMETER_REGEX, $identifierString);
     }
 
-    public static function findType(string $identifierString): string
+    public static function findTypeFromIdentifierString(string $identifierString): string
     {
         if (self::isElementIdentifier($identifierString)) {
             return IdentifierTypes::ELEMENT_SELECTOR;
         }
 
-        if (self::isElementParameterReference($identifierString)) {
-            return IdentifierTypes::ELEMENT_PARAMETER;
+        if (self::isElementReference($identifierString)) {
+            return IdentifierTypes::ELEMENT_REFERENCE;
         }
 
-        if (self::isAttributeIdentifier($identifierString)) {
-            return IdentifierTypes::ATTRIBUTE;
+        if (self::isAttributeReference($identifierString)) {
+            return IdentifierTypes::ATTRIBUTE_REFERENCE;
+        }
+
+        return IdentifierTypes::PAGE_ELEMENT_REFERENCE;
+    }
+
+    public static function findTypeFromIdentifier(IdentifierInterface $identifier): string
+    {
+        if ($identifier instanceof ElementIdentifierInterface) {
+            return IdentifierTypes::ELEMENT_SELECTOR;
+        }
+
+        if ($identifier instanceof ReferenceIdentifierInterface) {
+            $identifierType = $identifier->getType();
+
+            if (ReferenceIdentifierTypes::ELEMENT_REFERENCE === $identifierType) {
+                return IdentifierTypes::ELEMENT_REFERENCE;
+            }
+
+            if (ReferenceIdentifierTypes::ATTRIBUTE_REFERENCE === $identifierType) {
+                return IdentifierTypes::ATTRIBUTE_REFERENCE;
+            }
         }
 
         return IdentifierTypes::PAGE_ELEMENT_REFERENCE;
