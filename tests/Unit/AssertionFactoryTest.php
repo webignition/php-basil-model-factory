@@ -4,11 +4,17 @@
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
-use webignition\BasilModel\Assertion\Assertion;
-use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
+use webignition\BasilModel\Assertion\ExcludesAssertion;
+use webignition\BasilModel\Assertion\ExistsAssertion;
+use webignition\BasilModel\Assertion\IncludesAssertion;
+use webignition\BasilModel\Assertion\IsAssertion;
+use webignition\BasilModel\Assertion\IsNotAssertion;
+use webignition\BasilModel\Assertion\MatchesAssertion;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Value\AssertionExaminedValue;
+use webignition\BasilModel\Value\AssertionExpectedValue;
 use webignition\BasilModel\Value\AttributeReference;
 use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\BrowserProperty;
@@ -21,11 +27,13 @@ use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModel\Value\XpathExpression;
 use webignition\BasilModelFactory\AssertionFactory;
+use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
+use webignition\BasilModelFactory\Exception\InvalidComparisonException;
 
 class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var AssertionFactory
+     * @var \webignition\BasilModelFactory\AssertionFactory
      */
     private $assertionFactory;
 
@@ -49,411 +57,416 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromAssertionString(): array
     {
-        $cssSelectorIdentifier = new ElementIdentifier(
-            new CssSelector('.selector')
-        );
+        $cssSelector = new CssSelector('.selector');
+        $cssSelectorWithElementReference = new CssSelector('{{ reference }} .selector');
 
-        $cssSelectorIdentifierWithPosition1 = new ElementIdentifier(
-            new CssSelector('.selector'),
-            1
-        );
+        $cssIdentifier = new ElementIdentifier($cssSelector);
+        $cssIdentifierWithPosition1 = new ElementIdentifier($cssSelector, 1);
+        $cssIdentifierWithPosition2 = new ElementIdentifier($cssSelector, 2);
+        $cssIdentifierWithPositionMinus1 = new ElementIdentifier($cssSelector, -1);
+        $cssIdentifierWithElementReference = new ElementIdentifier($cssSelectorWithElementReference);
 
         $literalValue = new LiteralValue('value');
 
-        $cssSelectorElementValue = new ElementValue($cssSelectorIdentifier);
-        $cssSelectorWithPosition1ElementValue = new ElementValue($cssSelectorIdentifierWithPosition1);
+        $cssElementValue = new ElementValue($cssIdentifier);
+        $cssElementValueWithPosition1 = new ElementValue($cssIdentifierWithPosition1);
+        $cssElementValueWithPosition2 = new ElementValue($cssIdentifierWithPosition2);
+        $cssElementValueWithPositionMinus1 = new ElementValue($cssIdentifierWithPositionMinus1);
+        $cssElementValueWithElementReference = new ElementValue($cssIdentifierWithElementReference);
+
+        $cssSelectorAttributeValue = new AttributeValue(
+            new AttributeIdentifier($cssIdentifier, 'attribute_name')
+        );
+
+        $cssSelectorWithPosition1AttributeValue = new AttributeValue(
+            new AttributeIdentifier($cssIdentifierWithPosition1, 'attribute_name')
+        );
+
+        $cssSelectorWithPosition2AttributeValue = new AttributeValue(
+            new AttributeIdentifier($cssIdentifierWithPosition2, 'attribute_name')
+        );
+
+        $cssSelectorWithPositionMinus1AttributeValue = new AttributeValue(
+            new AttributeIdentifier($cssIdentifierWithPositionMinus1, 'attribute_name')
+        );
+
+        $cssSelectorExaminedValue = new AssertionExaminedValue($cssElementValue);
+        $literalExpectedValue = new AssertionExpectedValue($literalValue);
+        $emptyLiteralExpectedValue = new AssertionExpectedValue(
+            new LiteralValue('')
+        );
+
+        $cssSelectorWithPosition1ExaminedValue = new AssertionExaminedValue(
+            $cssElementValueWithPosition1
+        );
+
+        $cssSelectorWithPosition2ExaminedValue = new AssertionExaminedValue(
+            $cssElementValueWithPosition2
+        );
+
+        $cssSelectorWithPositionMinus1ExaminedValue = new AssertionExaminedValue(
+            $cssElementValueWithPositionMinus1
+        );
+
+        $cssSelectorWithElementReferenceExaminedValue = new AssertionExaminedValue(
+            $cssElementValueWithElementReference
+        );
+
+        $attributeValueExaminedValue = new AssertionExaminedValue($cssSelectorAttributeValue);
+        $attributeValueWithPosition1ExaminedValue = new AssertionExaminedValue($cssSelectorWithPosition1AttributeValue);
+        $attributeValueWithPosition2ExaminedValue = new AssertionExaminedValue($cssSelectorWithPosition2AttributeValue);
+        $attributeValueWithPositionMinus1ExaminedValue = new AssertionExaminedValue(
+            $cssSelectorWithPositionMinus1AttributeValue
+        );
 
         return [
             'css element selector, is, scalar value' => [
                 'assertionString' => '".selector" is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector" is "value"',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $cssSelectorExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css element selector with position 1, is, scalar value' => [
                 'assertionString' => '".selector":1 is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector":1 is "value"',
-                    $cssSelectorWithPosition1ElementValue,
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $cssSelectorWithPosition1ExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css element selector with position 2, is, scalar value' => [
                 'assertionString' => '".selector":2 is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector":2 is "value"',
-                    new ElementValue(new ElementIdentifier(
-                        new CssSelector('.selector'),
-                        2
-                    )),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $cssSelectorWithPosition2ExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css element selector with position first, is, scalar value' => [
                 'assertionString' => '".selector":first is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector":first is "value"',
-                    $cssSelectorWithPosition1ElementValue,
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $cssSelectorWithPosition1ExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css element selector with position last, is, scalar value' => [
                 'assertionString' => '".selector":last is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector":last is "value"',
-                    new ElementValue(new ElementIdentifier(
-                        new CssSelector('.selector'),
-                        -1
-                    )),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $cssSelectorWithPositionMinus1ExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css attribute selector, is, scalar value' => [
                 'assertionString' => '".selector".attribute_name is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector".attribute_name is "value"',
-                    new AttributeValue(
-                        new AttributeIdentifier(
-                            new ElementIdentifier(new CssSelector('.selector')),
-                            'attribute_name'
-                        )
-                    ),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $attributeValueExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css attribute selector with position 1, is, scalar value' => [
                 'assertionString' => '".selector":1.attribute_name is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector":1.attribute_name is "value"',
-                    new AttributeValue(
-                        new AttributeIdentifier(
-                            $cssSelectorIdentifierWithPosition1,
-                            'attribute_name'
-                        )
-                    ),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $attributeValueWithPosition1ExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css attribute selector with position 2, is, scalar value' => [
                 'assertionString' => '".selector":2.attribute_name is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector":2.attribute_name is "value"',
-                    new AttributeValue(
-                        new AttributeIdentifier(
-                            new ElementIdentifier(new CssSelector('.selector'), 2),
-                            'attribute_name'
-                        )
-                    ),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $attributeValueWithPosition2ExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css attribute selector with position first, is, scalar value' => [
                 'assertionString' => '".selector":first.attribute_name is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector":first.attribute_name is "value"',
-                    new AttributeValue(
-                        new AttributeIdentifier(
-                            $cssSelectorIdentifierWithPosition1,
-                            'attribute_name'
-                        )
-                    ),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $attributeValueWithPosition1ExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css attribute selector with position last, is, scalar value' => [
                 'assertionString' => '".selector":last.attribute_name is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector":last.attribute_name is "value"',
-                    new AttributeValue(
-                        new AttributeIdentifier(
-                            new ElementIdentifier(new CssSelector('.selector'), -1),
-                            'attribute_name'
-                        )
-                    ),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $attributeValueWithPositionMinus1ExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css element selector with element reference, is, scalar value' => [
                 'assertionString' => '"{{ reference }} .selector" is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '"{{ reference }} .selector" is "value"',
-                    new ElementValue(
-                        new ElementIdentifier(
-                            new CssSelector('{{ reference }} .selector')
-                        )
-                    ),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $cssSelectorWithElementReferenceExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css element selector, is, data parameter value' => [
                 'assertionString' => '".selector" is $data.name',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector" is $data.name',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::IS,
-                    new DataParameter('$data.name', 'name')
+                    $cssSelectorExaminedValue,
+                    new AssertionExpectedValue(
+                        new DataParameter('$data.name', 'name')
+                    )
                 ),
             ],
             'css element selector, is, element parameter value' => [
                 'actionString' => '".selector" is $elements.name',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector" is $elements.name',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::IS,
-                    new ElementReference('$elements.name', 'name')
+                    $cssSelectorExaminedValue,
+                    new AssertionExpectedValue(
+                        new ElementReference('$elements.name', 'name')
+                    )
                 ),
             ],
             'css element selector, is, page object value' => [
                 'actionString' => '".selector" is $page.url',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector" is $page.url',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::IS,
-                    new PageProperty('$page.url', 'url')
+                    $cssSelectorExaminedValue,
+                    new AssertionExpectedValue(
+                        new PageProperty('$page.url', 'url')
+                    )
                 ),
             ],
             'css element selector, is, browser object value' => [
                 'actionString' => '".selector" is $browser.size',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector" is $browser.size',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::IS,
-                    new BrowserProperty('$browser.size', 'size')
+                    $cssSelectorExaminedValue,
+                    new AssertionExpectedValue(
+                        new BrowserProperty('$browser.size', 'size')
+                    )
                 ),
             ],
             'css element selector, is, attribute parameter' => [
                 'actionString' => '".selector" is $elements.element_name.attribute_name',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector" is $elements.element_name.attribute_name',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::IS,
-                    new AttributeReference(
-                        '$elements.element_name.attribute_name',
-                        'element_name.attribute_name'
+                    $cssSelectorExaminedValue,
+                    new AssertionExpectedValue(
+                        new AttributeReference(
+                            '$elements.element_name.attribute_name',
+                            'element_name.attribute_name'
+                        )
                     )
                 ),
             ],
-            'css attribute selector selector, is, attribute value' => [
+            'css attribute selector,  is, attribute value' => [
                 'actionString' => '".selector".data-heading-title is $elements.element_name.attribute_name',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector".data-heading-title is $elements.element_name.attribute_name',
-                    new AttributeValue(
-                        new AttributeIdentifier(
-                            new ElementIdentifier(new CssSelector('.selector')),
-                            'data-heading-title'
+                    new AssertionExaminedValue(
+                        new AttributeValue(
+                            new AttributeIdentifier(
+                                $cssIdentifier,
+                                'data-heading-title'
+                            )
                         )
                     ),
-                    AssertionComparisons::IS,
-                    new AttributeReference(
-                        '$elements.element_name.attribute_name',
-                        'element_name.attribute_name'
+                    new AssertionExpectedValue(
+                        new AttributeReference(
+                            '$elements.element_name.attribute_name',
+                            'element_name.attribute_name'
+                        )
                     )
                 ),
             ],
             'css element selector, is, escaped quotes scalar value' => [
                 'assertionString' => '".selector" is "\"value\""',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector" is "\"value\""',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::IS,
-                    new LiteralValue('"value"')
+                    $cssSelectorExaminedValue,
+                    new AssertionExpectedValue(
+                        new LiteralValue('"value"')
+                    )
                 ),
             ],
             'css element selector, is, lacking value' => [
                 'assertionString' => '".selector" is',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector" is',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::IS
+                    $cssSelectorExaminedValue,
+                    $emptyLiteralExpectedValue
                 ),
             ],
             'css element selector, is-not, scalar value' => [
                 'assertionString' => '".selector" is-not "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsNotAssertion(
                     '".selector" is-not "value"',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::IS_NOT,
-                    $literalValue
+                    $cssSelectorExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css element selector, is-not, lacking value' => [
                 'assertionString' => '".selector" is-not',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsNotAssertion(
                     '".selector" is-not',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::IS_NOT
+                    $cssSelectorExaminedValue,
+                    $emptyLiteralExpectedValue
                 ),
             ],
             'css element selector, exists, no value' => [
                 'assertionString' => '".selector" exists',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new ExistsAssertion(
                     '".selector" exists',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::EXISTS
+                    $cssSelectorExaminedValue
                 ),
             ],
             'css element selector, exists, scalar value is ignored' => [
                 'assertionString' => '".selector" exists "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new ExistsAssertion(
                     '".selector" exists "value"',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::EXISTS
+                    $cssSelectorExaminedValue
                 ),
             ],
             'css element selector, exists, data parameter value is ignored' => [
                 'assertionString' => '".selector" exists $data.name',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new ExistsAssertion(
                     '".selector" exists $data.name',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::EXISTS
+                    $cssSelectorExaminedValue
                 ),
             ],
             'css selector, includes, scalar value' => [
                 'assertionString' => '".selector" includes "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IncludesAssertion(
                     '".selector" includes "value"',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::INCLUDES,
-                    $literalValue
+                    $cssSelectorExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css element selector, includes, lacking value' => [
                 'assertionString' => '".selector" includes',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IncludesAssertion(
                     '".selector" includes',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::INCLUDES
+                    $cssSelectorExaminedValue,
+                    $emptyLiteralExpectedValue
                 ),
             ],
             'css element selector, excludes, scalar value' => [
                 'assertionString' => '".selector" excludes "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new ExcludesAssertion(
                     '".selector" excludes "value"',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::EXCLUDES,
-                    $literalValue
+                    $cssSelectorExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css element selector, excludes, lacking value' => [
                 'assertionString' => '".selector" excludes',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new ExcludesAssertion(
                     '".selector" excludes',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::EXCLUDES
+                    $cssSelectorExaminedValue,
+                    $emptyLiteralExpectedValue
                 ),
             ],
             'css element selector, matches, scalar value' => [
                 'assertionString' => '".selector" matches "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new MatchesAssertion(
                     '".selector" matches "value"',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::MATCHES,
-                    $literalValue
+                    $cssSelectorExaminedValue,
+                    $literalExpectedValue
                 ),
             ],
             'css element selector, matches, lacking value' => [
                 'assertionString' => '".selector" matches',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new MatchesAssertion(
                     '".selector" matches',
-                    $cssSelectorElementValue,
-                    AssertionComparisons::MATCHES
+                    $cssSelectorExaminedValue,
+                    $emptyLiteralExpectedValue
                 ),
             ],
             'comparison-including css element selector, is, scalar value' => [
                 'assertionString' => '".selector is is-not exists not-exists includes excludes matches foo" is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '".selector is is-not exists not-exists includes excludes matches foo" is "value"',
-                    new ElementValue(
-                        new ElementIdentifier(
-                            new CssSelector(
-                                '.selector is is-not exists not-exists includes excludes matches foo'
+                    new AssertionExaminedValue(
+                        new ElementValue(
+                            new ElementIdentifier(
+                                new CssSelector(
+                                    '.selector is is-not exists not-exists includes excludes matches foo'
+                                )
                             )
                         )
                     ),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $literalExpectedValue
                 ),
             ],
             'simple xpath expression, is, scalar value' => [
                 'assertionString' => '"//foo" is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '"//foo" is "value"',
-                    new ElementValue(
-                        new ElementIdentifier(
-                            new XpathExpression('//foo')
+                    new AssertionExaminedValue(
+                        new ElementValue(
+                            new ElementIdentifier(
+                                new XpathExpression('//foo')
+                            )
                         )
                     ),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $literalExpectedValue
                 ),
             ],
             'comparison-including non-simple xpath expression, is, scalar value' => [
                 'assertionString' =>
                     '"//a[ends-with(@href is exists not-exists matches includes excludes, \".pdf\")]" is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '"//a[ends-with(@href is exists not-exists matches includes excludes, \".pdf\")]" is "value"',
-                    new ElementValue(
-                        new ElementIdentifier(
-                            new XpathExpression(
-                                '//a[ends-with(@href is exists not-exists matches includes excludes, \".pdf\")]'
+                    new AssertionExaminedValue(
+                        new ElementValue(
+                            new ElementIdentifier(
+                                new XpathExpression(
+                                    '//a[ends-with(@href is exists not-exists matches includes excludes, \".pdf\")]'
+                                )
                             )
                         )
                     ),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $literalExpectedValue
                 ),
             ],
             'page element reference, is, scalar value' => [
                 'assertionString' => 'page_import_name.elements.element_name is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     'page_import_name.elements.element_name is "value"',
-                    new PageElementReference(
-                        'page_import_name.elements.element_name',
-                        'page_import_name',
-                        'element_name'
+                    new AssertionExaminedValue(
+                        new PageElementReference(
+                            'page_import_name.elements.element_name',
+                            'page_import_name',
+                            'element_name'
+                        )
                     ),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    $literalExpectedValue
                 ),
             ],
             'element parameter, is, scalar value' => [
                 'actionString' => '$elements.name is "value"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '$elements.name is "value"',
-                    new ElementReference('$elements.name', 'name'),
-                    AssertionComparisons::IS,
-                    $literalValue
+                    new AssertionExaminedValue(new ElementReference('$elements.name', 'name')),
+                    $literalExpectedValue
                 ),
             ],
             'page object parameter, is, scalar value' => [
                 'actionString' => '$page.url is "http://example.com/"',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '$page.url is "http://example.com/"',
-                    new PageProperty('$page.url', 'url'),
-                    AssertionComparisons::IS,
-                    new LiteralValue('http://example.com/')
+                    new AssertionExaminedValue(new PageProperty('$page.url', 'url')),
+                    new AssertionExpectedValue(new LiteralValue('http://example.com/'))
                 ),
             ],
             'browser object parameter, is, scalar value' => [
                 'actionString' => '$browser.size is 1024,768',
-                'expectedAssertion' => new Assertion(
+                'expectedAssertion' => new IsAssertion(
                     '$browser.size is 1024,768',
-                    new BrowserProperty('$browser.size', 'size'),
-                    AssertionComparisons::IS,
-                    new LiteralValue('1024,768')
+                    new AssertionExaminedValue(new BrowserProperty('$browser.size', 'size')),
+                    new AssertionExpectedValue(new LiteralValue('1024,768'))
                 ),
             ],
         ];
@@ -461,14 +474,15 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateFromEmptyAssertionString()
     {
-        $assertionString = '';
+        $this->expectException(EmptyAssertionStringException::class);
 
-        $assertion = $this->assertionFactory->createFromAssertionString($assertionString);
+        $this->assertionFactory->createFromAssertionString('');
+    }
 
-        $this->assertInstanceOf(AssertionInterface::class, $assertion);
-        $this->assertEquals('', $assertion->getAssertionString());
-        $this->assertNull($assertion->getExaminedValue());
-        $this->assertNull($assertion->getComparison());
-        $this->assertNull($assertion->getExpectedValue());
+    public function testCreateForUnknownComparison()
+    {
+        $this->expectException(InvalidComparisonException::class);
+
+        $this->assertionFactory->createFromAssertionString('".selector" foo "value"');
     }
 }

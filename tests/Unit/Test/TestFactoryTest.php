@@ -12,8 +12,7 @@ use webignition\BasilDataStructure\Step as StepData;
 use webignition\BasilDataStructure\Test\Configuration as ConfigurationData;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InteractionAction;
-use webignition\BasilModel\Assertion\Assertion;
-use webignition\BasilModel\Assertion\AssertionComparisons;
+use webignition\BasilModel\Assertion\IsAssertion;
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Identifier\ElementIdentifier;
@@ -25,6 +24,8 @@ use webignition\BasilModel\Test\Configuration;
 use webignition\BasilModel\Test\Test;
 use webignition\BasilModel\Test\TestInterface;
 use webignition\BasilDataStructure\Test\Test as TestData;
+use webignition\BasilModel\Value\AssertionExaminedValue;
+use webignition\BasilModel\Value\AssertionExpectedValue;
 use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\PageElementReference;
@@ -127,11 +128,14 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
                 'expectedTest' => new Test('inline step, scalar values', $expectedConfiguration, [
                     'verify page is open' => new Step([], [
-                        new Assertion(
+                        new IsAssertion(
                             '$page.url is "http://example.com"',
-                            new PageProperty('$page.url', 'url'),
-                            AssertionComparisons::IS,
-                            new LiteralValue('http://example.com')
+                            new AssertionExaminedValue(
+                                new PageProperty('$page.url', 'url')
+                            ),
+                            new AssertionExpectedValue(
+                                new LiteralValue('http://example.com')
+                            )
                         ),
                     ]),
                     'query "example"' => new Step(
@@ -146,11 +150,14 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             ),
                         ],
                         [
-                            new Assertion(
+                            new IsAssertion(
                                 '$page.title is "example - Example Domain"',
-                                new PageProperty('$page.title', 'title'),
-                                AssertionComparisons::IS,
-                                new LiteralValue('example - Example Domain')
+                                new AssertionExaminedValue(
+                                    new PageProperty('$page.title', 'title')
+                                ),
+                                new AssertionExpectedValue(
+                                    new LiteralValue('example - Example Domain')
+                                )
                             ),
                         ]
                     ),
@@ -189,15 +196,18 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             ),
                         ],
                         [
-                            new Assertion(
+                            new IsAssertion(
                                 'page_import_name.elements.heading is "example"',
-                                new PageElementReference(
-                                    'page_import_name.elements.heading',
-                                    'page_import_name',
-                                    'heading'
+                                new AssertionExaminedValue(
+                                    new PageElementReference(
+                                        'page_import_name.elements.heading',
+                                        'page_import_name',
+                                        'heading'
+                                    )
                                 ),
-                                AssertionComparisons::IS,
-                                new LiteralValue('example')
+                                new AssertionExpectedValue(
+                                    new LiteralValue('example')
+                                )
                             ),
                         ]
                     ),
