@@ -1,17 +1,34 @@
 <?php
 
-namespace webignition\BasilModelFactory;
+namespace webignition\BasilModelFactory\Assertion;
 
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
+use webignition\BasilModel\Assertion\ExcludesAssertion;
+use webignition\BasilModel\Assertion\ExistsAssertion;
+use webignition\BasilModel\Assertion\IncludesAssertion;
+use webignition\BasilModel\Assertion\IsAssertion;
+use webignition\BasilModel\Assertion\IsNotAssertion;
+use webignition\BasilModel\Assertion\MatchesAssertion;
+use webignition\BasilModel\Assertion\NotExistsAssertion;
+use webignition\BasilModel\Assertion\ValueComparisonAssertionInterface;
+use webignition\BasilModel\Exception\InvalidAssertionExaminedValueException;
+use webignition\BasilModel\Exception\InvalidAssertionExpectedValueException;
 use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
+use webignition\BasilModel\Value\AssertionExaminedValue;
+use webignition\BasilModel\Value\AssertionExpectedValue;
 use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\ElementValue;
+use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
+use webignition\BasilModelFactory\Exception\InvalidComparisonException;
 use webignition\BasilModelFactory\Identifier\AttributeIdentifierFactory;
 use webignition\BasilModelFactory\Identifier\ElementIdentifierFactory;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
+use webignition\BasilModelFactory\IdentifierTypeFinder;
+use webignition\BasilModelFactory\MalformedPageElementReferenceException;
+use webignition\BasilModelFactory\ValueFactory;
 
 class AssertionFactory
 {
@@ -19,6 +36,11 @@ class AssertionFactory
     private $identifierStringExtractor;
     private $elementIdentifierFactory;
     private $attributeIdentifierFactory;
+
+    const EXISTENCE_COMPARISONS = [
+        AssertionComparisons::EXISTS,
+        AssertionComparisons::NOT_EXISTS,
+    ];
 
     public function __construct(
         ValueFactory $valueFactory,
@@ -48,6 +70,9 @@ class AssertionFactory
      * @return AssertionInterface
      *
      * @throws EmptyAssertionStringException
+     * @throws InvalidAssertionExaminedValueException
+     * @throws InvalidAssertionExpectedValueException
+     * @throws InvalidComparisonException
      * @throws MalformedPageElementReferenceException
      */
     public function createFromAssertionString(string $assertionString): AssertionInterface
@@ -59,43 +84,124 @@ class AssertionFactory
 
         $identifierString = $this->identifierStringExtractor->extractFromStart($assertionString);
 
-        $examinedValue = null;
         $expectedValue = null;
+        $examinedValue = $this->createExaminedValue($identifierString);
 
+        $comparisonAndExpectedValue = trim(mb_substr($assertionString, mb_strlen($identifierString)));
+        list($comparison, $expectedValueString) = $this->findComparisonAndExpectedValue($comparisonAndExpectedValue);
+
+        if (in_array($comparison, self::EXISTENCE_COMPARISONS)) {
+            return $this->createExistenceAssertion($comparison, $assertionString, $examinedValue);
+        }
+
+        return $this->createValueComparisonAssertion(
+            $comparison,
+            $assertionString,
+            $examinedValue,
+            new AssertionExpectedValue($this->valueFactory->createFromValueString($expectedValueString))
+        );
+    }
+
+    private function findComparisonAndExpectedValue(string $comparisonAndExpectedValue): array
+    {
+        if (substr_count($comparisonAndExpectedValue, ' ') === 0) {
+            return [
+                $comparisonAndExpectedValue,
+                ''
+            ];
+        }
+
+        return explode(' ', $comparisonAndExpectedValue, 2);
+    }
+
+    /**
+     * @param string $identifierString
+     *
+     * @return AssertionExaminedValue
+     *
+     * @throws MalformedPageElementReferenceException
+     * @throws InvalidAssertionExaminedValueException
+     */
+    private function createExaminedValue(string $identifierString): ValueInterface
+    {
         if (IdentifierTypeFinder::isElementIdentifier($identifierString)) {
             $elementIdentifier = $this->elementIdentifierFactory->create($identifierString);
 
             if ($elementIdentifier instanceof ElementIdentifierInterface) {
-                $examinedValue = new ElementValue($elementIdentifier);
+                return new AssertionExaminedValue(
+                    new ElementValue($elementIdentifier)
+                );
             }
         }
 
-        if (null === $examinedValue && IdentifierTypeFinder::isAttributeReference($identifierString)) {
+        if (IdentifierTypeFinder::isAttributeReference($identifierString)) {
             $attributeIdentifier = $this->attributeIdentifierFactory->create($identifierString);
 
             if ($attributeIdentifier instanceof AttributeIdentifierInterface) {
-                $examinedValue = new AttributeValue($attributeIdentifier);
+                return new AssertionExaminedValue(
+                    new AttributeValue($attributeIdentifier)
+                );
             }
         }
 
-        if (null === $examinedValue) {
-            $examinedValue = $this->valueFactory->createFromValueString($identifierString);
+        return new AssertionExaminedValue(
+            $this->valueFactory->createFromValueString($identifierString)
+        );
+    }
+
+    /**
+     * @param string $comparison
+     * @param string $assertionString
+     * @param AssertionExaminedValue $examinedValue
+     *
+     * @return AssertionInterface
+     */
+    private function createExistenceAssertion(
+        string $comparison,
+        string $assertionString,
+        AssertionExaminedValue $examinedValue
+    ): AssertionInterface {
+        return AssertionComparisons::EXISTS === $comparison
+            ? new ExistsAssertion($assertionString, $examinedValue)
+            : new NotExistsAssertion($assertionString, $examinedValue);
+    }
+
+    /**
+     * @param string $comparison
+     * @param string $assertionString
+     * @param AssertionExaminedValue $examinedValue
+     * @param AssertionExpectedValue $expectedValue
+     *
+     * @return ValueComparisonAssertionInterface
+     *
+     * @throws InvalidComparisonException
+     */
+    private function createValueComparisonAssertion(
+        string $comparison,
+        string $assertionString,
+        AssertionExaminedValue $examinedValue,
+        AssertionExpectedValue $expectedValue
+    ): ValueComparisonAssertionInterface {
+        if (AssertionComparisons::IS === $comparison) {
+            return new IsAssertion($assertionString, $examinedValue, $expectedValue);
         }
 
-        $comparisonAndExpectedValue = trim(mb_substr($assertionString, mb_strlen($identifierString)));
-
-        if (substr_count($comparisonAndExpectedValue, ' ') === 0) {
-            $comparison = $comparisonAndExpectedValue;
-            $valueString = null;
-        } else {
-            $comparisonAndValueParts = explode(' ', $comparisonAndExpectedValue, 2);
-            list($comparison, $valueString) = $comparisonAndValueParts;
-
-            if (!in_array($comparison, AssertionComparisons::NO_VALUE_TYPES)) {
-                $expectedValue = $this->valueFactory->createFromValueString($valueString);
-            }
+        if (AssertionComparisons::IS_NOT === $comparison) {
+            return new IsNotAssertion($assertionString, $examinedValue, $expectedValue);
         }
 
-        return new Assertion($assertionString, $examinedValue, $comparison, $expectedValue);
+        if (AssertionComparisons::INCLUDES === $comparison) {
+            return new IncludesAssertion($assertionString, $examinedValue, $expectedValue);
+        }
+
+        if (AssertionComparisons::EXCLUDES === $comparison) {
+            return new ExcludesAssertion($assertionString, $examinedValue, $expectedValue);
+        }
+
+        if (AssertionComparisons::MATCHES === $comparison) {
+            return new MatchesAssertion($assertionString, $examinedValue, $expectedValue);
+        }
+
+        throw new InvalidComparisonException($assertionString, $comparison);
     }
 }
