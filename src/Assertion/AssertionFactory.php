@@ -2,13 +2,13 @@
 
 namespace webignition\BasilModelFactory;
 
-use webignition\BasilModel\Assertion\Assertion;
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\ElementValue;
+use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
 use webignition\BasilModelFactory\Identifier\AttributeIdentifierFactory;
 use webignition\BasilModelFactory\Identifier\ElementIdentifierFactory;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
@@ -47,13 +47,14 @@ class AssertionFactory
      *
      * @return AssertionInterface
      *
+     * @throws EmptyAssertionStringException
      * @throws MalformedPageElementReferenceException
      */
     public function createFromAssertionString(string $assertionString): AssertionInterface
     {
         $assertionString = trim($assertionString);
         if ('' === $assertionString) {
-            return new Assertion('', null, null);
+            throw new EmptyAssertionStringException();
         }
 
         $identifierString = $this->identifierStringExtractor->extractFromStart($assertionString);
