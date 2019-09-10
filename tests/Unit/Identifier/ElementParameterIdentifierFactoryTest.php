@@ -5,7 +5,7 @@
 namespace webignition\BasilModelFactory\Tests\Unit\Identifier;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModelFactory\Identifier\ElementParameterIdentifierFactory;
+use webignition\BasilModelFactory\Identifier\ElementReferenceIdentifierFactory;
 use webignition\BasilModelFactory\Tests\DataProvider\AttributeIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\AttributeIdentifierStringDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\CssSelectorDataProviderTrait;
@@ -33,7 +33,7 @@ class ElementParameterIdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     use XpathExpressionIdentifierDataProviderTrait;
 
     /**
-     * @var ElementParameterIdentifierFactory
+     * @var ElementReferenceIdentifierFactory
      */
     private $factory;
 
@@ -41,7 +41,7 @@ class ElementParameterIdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->factory = ElementParameterIdentifierFactory::createFactory();
+        $this->factory = ElementReferenceIdentifierFactory::createFactory();
     }
 
     /**

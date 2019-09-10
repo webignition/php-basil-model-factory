@@ -69,7 +69,7 @@ class AssertionFactory
             }
         }
 
-        if (null === $examinedValue && IdentifierTypeFinder::isAttributeIdentifier($identifierString)) {
+        if (null === $examinedValue && IdentifierTypeFinder::isAttributeReference($identifierString)) {
             $attributeIdentifier = $this->attributeIdentifierFactory->create($identifierString);
 
             if ($attributeIdentifier instanceof AttributeIdentifierInterface) {

@@ -10,7 +10,6 @@ use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Value\AttributeReference;
 use webignition\BasilModel\Value\CssSelector;
@@ -83,8 +82,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'click page_import_name.elements.element_name',
                     ActionTypes::CLICK,
-                    new ReferenceIdentifier(
-                        IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+                    ReferenceIdentifier::createPageElementReferenceIdentifier(
                         new PageElementReference(
                             'page_import_name.elements.element_name',
                             'page_import_name',
@@ -99,8 +97,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'click $elements.name',
                     ActionTypes::CLICK,
-                    new ReferenceIdentifier(
-                        IdentifierTypes::ELEMENT_PARAMETER,
+                    ReferenceIdentifier::createElementReferenceIdentifier(
                         new ElementReference('$elements.name', 'name')
                     ),
                     '$elements.name'
@@ -150,8 +147,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'submit page_import_name.elements.element_name',
                     ActionTypes::SUBMIT,
-                    new ReferenceIdentifier(
-                        IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+                    ReferenceIdentifier::createPageElementReferenceIdentifier(
                         new PageElementReference(
                             'page_import_name.elements.element_name',
                             'page_import_name',
@@ -166,8 +162,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'submit $elements.name',
                     ActionTypes::SUBMIT,
-                    new ReferenceIdentifier(
-                        IdentifierTypes::ELEMENT_PARAMETER,
+                    ReferenceIdentifier::createElementReferenceIdentifier(
                         new ElementReference('$elements.name', 'name')
                     ),
                     '$elements.name'
@@ -217,8 +212,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'wait-for page_import_name.elements.element_name',
                     ActionTypes::WAIT_FOR,
-                    new ReferenceIdentifier(
-                        IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+                    ReferenceIdentifier::createPageElementReferenceIdentifier(
                         new PageElementReference(
                             'page_import_name.elements.element_name',
                             'page_import_name',
@@ -233,8 +227,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'wait-for $elements.name',
                     ActionTypes::WAIT_FOR,
-                    new ReferenceIdentifier(
-                        IdentifierTypes::ELEMENT_PARAMETER,
+                    ReferenceIdentifier::createElementReferenceIdentifier(
                         new ElementReference('$elements.name', 'name')
                     ),
                     '$elements.name'
@@ -358,8 +351,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set page_import_name.elements.element_name to "value"',
                 'expectedAction' => new InputAction(
                     'set page_import_name.elements.element_name to "value"',
-                    new ReferenceIdentifier(
-                        IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+                    ReferenceIdentifier::createPageElementReferenceIdentifier(
                         new PageElementReference(
                             'page_import_name.elements.element_name',
                             'page_import_name',
@@ -374,8 +366,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set $elements.element_name to "value"',
                 'expectedAction' => new InputAction(
                     'set $elements.element_name to "value"',
-                    new ReferenceIdentifier(
-                        IdentifierTypes::ELEMENT_PARAMETER,
+                    ReferenceIdentifier::createElementReferenceIdentifier(
                         new ElementReference('$elements.element_name', 'element_name')
                     ),
                     $scalarValue,

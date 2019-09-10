@@ -3,11 +3,11 @@
 namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\PageElementReference\PageElementReference as PageElementReferenceModel;
 use webignition\BasilModel\Value\PageElementReference as PageElementReferenceValue;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
+use webignition\BasilModelFactory\IdentifierTypes;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 
 class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInterface
@@ -23,7 +23,8 @@ class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInte
             return false;
         }
 
-        return IdentifierTypes::PAGE_ELEMENT_REFERENCE === IdentifierTypeFinder::findType($identifierString);
+        return IdentifierTypes::PAGE_ELEMENT_REFERENCE ===
+            IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
     }
 
     /**
@@ -46,8 +47,7 @@ class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInte
             throw new MalformedPageElementReferenceException($pageElementReference);
         }
 
-        return new ReferenceIdentifier(
-            IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+        return ReferenceIdentifier::createPageElementReferenceIdentifier(
             new PageElementReferenceValue(
                 $identifierString,
                 $pageElementReference->getImportName(),

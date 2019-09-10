@@ -4,10 +4,10 @@ namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\XpathExpression;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
+use webignition\BasilModelFactory\IdentifierTypes;
 
 class ElementIdentifierFactory implements IdentifierTypeFactoryInterface
 {
@@ -22,7 +22,8 @@ class ElementIdentifierFactory implements IdentifierTypeFactoryInterface
             return false;
         }
 
-        return IdentifierTypes::ELEMENT_SELECTOR === IdentifierTypeFinder::findType($identifierString);
+        return IdentifierTypes::ELEMENT_SELECTOR ===
+            IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
     }
 
     public function create(string $identifierString): ?IdentifierInterface

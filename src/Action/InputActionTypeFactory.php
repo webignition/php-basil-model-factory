@@ -6,10 +6,10 @@ use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\PageElementReference\PageElementReference;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
+use webignition\BasilModelFactory\IdentifierTypes;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\ValueFactory;
 
@@ -65,9 +65,9 @@ class InputActionTypeFactory extends AbstractActionTypeFactory implements Action
         }
 
         $identifier = $this->identifierFactory->create($identifierString, [
-            IdentifierTypes::ELEMENT_PARAMETER,
-            IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+            IdentifierTypes::ELEMENT_REFERENCE,
             IdentifierTypes::ELEMENT_SELECTOR,
+            IdentifierTypes::PAGE_ELEMENT_REFERENCE,
         ]);
 
         if (!$identifier instanceof IdentifierInterface) {

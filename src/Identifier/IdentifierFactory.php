@@ -4,7 +4,8 @@ namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModelFactory\IdentifierTypeFinder;
+use webignition\BasilModelFactory\IdentifierTypes;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 
 class IdentifierFactory
@@ -31,7 +32,7 @@ class IdentifierFactory
         return new IdentifierFactory([
             ElementIdentifierFactory::createFactory(),
             AttributeIdentifierFactory::createFactory(),
-            ElementParameterIdentifierFactory::createFactory(),
+            ElementReferenceIdentifierFactory::createFactory(),
             PageElementReferenceIdentifierFactory::createFactory(),
         ]);
     }
@@ -92,10 +93,10 @@ class IdentifierFactory
      * @throws MalformedPageElementReferenceException
      */
     public function create(string $identifierString, array $allowedTypes = [
-        IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-        IdentifierTypes::ELEMENT_PARAMETER,
+        IdentifierTypes::ATTRIBUTE_REFERENCE,
+        IdentifierTypes::ELEMENT_REFERENCE,
         IdentifierTypes::ELEMENT_SELECTOR,
-        IdentifierTypes::ATTRIBUTE
+        IdentifierTypes::PAGE_ELEMENT_REFERENCE,
     ]): ?IdentifierInterface
     {
         $identifierString = trim($identifierString);
@@ -104,9 +105,11 @@ class IdentifierFactory
         if ($identifierTypeFactory instanceof IdentifierTypeFactoryInterface) {
             $identifier = $identifierTypeFactory->create($identifierString);
 
-            return $identifier instanceof IdentifierInterface && in_array($identifier->getType(), $allowedTypes)
-                ? $identifier
-                : null;
+            if ($identifier instanceof IdentifierInterface) {
+                $identifierType = IdentifierTypeFinder::findTypeFromIdentifier($identifier);
+
+                return in_array($identifierType, $allowedTypes) ? $identifier : null;
+            }
         }
 
         return null;
