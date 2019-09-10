@@ -30,7 +30,8 @@ class AttributeIdentifierFactory implements IdentifierTypeFactoryInterface
             return false;
         }
 
-        return IdentifierTypes::ATTRIBUTE_REFERENCE === IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
+        return IdentifierTypes::ATTRIBUTE_REFERENCE ===
+            IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
     }
 
     public function create(string $identifierString): ?IdentifierInterface

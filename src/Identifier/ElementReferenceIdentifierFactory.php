@@ -23,7 +23,8 @@ class ElementReferenceIdentifierFactory implements IdentifierTypeFactoryInterfac
             return false;
         }
 
-        return IdentifierTypes::ELEMENT_REFERENCE === IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
+        return IdentifierTypes::ELEMENT_REFERENCE ===
+            IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
     }
 
     /**

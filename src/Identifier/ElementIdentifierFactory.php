@@ -22,7 +22,8 @@ class ElementIdentifierFactory implements IdentifierTypeFactoryInterface
             return false;
         }
 
-        return IdentifierTypes::ELEMENT_SELECTOR === IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
+        return IdentifierTypes::ELEMENT_SELECTOR ===
+            IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
     }
 
     public function create(string $identifierString): ?IdentifierInterface

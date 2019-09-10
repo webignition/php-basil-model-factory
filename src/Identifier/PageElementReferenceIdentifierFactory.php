@@ -23,7 +23,8 @@ class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInte
             return false;
         }
 
-        return IdentifierTypes::PAGE_ELEMENT_REFERENCE === IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
+        return IdentifierTypes::PAGE_ELEMENT_REFERENCE ===
+            IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
     }
 
     /**

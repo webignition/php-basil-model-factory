@@ -104,11 +104,12 @@ class IdentifierFactory
 
         if ($identifierTypeFactory instanceof IdentifierTypeFactoryInterface) {
             $identifier = $identifierTypeFactory->create($identifierString);
-            $identifierType = IdentifierTypeFinder::findTypeFromIdentifier($identifier);
 
-            return $identifier instanceof IdentifierInterface && in_array($identifierType, $allowedTypes)
-                ? $identifier
-                : null;
+            if ($identifier instanceof IdentifierInterface) {
+                $identifierType = IdentifierTypeFinder::findTypeFromIdentifier($identifier);
+
+                return in_array($identifierType, $allowedTypes) ? $identifier : null;
+            }
         }
 
         return null;
