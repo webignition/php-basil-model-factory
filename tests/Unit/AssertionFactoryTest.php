@@ -2,7 +2,7 @@
 /** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpDocSignatureInspection */
 
-namespace webignition\BasilModelFactory\Tests\Unit\Assertion;
+namespace webignition\BasilModelFactory\Tests\Unit;
 
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Assertion\ExcludesAssertion;
@@ -26,14 +26,14 @@ use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModel\Value\XpathExpression;
-use webignition\BasilModelFactory\Assertion\AssertionFactory;
+use webignition\BasilModelFactory\AssertionFactory;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
 use webignition\BasilModelFactory\Exception\InvalidComparisonException;
 
 class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var AssertionFactory
+     * @var \webignition\BasilModelFactory\AssertionFactory
      */
     private $assertionFactory;
 

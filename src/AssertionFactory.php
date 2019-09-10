@@ -1,6 +1,6 @@
 <?php
 
-namespace webignition\BasilModelFactory\Assertion;
+namespace webignition\BasilModelFactory;
 
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
