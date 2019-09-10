@@ -9,8 +9,8 @@ use webignition\BasilContextAwareException\ExceptionContext\ExceptionContextInte
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
 use webignition\BasilModel\Action\InteractionAction;
-use webignition\BasilModel\Assertion\Assertion;
-use webignition\BasilModel\Assertion\AssertionComparisons;
+use webignition\BasilModel\Assertion\ExistsAssertion;
+use webignition\BasilModel\Assertion\IsAssertion;
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Identifier\ElementIdentifier;
@@ -19,6 +19,8 @@ use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
+use webignition\BasilModel\Value\AssertionExaminedValue;
+use webignition\BasilModel\Value\AssertionExpectedValue;
 use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\LiteralValue;
@@ -111,24 +113,28 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     [
                     ],
                     [
-                        new Assertion(
+                        new IsAssertion(
                             '".selector" is "value"',
-                            new ElementValue(
-                                new ElementIdentifier(
-                                    new CssSelector('.selector')
+                            new AssertionExaminedValue(
+                                new ElementValue(
+                                    new ElementIdentifier(
+                                        new CssSelector('.selector')
+                                    )
                                 )
                             ),
-                            AssertionComparisons::IS,
-                            new LiteralValue('value')
+                            new AssertionExpectedValue(
+                                new LiteralValue('value')
+                            )
                         ),
-                        new Assertion(
+                        new ExistsAssertion(
                             '".input" exists',
-                            new ElementValue(
-                                new ElementIdentifier(
-                                    new CssSelector('.input')
+                            new AssertionExaminedValue(
+                                new ElementValue(
+                                    new ElementIdentifier(
+                                        new CssSelector('.input')
+                                    )
                                 )
-                            ),
-                            AssertionComparisons::EXISTS
+                            )
                         ),
                     ]
                 ),
@@ -158,14 +164,15 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         )
                     ],
                     [
-                        new Assertion(
+                        new ExistsAssertion(
                             'page_import_name.elements.element_name exists',
-                            new PageElementReference(
-                                'page_import_name.elements.element_name',
-                                'page_import_name',
-                                'element_name'
-                            ),
-                            AssertionComparisons::EXISTS
+                            new AssertionExaminedValue(
+                                new PageElementReference(
+                                    'page_import_name.elements.element_name',
+                                    'page_import_name',
+                                    'element_name'
+                                )
+                            )
                         ),
                     ]
                 ),
@@ -257,14 +264,15 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             ),
                         ],
                         [
-                            new Assertion(
+                            new ExistsAssertion(
                                 '".selector" exists',
-                                new ElementValue(
-                                    new ElementIdentifier(
-                                        new CssSelector('.selector')
+                                new AssertionExaminedValue(
+                                    new ElementValue(
+                                        new ElementIdentifier(
+                                            new CssSelector('.selector')
+                                        )
                                     )
-                                ),
-                                AssertionComparisons::EXISTS
+                                )
                             ),
                         ]
                     ),
