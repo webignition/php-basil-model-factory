@@ -22,7 +22,7 @@ class ElementParameterIdentifierFactory implements IdentifierTypeFactoryInterfac
             return false;
         }
 
-        return IdentifierTypes::ELEMENT_PARAMETER === IdentifierTypeFinder::findType($identifierString);
+        return IdentifierTypeFinder::TYPE_ELEMENT_REFERENCE === IdentifierTypeFinder::findType($identifierString);
     }
 
     /**
