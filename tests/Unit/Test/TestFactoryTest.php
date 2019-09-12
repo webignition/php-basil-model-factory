@@ -27,7 +27,8 @@ use webignition\BasilModel\Test\TestInterface;
 use webignition\BasilDataStructure\Test\Test as TestData;
 use webignition\BasilModel\Value\AssertionExaminedValue;
 use webignition\BasilModel\Value\AssertionExpectedValue;
-use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModel\Value\PageProperty;
@@ -146,7 +147,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                                 'click ".form .submit"',
                                 ActionTypes::CLICK,
                                 new ElementIdentifier(
-                                    new CssSelector('.form .submit')
+                                    new ElementExpression('.form .submit', ElementExpressionType::CSS_SELECTOR)
                                 ),
                                 '".form .submit"'
                             ),

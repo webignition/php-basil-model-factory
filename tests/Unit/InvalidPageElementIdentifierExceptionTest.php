@@ -6,7 +6,8 @@ use webignition\BasilContextAwareException\ExceptionContext\ExceptionContext;
 use webignition\BasilContextAwareException\ExceptionContext\ExceptionContextInterface;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModelFactory\InvalidPageElementIdentifierException;
 
 class InvalidPageElementIdentifierExceptionTest extends \PHPUnit\Framework\TestCase
@@ -15,7 +16,7 @@ class InvalidPageElementIdentifierExceptionTest extends \PHPUnit\Framework\TestC
     {
         $identifier = new AttributeIdentifier(
             new ElementIdentifier(
-                new CssSelector('.selector')
+                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
             ),
             'attribute_name'
         );
@@ -29,7 +30,7 @@ class InvalidPageElementIdentifierExceptionTest extends \PHPUnit\Framework\TestC
     {
         $identifier = new AttributeIdentifier(
             new ElementIdentifier(
-                new CssSelector('.selector')
+                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
             ),
             'attribute_name'
         );

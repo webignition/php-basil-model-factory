@@ -5,8 +5,8 @@
 namespace webignition\BasilModelFactory\Tests\Unit\Identifier;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Value\CssSelector;
-use webignition\BasilModel\Value\XpathExpression;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\Tests\DataProvider\AttributeIdentifierDataProviderTrait;
@@ -72,7 +72,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     public function createReferencedElementDataProvider(): array
     {
         $parentIdentifier = TestIdentifierFactory::createElementIdentifier(
-            new CssSelector('.parent'),
+            new ElementExpression('.parent', ElementExpressionType::CSS_SELECTOR),
             1,
             'parent_element_name',
             null
@@ -88,7 +88,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'element_name' => 'element_name',
                 'existingIdentifiers' => [],
                 'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
-                    new CssSelector('.selector'),
+                    new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR),
                     null,
                     'element_name'
                 ),
@@ -98,7 +98,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
-                    new CssSelector('.selector'),
+                    new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR),
                     null,
                     'element_name',
                     $parentIdentifier
@@ -109,7 +109,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
-                    new CssSelector('.selector'),
+                    new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR),
                     1,
                     'element_name',
                     $parentIdentifier
@@ -120,7 +120,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
-                    new CssSelector('.selector'),
+                    new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR),
                     2,
                     'element_name',
                     $parentIdentifier
@@ -131,7 +131,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
-                    new CssSelector('{{ another_element_name }} .selector'),
+                    new ElementExpression('{{ another_element_name }} .selector', ElementExpressionType::CSS_SELECTOR),
                     null,
                     'element_name',
                     $parentIdentifier
@@ -142,7 +142,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
-                    new XpathExpression('//foo'),
+                    new ElementExpression('//foo', ElementExpressionType::XPATH_EXPRESSION),
                     null,
                     'element_name',
                     $parentIdentifier
@@ -153,7 +153,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
-                    new XpathExpression('//foo'),
+                    new ElementExpression('//foo', ElementExpressionType::XPATH_EXPRESSION),
                     1,
                     'element_name',
                     $parentIdentifier
@@ -164,7 +164,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
                 'element_name' => 'element_name',
                 'existingIdentifiers' => $existingIdentifiers,
                 'expectedIdentifier' => TestIdentifierFactory::createElementIdentifier(
-                    new XpathExpression('//foo'),
+                    new ElementExpression('//foo', ElementExpressionType::XPATH_EXPRESSION),
                     2,
                     'element_name',
                     $parentIdentifier

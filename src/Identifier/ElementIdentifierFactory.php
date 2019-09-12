@@ -4,8 +4,8 @@ namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Value\CssSelector;
-use webignition\BasilModel\Value\XpathExpression;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\IdentifierTypes;
 
@@ -37,9 +37,11 @@ class ElementIdentifierFactory implements IdentifierTypeFactoryInterface
         list($elementExpression, $position) = IdentifierStringValueAndPositionExtractor::extract($identifierString);
         $elementExpression = trim($elementExpression, '"');
 
-        $elementExpression = IdentifierTypeFinder::isCssSelector($identifierString)
-            ? new CssSelector($elementExpression)
-            : new XpathExpression($elementExpression);
+        $elementExpressionType = IdentifierTypeFinder::isCssSelector($identifierString)
+            ? ElementExpressionType::CSS_SELECTOR
+            : ElementExpressionType::XPATH_EXPRESSION;
+
+        $elementExpression = new ElementExpression($elementExpression, $elementExpressionType);
 
         return new ElementIdentifier($elementExpression, $position);
     }

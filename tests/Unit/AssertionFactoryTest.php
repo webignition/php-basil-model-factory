@@ -15,14 +15,14 @@ use webignition\BasilModel\Value\AssertionExpectedValue;
 use webignition\BasilModel\Value\AttributeReference;
 use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\BrowserProperty;
-use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\DataParameter;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModel\Value\PageProperty;
-use webignition\BasilModel\Value\XpathExpression;
 use webignition\BasilModelFactory\AssertionFactory;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
 
@@ -53,8 +53,11 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromAssertionString(): array
     {
-        $cssSelector = new CssSelector('.selector');
-        $cssSelectorWithElementReference = new CssSelector('{{ reference }} .selector');
+        $cssSelector = new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR);
+        $cssSelectorWithElementReference = new ElementExpression(
+            '{{ reference }} .selector',
+            ElementExpressionType::CSS_SELECTOR
+        );
 
         $cssIdentifier = new ElementIdentifier($cssSelector);
         $cssIdentifierWithPosition1 = new ElementIdentifier($cssSelector, 1);
@@ -417,8 +420,9 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     new AssertionExaminedValue(
                         new ElementValue(
                             new ElementIdentifier(
-                                new CssSelector(
-                                    '.selector is is-not exists not-exists includes excludes matches foo'
+                                new ElementExpression(
+                                    '.selector is is-not exists not-exists includes excludes matches foo',
+                                    ElementExpressionType::CSS_SELECTOR
                                 )
                             )
                         )
@@ -434,7 +438,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     new AssertionExaminedValue(
                         new ElementValue(
                             new ElementIdentifier(
-                                new XpathExpression('//foo')
+                                new ElementExpression('//foo', ElementExpressionType::XPATH_EXPRESSION)
                             )
                         )
                     ),
@@ -450,8 +454,9 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     new AssertionExaminedValue(
                         new ElementValue(
                             new ElementIdentifier(
-                                new XpathExpression(
-                                    '//a[ends-with(@href is exists not-exists matches includes excludes, \".pdf\")]'
+                                new ElementExpression(
+                                    '//a[ends-with(@href is exists not-exists matches includes excludes, \".pdf\")]',
+                                    ElementExpressionType::XPATH_EXPRESSION
                                 )
                             )
                         )

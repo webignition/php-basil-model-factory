@@ -5,16 +5,16 @@ namespace webignition\BasilModelFactory;
 use webignition\BasilModel\PageElementReference\PageElementReference as PageElementReferenceModel;
 use webignition\BasilModel\Value\AttributeReference;
 use webignition\BasilModel\Value\BrowserProperty;
-use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\DataParameter;
+use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionInterface;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\PageElementReference as PageElementReferenceValue;
 use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModel\Value\ValueInterface;
-use webignition\BasilModel\Value\XpathExpression;
 
 class ValueFactory
 {
@@ -83,11 +83,14 @@ class ValueFactory
         }
 
         if (IdentifierTypeFinder::isCssSelector($identifierString)) {
-            return new CssSelector($this->getQuotedValue($identifierString));
+            return new ElementExpression($this->getQuotedValue($identifierString), ElementExpressionType::CSS_SELECTOR);
         }
 
         if (IdentifierTypeFinder::isXpathExpression($identifierString)) {
-            return new XpathExpression($this->getQuotedValue($identifierString));
+            return new ElementExpression(
+                $this->getQuotedValue($identifierString),
+                ElementExpressionType::XPATH_EXPRESSION
+            );
         }
 
         return null;
