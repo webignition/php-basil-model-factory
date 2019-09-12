@@ -33,7 +33,7 @@ use webignition\BasilModelFactory\Exception\InvalidComparisonException;
 class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \webignition\BasilModelFactory\AssertionFactory
+     * @var AssertionFactory
      */
     private $assertionFactory;
 
