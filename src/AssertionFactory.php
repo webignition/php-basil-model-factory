@@ -4,14 +4,8 @@ namespace webignition\BasilModelFactory;
 
 use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
-use webignition\BasilModel\Assertion\ExcludesAssertion;
-use webignition\BasilModel\Assertion\ExistsAssertion;
-use webignition\BasilModel\Assertion\IncludesAssertion;
-use webignition\BasilModel\Assertion\IsAssertion;
-use webignition\BasilModel\Assertion\IsNotAssertion;
-use webignition\BasilModel\Assertion\MatchesAssertion;
-use webignition\BasilModel\Assertion\NotExistsAssertion;
-use webignition\BasilModel\Assertion\ValueComparisonAssertionInterface;
+use webignition\BasilModel\Assertion\ComparisonAssertion;
+use webignition\BasilModel\Assertion\ExaminationAssertion;
 use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Value\AssertionExaminedValue;
@@ -20,7 +14,6 @@ use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
-use webignition\BasilModelFactory\Exception\InvalidComparisonException;
 use webignition\BasilModelFactory\Identifier\AttributeIdentifierFactory;
 use webignition\BasilModelFactory\Identifier\ElementIdentifierFactory;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
@@ -31,11 +24,6 @@ class AssertionFactory
     private $identifierStringExtractor;
     private $elementIdentifierFactory;
     private $attributeIdentifierFactory;
-
-    const EXISTENCE_COMPARISONS = [
-        AssertionComparison::EXISTS,
-        AssertionComparison::NOT_EXISTS,
-    ];
 
     public function __construct(
         ValueFactory $valueFactory,
@@ -65,7 +53,6 @@ class AssertionFactory
      * @return AssertionInterface
      *
      * @throws EmptyAssertionStringException
-     * @throws InvalidComparisonException
      * @throws MalformedPageElementReferenceException
      */
     public function createFromAssertionString(string $assertionString): AssertionInterface
@@ -77,20 +64,23 @@ class AssertionFactory
 
         $identifierString = $this->identifierStringExtractor->extractFromStart($assertionString);
 
-        $expectedValue = null;
         $examinedValue = $this->createExaminedValue($identifierString);
 
         $comparisonAndExpectedValue = trim(mb_substr($assertionString, mb_strlen($identifierString)));
         list($comparison, $expectedValueString) = $this->findComparisonAndExpectedValue($comparisonAndExpectedValue);
 
-        if (in_array($comparison, self::EXISTENCE_COMPARISONS)) {
-            return $this->createExistenceAssertion($comparison, $assertionString, $examinedValue);
+        if (in_array($comparison, AssertionComparison::EXAMINATION_COMPARISONS)) {
+            return new ExaminationAssertion(
+                $assertionString,
+                $examinedValue,
+                $comparison
+            );
         }
 
-        return $this->createValueComparisonAssertion(
-            $comparison,
+        return new ComparisonAssertion(
             $assertionString,
             $examinedValue,
+            $comparison,
             new AssertionExpectedValue($this->valueFactory->createFromValueString($expectedValueString))
         );
     }
@@ -139,61 +129,5 @@ class AssertionFactory
         return new AssertionExaminedValue(
             $this->valueFactory->createFromValueString($identifierString)
         );
-    }
-
-    /**
-     * @param string $comparison
-     * @param string $assertionString
-     * @param AssertionExaminedValue $examinedValue
-     *
-     * @return AssertionInterface
-     */
-    private function createExistenceAssertion(
-        string $comparison,
-        string $assertionString,
-        AssertionExaminedValue $examinedValue
-    ): AssertionInterface {
-        return AssertionComparison::EXISTS === $comparison
-            ? new ExistsAssertion($assertionString, $examinedValue)
-            : new NotExistsAssertion($assertionString, $examinedValue);
-    }
-
-    /**
-     * @param string $comparison
-     * @param string $assertionString
-     * @param AssertionExaminedValue $examinedValue
-     * @param AssertionExpectedValue $expectedValue
-     *
-     * @return ValueComparisonAssertionInterface
-     *
-     * @throws InvalidComparisonException
-     */
-    private function createValueComparisonAssertion(
-        string $comparison,
-        string $assertionString,
-        AssertionExaminedValue $examinedValue,
-        AssertionExpectedValue $expectedValue
-    ): ValueComparisonAssertionInterface {
-        if (AssertionComparison::IS === $comparison) {
-            return new IsAssertion($assertionString, $examinedValue, $expectedValue);
-        }
-
-        if (AssertionComparison::IS_NOT === $comparison) {
-            return new IsNotAssertion($assertionString, $examinedValue, $expectedValue);
-        }
-
-        if (AssertionComparison::INCLUDES === $comparison) {
-            return new IncludesAssertion($assertionString, $examinedValue, $expectedValue);
-        }
-
-        if (AssertionComparison::EXCLUDES === $comparison) {
-            return new ExcludesAssertion($assertionString, $examinedValue, $expectedValue);
-        }
-
-        if (AssertionComparison::MATCHES === $comparison) {
-            return new MatchesAssertion($assertionString, $examinedValue, $expectedValue);
-        }
-
-        throw new InvalidComparisonException($assertionString, $comparison);
     }
 }
