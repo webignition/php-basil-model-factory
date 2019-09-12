@@ -5,16 +5,16 @@ namespace webignition\BasilModelFactory\Tests\Unit;
 
 use webignition\BasilModel\Value\AttributeReference;
 use webignition\BasilModel\Value\BrowserProperty;
-use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\DataParameter;
+use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionInterface;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModel\Value\ValueInterface;
-use webignition\BasilModel\Value\XpathExpression;
 use webignition\BasilModelFactory\ValueFactory;
 
 class ValueFactoryTest extends \PHPUnit\Framework\TestCase
@@ -181,11 +181,11 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'css selector' => [
                 'identifierString' => '".selector"',
-                'expectedElementExpression' => new CssSelector('.selector'),
+                'expectedElementExpression' => new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR),
             ],
             'xpath expression' => [
                 'identifierString' => '"//foo"',
-                'expectedElementExpression' => new XpathExpression('//foo'),
+                'expectedElementExpression' => new ElementExpression('//foo', ElementExpressionType::XPATH_EXPRESSION),
             ],
             'non-selector' => [
                 'identifierString' => 'value',

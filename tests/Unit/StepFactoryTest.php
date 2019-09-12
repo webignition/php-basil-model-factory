@@ -22,7 +22,8 @@ use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModel\Value\AssertionExaminedValue;
 use webignition\BasilModel\Value\AssertionExpectedValue;
-use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilDataStructure\Step as StepData;
@@ -87,14 +88,14 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             'click ".selector"',
                             ActionTypes::CLICK,
                             new ElementIdentifier(
-                                new CssSelector('.selector')
+                                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                             ),
                             '".selector"'
                         ),
                         new InputAction(
                             'set ".input" to "value"',
                             new ElementIdentifier(
-                                new CssSelector('.input')
+                                new ElementExpression('.input', ElementExpressionType::CSS_SELECTOR)
                             ),
                             new LiteralValue('value'),
                             '".input" to "value"'
@@ -119,7 +120,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             new AssertionExaminedValue(
                                 new ElementValue(
                                     new ElementIdentifier(
-                                        new CssSelector('.selector')
+                                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                                     )
                                 )
                             ),
@@ -133,7 +134,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             new AssertionExaminedValue(
                                 new ElementValue(
                                     new ElementIdentifier(
-                                        new CssSelector('.input')
+                                        new ElementExpression('.input', ElementExpressionType::CSS_SELECTOR)
                                     )
                                 )
                             ),
@@ -262,7 +263,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                                 'click ".selector"',
                                 ActionTypes::CLICK,
                                 new ElementIdentifier(
-                                    new CssSelector('.selector')
+                                    new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                                 ),
                                 '".selector"'
                             ),
@@ -273,7 +274,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                                 new AssertionExaminedValue(
                                     new ElementValue(
                                         new ElementIdentifier(
-                                            new CssSelector('.selector')
+                                            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                                         )
                                     )
                                 ),

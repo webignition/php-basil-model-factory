@@ -10,7 +10,8 @@ use webignition\BasilModel\Identifier\ElementIdentifierCollection;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilDataStructure\Page as PageData;
-use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModelFactory\InvalidPageElementIdentifierException;
 use webignition\BasilModelFactory\PageFactory;
 use webignition\BasilTestIdentifierFactory\TestIdentifierFactory;
@@ -43,7 +44,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
     public function createFromPageDataDataProvider(): array
     {
         $parentIdentifier = TestIdentifierFactory::createElementIdentifier(
-            new CssSelector('.form'),
+            new ElementExpression('.form', ElementExpressionType::CSS_SELECTOR),
             1,
             'form'
         );
@@ -70,7 +71,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                     new Uri('http://example.com/'),
                     new ElementIdentifierCollection([
                         'css-selector' => (new ElementIdentifier(
-                            new CssSelector('.selector')
+                            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                         ))->withName('css-selector'),
                     ])
                 ),
@@ -88,7 +89,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                     new ElementIdentifierCollection([
                         'form' => $parentIdentifier,
                         'form_field' => TestIdentifierFactory::createElementIdentifier(
-                            new CssSelector('.field'),
+                            new ElementExpression('.field', ElementExpressionType::CSS_SELECTOR),
                             null,
                             'form_field',
                             $parentIdentifier
