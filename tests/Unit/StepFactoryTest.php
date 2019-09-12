@@ -9,8 +9,9 @@ use webignition\BasilContextAwareException\ExceptionContext\ExceptionContextInte
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
 use webignition\BasilModel\Action\InteractionAction;
-use webignition\BasilModel\Assertion\ExistsAssertion;
-use webignition\BasilModel\Assertion\IsAssertion;
+use webignition\BasilModel\Assertion\AssertionComparison;
+use webignition\BasilModel\Assertion\ComparisonAssertion;
+use webignition\BasilModel\Assertion\ExaminationAssertion;
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Identifier\ElementIdentifier;
@@ -113,7 +114,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     [
                     ],
                     [
-                        new IsAssertion(
+                        new ComparisonAssertion(
                             '".selector" is "value"',
                             new AssertionExaminedValue(
                                 new ElementValue(
@@ -122,11 +123,12 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                                     )
                                 )
                             ),
+                            AssertionComparison::IS,
                             new AssertionExpectedValue(
                                 new LiteralValue('value')
                             )
                         ),
-                        new ExistsAssertion(
+                        new ExaminationAssertion(
                             '".input" exists',
                             new AssertionExaminedValue(
                                 new ElementValue(
@@ -134,7 +136,8 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                                         new CssSelector('.input')
                                     )
                                 )
-                            )
+                            ),
+                            AssertionComparison::EXISTS
                         ),
                     ]
                 ),
@@ -164,7 +167,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         )
                     ],
                     [
-                        new ExistsAssertion(
+                        new ExaminationAssertion(
                             'page_import_name.elements.element_name exists',
                             new AssertionExaminedValue(
                                 new PageElementReference(
@@ -172,7 +175,8 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                                     'page_import_name',
                                     'element_name'
                                 )
-                            )
+                            ),
+                            AssertionComparison::EXISTS
                         ),
                     ]
                 ),
@@ -264,7 +268,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             ),
                         ],
                         [
-                            new ExistsAssertion(
+                            new ExaminationAssertion(
                                 '".selector" exists',
                                 new AssertionExaminedValue(
                                     new ElementValue(
@@ -272,7 +276,8 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                                             new CssSelector('.selector')
                                         )
                                     )
-                                )
+                                ),
+                                AssertionComparison::EXISTS
                             ),
                         ]
                     ),
