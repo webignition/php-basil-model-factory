@@ -61,7 +61,6 @@ class AssertionFactory
      * @return AssertionInterface
      *
      * @throws EmptyAssertionStringException
-     * @throws MalformedPageElementReferenceException
      */
     public function createFromAssertionString(string $assertionString): AssertionInterface
     {
@@ -132,7 +131,6 @@ class AssertionFactory
      * @throws EmptyAssertionStringException
      * @throws InvalidAssertionExaminedValueException
      * @throws InvalidAssertionExpectedValueException
-     * @throws MalformedPageElementReferenceException
      */
     public function createAssertableAssertionFromString(string $assertionString): AssertionInterface
     {
@@ -159,8 +157,6 @@ class AssertionFactory
      * @param string $identifierString
      *
      * @return ExaminedValue
-     *
-     * @throws MalformedPageElementReferenceException
      */
     private function createExaminedValue(string $identifierString): ValueInterface
     {
