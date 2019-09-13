@@ -32,6 +32,8 @@ use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModel\Value\PageProperty;
+use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
+use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\Test\TestFactory;
 
@@ -389,7 +391,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
         //   - test.elements contains malformed reference
 
         return [
-            'MalformedPageElementReferenceException: action string contains malformed reference (1)' => [
+            'action string contains invalid identifier string' => [
                 'name' => 'test name',
                 'testData' => new TestData(
                     PathResolver::create(),
@@ -405,15 +407,15 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                         ],
                     ]
                 ),
-                'expectedException' => MalformedPageElementReferenceException::class,
-                'expectedExceptionMessage' => 'Malformed page element reference "action_one_element_reference"',
+                'expectedException' => InvalidIdentifierStringException::class,
+                'expectedExceptionMessage' => 'Invalid identifier string "action_one_element_reference"',
                 'expectedExceptionContext' =>  new ExceptionContext([
                     ExceptionContextInterface::KEY_TEST_NAME => 'test name',
                     ExceptionContextInterface::KEY_STEP_NAME => 'step name',
                     ExceptionContextInterface::KEY_CONTENT => 'click action_one_element_reference',
                 ]),
             ],
-            'MalformedPageElementReferenceException: action string contains malformed reference (2)' => [
+            'action string contains invalid action type' => [
                 'name' => 'test name',
                 'testData' => new TestData(
                     PathResolver::create(),
@@ -424,21 +426,20 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                         ],
                         'step name' => [
                             StepData::KEY_ACTIONS => [
-                                'click ".heading"',
-                                'click action_two_element_reference',
+                                'foo ".selector"',
                             ],
                         ],
                     ]
                 ),
-                'expectedException' => MalformedPageElementReferenceException::class,
-                'expectedExceptionMessage' => 'Malformed page element reference "action_two_element_reference"',
+                'expectedException' => InvalidActionTypeException::class,
+                'expectedExceptionMessage' => 'Invalid action type "foo"',
                 'expectedExceptionContext' =>  new ExceptionContext([
                     ExceptionContextInterface::KEY_TEST_NAME => 'test name',
                     ExceptionContextInterface::KEY_STEP_NAME => 'step name',
-                    ExceptionContextInterface::KEY_CONTENT => 'click action_two_element_reference',
+                    ExceptionContextInterface::KEY_CONTENT => 'foo ".selector"',
                 ]),
             ],
-            'MalformedPageElementReferenceException: test.elements contains malformed reference (1)' => [
+            'test.elements contains malformed reference' => [
                 'name' => 'test name',
                 'testData' => new TestData(
                     PathResolver::create(),
@@ -461,35 +462,6 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                     ExceptionContextInterface::KEY_TEST_NAME => 'test name',
                     ExceptionContextInterface::KEY_STEP_NAME => 'step one',
                 ]),
-            ],
-            'MalformedPageElementReferenceException: test.elements contains malformed reference (2)' => [
-                'name' => 'test name',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => [
-                            ConfigurationData::KEY_BROWSER => 'chrome',
-                            ConfigurationData::KEY_URL => 'http://example.com',
-                        ],
-                        'step one' => [
-                            StepData::KEY_ASSERTIONS => [
-                                '$page.url is "http://example.com"',
-                            ],
-                        ],
-                        'step two' => [
-                            StepData::KEY_USE => 'step_import_name',
-                            StepData::KEY_ELEMENTS => [
-                                'heading' => 'malformed_page_element_reference',
-                            ],
-                        ],
-                    ]
-                ),
-                'expectedException' => MalformedPageElementReferenceException::class,
-                'expectedExceptionMessage' => 'Malformed page element reference "malformed_page_element_reference"',
-                'expectedExceptionContext' =>  new ExceptionContext([
-                    ExceptionContextInterface::KEY_TEST_NAME => 'test name',
-                    ExceptionContextInterface::KEY_STEP_NAME => 'step two',
-                ])
             ],
         ];
     }

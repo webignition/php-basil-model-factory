@@ -7,6 +7,9 @@ use webignition\BasilModel\Test\TestInterface;
 use webignition\BasilModel\Test\Test;
 use webignition\BasilDataStructure\Step;
 use webignition\BasilDataStructure\Test\Test as TestData;
+use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
+use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
+use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\StepFactory;
 
@@ -35,7 +38,10 @@ class TestFactory
      *
      * @return TestInterface
      *
+     * @throws InvalidActionTypeException
+     * @throws InvalidIdentifierStringException
      * @throws MalformedPageElementReferenceException
+     * @throws EmptyAssertionStringException
      */
     public function createFromTestData(string $name, TestData $testData)
     {
@@ -46,7 +52,11 @@ class TestFactory
         foreach ($testData->getSteps() as $stepName => $stepData) {
             try {
                 $steps[$stepName] = $this->stepFactory->createFromStepData($stepData);
-            } catch (MalformedPageElementReferenceException $contextAwareException) {
+            } catch (EmptyAssertionStringException |
+                InvalidActionTypeException |
+                InvalidIdentifierStringException |
+                MalformedPageElementReferenceException $contextAwareException
+            ) {
                 $contextAwareException->applyExceptionContext([
                     ExceptionContextInterface::KEY_TEST_NAME => $name,
                     ExceptionContextInterface::KEY_STEP_NAME => $stepName,
