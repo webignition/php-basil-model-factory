@@ -8,7 +8,6 @@ use webignition\BasilModel\PageElementReference\PageElementReference as PageElem
 use webignition\BasilModel\Value\PageElementReference as PageElementReferenceValue;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\IdentifierTypes;
-use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 
 class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInterface
 {
@@ -31,8 +30,6 @@ class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInte
      * @param string $identifierString
      *
      * @return IdentifierInterface|null
-     *
-     * @throws MalformedPageElementReferenceException
      */
     public function create(string $identifierString): ?IdentifierInterface
     {
@@ -42,10 +39,6 @@ class PageElementReferenceIdentifierFactory implements IdentifierTypeFactoryInte
 
         $identifierString = trim($identifierString);
         $pageElementReference = new PageElementReferenceModel($identifierString);
-
-        if (!$pageElementReference->isValid()) {
-            throw new MalformedPageElementReferenceException($pageElementReference);
-        }
 
         return ReferenceIdentifier::createPageElementReferenceIdentifier(
             new PageElementReferenceValue(
