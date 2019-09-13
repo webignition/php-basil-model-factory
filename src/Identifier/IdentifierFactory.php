@@ -6,7 +6,6 @@ use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\IdentifierTypes;
-use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 
 class IdentifierFactory
 {
@@ -48,8 +47,6 @@ class IdentifierFactory
      * @param IdentifierInterface[] $existingIdentifiers
      *
      * @return IdentifierInterface|null
-     *
-     * @throws MalformedPageElementReferenceException
      */
     public function createWithElementReference(
         string $identifierString,
@@ -89,8 +86,6 @@ class IdentifierFactory
      * @param array $allowedTypes
      *
      * @return IdentifierInterface|null
-     *
-     * @throws MalformedPageElementReferenceException
      */
     public function create(string $identifierString, array $allowedTypes = [
         IdentifierTypes::ATTRIBUTE_REFERENCE,

@@ -6,23 +6,23 @@ use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 
-class NoArgumentsActionTypeFactory extends AbstractActionTypeFactory implements ActionTypeFactoryInterface
+class NoArgumentsActionTypeFactory implements ActionTypeFactoryInterface
 {
     public static function createFactory(): NoArgumentsActionTypeFactory
     {
         return new NoArgumentsActionTypeFactory();
     }
 
-    protected function getHandledActionTypes(): array
+    public function handles(string $type): bool
     {
-        return [
+        return in_array($type, [
             ActionTypes::RELOAD,
             ActionTypes::BACK,
             ActionTypes::FORWARD,
-        ];
+        ]);
     }
 
-    protected function doCreateForActionType(string $actionString, string $type, string $arguments): ActionInterface
+    public function createForActionType(string $actionString, string $type, string $arguments): ActionInterface
     {
         return new NoArgumentsAction($actionString, $type, $arguments);
     }

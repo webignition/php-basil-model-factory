@@ -34,7 +34,6 @@ class PageFactory
      *
      * @return PageInterface
      *
-     * @throws MalformedPageElementReferenceException
      * @throws InvalidPageElementIdentifierException
      */
     public function createFromPageData(PageData $pageData): PageInterface
@@ -56,7 +55,6 @@ class PageFactory
      * @return ElementIdentifierCollection
      *
      * @throws InvalidPageElementIdentifierException
-     * @throws MalformedPageElementReferenceException
      */
     private function createElementIdentifiers(array $elementData): ElementIdentifierCollection
     {

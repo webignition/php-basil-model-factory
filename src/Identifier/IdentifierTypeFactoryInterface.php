@@ -3,7 +3,6 @@
 namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 
 interface IdentifierTypeFactoryInterface
 {
@@ -14,8 +13,6 @@ interface IdentifierTypeFactoryInterface
      * @param string $identifierString
      *
      * @return IdentifierInterface|null
-     *
-     * @throws MalformedPageElementReferenceException
      */
     public function create(string $identifierString): ?IdentifierInterface;
 }

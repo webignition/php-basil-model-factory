@@ -65,16 +65,4 @@ class WaitActionTypeFactoryTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
-
-    public function testCreateForActionTypeThrowsException()
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Invalid action type');
-
-        $this->actionFactory->createForActionType(
-            'set ".selector" to "value"',
-            ActionTypes::SET,
-            '".selector" to "value"'
-        );
-    }
 }

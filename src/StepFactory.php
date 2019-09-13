@@ -12,6 +12,9 @@ use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilDataStructure\Step as StepData;
 use webignition\BasilModelFactory\Action\ActionFactory;
+use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
+use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
+use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 use webignition\BasilModelFactory\Identifier\PageElementReferenceIdentifierFactory;
 
 class StepFactory
@@ -44,6 +47,9 @@ class StepFactory
      *
      * @return StepInterface
      *
+     * @throws EmptyAssertionStringException
+     * @throws InvalidActionTypeException
+     * @throws InvalidIdentifierStringException
      * @throws MalformedPageElementReferenceException
      */
     public function createFromStepData(StepData $stepData): StepInterface
@@ -77,7 +83,7 @@ class StepFactory
                     }
                 }
             }
-        } catch (MalformedPageElementReferenceException $contextAwareException) {
+        } catch (InvalidActionTypeException | InvalidIdentifierStringException $contextAwareException) {
             $contextAwareException->applyExceptionContext([
                 ExceptionContextInterface::KEY_CONTENT => $assertionString !== '' ? $assertionString : $actionString,
             ]);

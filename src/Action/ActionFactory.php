@@ -3,32 +3,37 @@
 namespace webignition\BasilModelFactory\Action;
 
 use webignition\BasilModel\Action\ActionInterface;
-use webignition\BasilModel\Action\UnrecognisedAction;
+use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
+use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 
 class ActionFactory
 {
-    /**
-     * @var ActionTypeFactoryInterface[]
-     */
-    private $actionTypeFactories = [];
+    private $inputActionTypeFactory;
+    private $interactionActionTypeFactory;
+    private $noArgumentsActionTypeFactory;
+    private $waitActionTypeFactory;
+
+    public function __construct()
+    {
+        $this->inputActionTypeFactory = InputActionTypeFactory::createFactory();
+        $this->interactionActionTypeFactory = InteractionActionTypeFactory::createFactory();
+        $this->noArgumentsActionTypeFactory = NoArgumentsActionTypeFactory::createFactory();
+        $this->waitActionTypeFactory = WaitActionTypeFactory::createFactory();
+    }
 
     public static function createFactory(): ActionFactory
     {
-        $actionFactory = new ActionFactory();
-
-        $actionFactory->addActionTypeFactory(InputActionTypeFactory::createFactory());
-        $actionFactory->addActionTypeFactory(InteractionActionTypeFactory::createFactory());
-        $actionFactory->addActionTypeFactory(NoArgumentsActionTypeFactory::createFactory());
-        $actionFactory->addActionTypeFactory(WaitActionTypeFactory::createFactory());
-
-        return $actionFactory;
+        return new ActionFactory();
     }
 
-    public function addActionTypeFactory(ActionTypeFactoryInterface $actionTypeFactory)
-    {
-        $this->actionTypeFactories[] = $actionTypeFactory;
-    }
-
+    /**
+     * @param string $actionString
+     *
+     * @return ActionInterface
+     *
+     * @throws InvalidActionTypeException
+     * @throws InvalidIdentifierStringException
+     */
     public function createFromActionString(string $actionString): ActionInterface
     {
         $actionString = trim($actionString);
@@ -40,23 +45,22 @@ class ActionFactory
             list($type, $arguments) = explode(' ', $actionString, 2);
         }
 
-        $actionTypeFactory = $this->findActionTypeFactory($type);
-
-        if ($actionTypeFactory instanceof ActionTypeFactoryInterface) {
-            return $actionTypeFactory->createForActionType($actionString, $type, $arguments);
+        if ($this->inputActionTypeFactory->handles($type)) {
+            return $this->inputActionTypeFactory->createForActionType($actionString, $type, $arguments);
         }
 
-        return new UnrecognisedAction($actionString, $type, $arguments);
-    }
-
-    private function findActionTypeFactory(string $type): ?ActionTypeFactoryInterface
-    {
-        foreach ($this->actionTypeFactories as $typeParser) {
-            if ($typeParser->handles($type)) {
-                return $typeParser;
-            }
+        if ($this->interactionActionTypeFactory->handles($type)) {
+            return $this->interactionActionTypeFactory->createForActionType($actionString, $type, $arguments);
         }
 
-        return null;
+        if ($this->noArgumentsActionTypeFactory->handles($type)) {
+            return $this->noArgumentsActionTypeFactory->createForActionType($actionString, $type, $arguments);
+        }
+
+        if ($this->waitActionTypeFactory->handles($type)) {
+            return $this->waitActionTypeFactory->createForActionType($actionString, $type, $arguments);
+        }
+
+        throw new InvalidActionTypeException($type);
     }
 }
