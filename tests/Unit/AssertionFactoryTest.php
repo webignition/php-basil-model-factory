@@ -4,12 +4,16 @@
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
+use webignition\BasilModel\Assertion\AssertableComparisonAssertion;
+use webignition\BasilModel\Assertion\AssertableExaminationAssertion;
 use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Assertion\ComparisonAssertion;
 use webignition\BasilModel\Assertion\ExaminationAssertion;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Value\Assertion\AssertableExaminedValue;
+use webignition\BasilModel\Value\Assertion\AssertableExpectedValue;
 use webignition\BasilModel\Value\Assertion\ExaminedValue;
 use webignition\BasilModel\Value\Assertion\ExpectedValue;
 use webignition\BasilModel\Value\AttributeReference;
@@ -515,5 +519,98 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
         $this->expectException(EmptyAssertionStringException::class);
 
         $this->assertionFactory->createFromAssertionString('');
+    }
+
+    /**
+     * @dataProvider createAssertableAssertionReturnsAssertionDataProvider
+     */
+    public function testCreateAssertableAssertionReturnsAssertion(AssertionInterface $assertion)
+    {
+        $this->assertSame(
+            $assertion,
+            $this->assertionFactory->createAssertableAssertion($assertion)
+        );
+    }
+
+    public function createAssertableAssertionReturnsAssertionDataProvider(): array
+    {
+        return [
+            'non-examination, non-comparison' => [
+                'assertion' => \Mockery::mock(AssertionInterface::class),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider createAssertableAssertionDataProvider
+     */
+    public function testCreateAssertableAssertion(
+        AssertionInterface $assertion,
+        AssertionInterface $expectedAssertion
+    ) {
+        $assertableAssertion = $this->assertionFactory->createAssertableAssertion($assertion);
+
+        $this->assertNotSame($assertion, $assertableAssertion);
+        $this->assertEquals($expectedAssertion, $assertableAssertion);
+    }
+
+    public function createAssertableAssertionDataProvider(): array
+    {
+        return [
+            'examination assertion' => [
+                'assertion' => new ExaminationAssertion(
+                    '".selector" exists',
+                    new ExaminedValue(
+                        new ElementValue(
+                            new ElementIdentifier(
+                                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                            )
+                        )
+                    ),
+                    AssertionComparison::EXISTS
+                ),
+                'expectedAssertion' => new AssertableExaminationAssertion(
+                    '".selector" exists',
+                    new AssertableExaminedValue(
+                        new ElementValue(
+                            new ElementIdentifier(
+                                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                            )
+                        )
+                    ),
+                    AssertionComparison::EXISTS
+                )
+            ],
+            'comparison assertion' => [
+                'assertion' => new ComparisonAssertion(
+                    '".selector" is "foo"',
+                    new ExaminedValue(
+                        new ElementValue(
+                            new ElementIdentifier(
+                                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                            )
+                        )
+                    ),
+                    AssertionComparison::EXISTS,
+                    new ExpectedValue(
+                        new LiteralValue('foo')
+                    )
+                ),
+                'expectedAssertion' => new AssertableComparisonAssertion(
+                    '".selector" is "foo"',
+                    new AssertableExaminedValue(
+                        new ElementValue(
+                            new ElementIdentifier(
+                                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                            )
+                        )
+                    ),
+                    AssertionComparison::EXISTS,
+                    new AssertableExpectedValue(
+                        new LiteralValue('foo')
+                    )
+                )
+            ],
+        ];
     }
 }

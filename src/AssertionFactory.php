@@ -2,12 +2,20 @@
 
 namespace webignition\BasilModelFactory;
 
+use webignition\BasilModel\Assertion\AssertableComparisonAssertion;
+use webignition\BasilModel\Assertion\AssertableExaminationAssertion;
 use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Assertion\ComparisonAssertion;
+use webignition\BasilModel\Assertion\ComparisonAssertionInterface;
 use webignition\BasilModel\Assertion\ExaminationAssertion;
+use webignition\BasilModel\Assertion\ExaminationAssertionInterface;
+use webignition\BasilModel\Exception\InvalidAssertionExaminedValueException;
+use webignition\BasilModel\Exception\InvalidAssertionExpectedValueException;
 use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
+use webignition\BasilModel\Value\Assertion\AssertableExaminedValue;
+use webignition\BasilModel\Value\Assertion\AssertableExpectedValue;
 use webignition\BasilModel\Value\Assertion\ExaminedValue;
 use webignition\BasilModel\Value\Assertion\ExpectedValue;
 use webignition\BasilModel\Value\AttributeValue;
@@ -82,6 +90,37 @@ class AssertionFactory
             $examinedValue,
             $comparison,
             new ExpectedValue($this->valueFactory->createFromValueString($expectedValueString))
+        );
+    }
+
+    /**
+     * @param AssertionInterface $assertion
+     *
+     * @return AssertionInterface
+     *
+     * @throws InvalidAssertionExaminedValueException
+     * @throws InvalidAssertionExpectedValueException
+     */
+    public function createAssertableAssertion(AssertionInterface $assertion): AssertionInterface
+    {
+        if (!($assertion instanceof ExaminationAssertionInterface ||
+            $assertion instanceof ComparisonAssertionInterface)) {
+            return $assertion;
+        }
+
+        if ($assertion instanceof ComparisonAssertionInterface) {
+            return new AssertableComparisonAssertion(
+                $assertion->getAssertionString(),
+                new AssertableExaminedValue($assertion->getExaminedValue()->getExaminedValue()),
+                $assertion->getComparison(),
+                new AssertableExpectedValue($assertion->getExpectedValue()->getExpectedValue())
+            );
+        }
+
+        return new AssertableExaminationAssertion(
+            $assertion->getAssertionString(),
+            new AssertableExaminedValue($assertion->getExaminedValue()->getExaminedValue()),
+            $assertion->getComparison()
         );
     }
 
