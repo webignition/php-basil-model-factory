@@ -22,6 +22,7 @@ use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
+use webignition\BasilModelFactory\Exception\MissingValueException;
 use webignition\BasilModelFactory\Identifier\AttributeIdentifierFactory;
 use webignition\BasilModelFactory\Identifier\ElementIdentifierFactory;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
@@ -61,6 +62,7 @@ class AssertionFactory
      * @return AssertionInterface
      *
      * @throws EmptyAssertionStringException
+     * @throws MissingValueException
      */
     public function createFromAssertionString(string $assertionString): AssertionInterface
     {
@@ -82,6 +84,10 @@ class AssertionFactory
                 $examinedValue,
                 $comparison
             );
+        }
+
+        if ('' === $expectedValueString) {
+            throw new MissingValueException();
         }
 
         return new ComparisonAssertion(
@@ -131,6 +137,7 @@ class AssertionFactory
      * @throws EmptyAssertionStringException
      * @throws InvalidAssertionExaminedValueException
      * @throws InvalidAssertionExpectedValueException
+     * @throws MissingValueException
      */
     public function createAssertableAssertionFromString(string $assertionString): AssertionInterface
     {

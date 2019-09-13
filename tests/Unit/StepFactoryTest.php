@@ -356,6 +356,19 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     ExceptionContextInterface::KEY_CONTENT => 'set ".selector" to',
                 ]),
             ],
+            'is assertion missing value' => [
+                'stepData' => new StepData([
+                    StepData::KEY_ASSERTIONS => [
+                        '".selector" is',
+                    ],
+                ]),
+                'expectedException' => MissingValueException::class,
+                'expectedExceptionContext' => new ExceptionContext([
+                    ExceptionContextInterface::KEY_TEST_NAME => null,
+                    ExceptionContextInterface::KEY_STEP_NAME => null,
+                    ExceptionContextInterface::KEY_CONTENT => '".selector" is',
+                ]),
+            ],
         ];
     }
 }

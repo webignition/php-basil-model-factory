@@ -457,6 +457,30 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                     ExceptionContextInterface::KEY_CONTENT => 'set ".selector" to',
                 ]),
             ],
+            'assertion string lacks value' => [
+                'name' => 'test name',
+                'testData' => new TestData(
+                    PathResolver::create(),
+                    [
+                        TestData::KEY_CONFIGURATION => [
+                            ConfigurationData::KEY_BROWSER => 'chrome',
+                            ConfigurationData::KEY_URL => 'http://example.com',
+                        ],
+                        'step name' => [
+                            StepData::KEY_ASSERTIONS => [
+                                '".selector" is',
+                            ],
+                        ],
+                    ]
+                ),
+                'expectedException' => MissingValueException::class,
+                'expectedExceptionMessage' => '',
+                'expectedExceptionContext' =>  new ExceptionContext([
+                    ExceptionContextInterface::KEY_TEST_NAME => 'test name',
+                    ExceptionContextInterface::KEY_STEP_NAME => 'step name',
+                    ExceptionContextInterface::KEY_CONTENT => '".selector" is',
+                ]),
+            ],
             'test.elements contains malformed reference' => [
                 'name' => 'test name',
                 'testData' => new TestData(
