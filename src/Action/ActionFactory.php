@@ -3,17 +3,11 @@
 namespace webignition\BasilModelFactory\Action;
 
 use webignition\BasilModel\Action\ActionInterface;
-use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 
 class ActionFactory
 {
-    /**
-     * @var ActionTypeFactoryInterface[]
-     */
-    private $actionTypeFactories = [];
-
     private $inputActionTypeFactory;
     private $interactionActionTypeFactory;
     private $noArgumentsActionTypeFactory;
@@ -67,23 +61,6 @@ class ActionFactory
             return $this->waitActionTypeFactory->createForActionType($actionString, $type, $arguments);
         }
 
-        $actionTypeFactory = $this->findActionTypeFactory($type);
-
-        if ($actionTypeFactory instanceof ActionTypeFactoryInterface) {
-            return $actionTypeFactory->createForActionType($actionString, $type, $arguments);
-        }
-
-        return new UnrecognisedAction($actionString, $type, $arguments);
-    }
-
-    private function findActionTypeFactory(string $type): ?ActionTypeFactoryInterface
-    {
-        foreach ($this->actionTypeFactories as $typeParser) {
-            if ($typeParser->handles($type)) {
-                return $typeParser;
-            }
-        }
-
-        return null;
+        throw new InvalidActionTypeException($type);
     }
 }

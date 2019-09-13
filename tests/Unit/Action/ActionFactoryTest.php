@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelFactory\Tests\Unit\Action;
@@ -7,7 +8,6 @@ use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
 use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
-use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
@@ -20,6 +20,7 @@ use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelFactory\Action\ActionFactory;
+use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 
 class ActionFactoryTest extends \PHPUnit\Framework\TestCase
@@ -504,26 +505,28 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testCreateFromActionStringForUnrecognisedAction()
+    /**
+     * @dataProvider createFromActionStringForUnknownActionTypeDataProvider
+     */
+    public function testCreateFromActionForUnknownActionType(string $actionString, string $expectedInvalidActionType)
     {
-        $actionString = 'foo ".selector" to "value';
+        $this->expectExceptionObject(new InvalidActionTypeException($expectedInvalidActionType));
 
-        $action = $this->actionFactory->createFromActionString($actionString);
-
-        $this->assertInstanceOf(UnrecognisedAction::class, $action);
-        $this->assertSame('foo', $action->getType());
-        $this->assertFalse($action->isRecognised());
+        $this->actionFactory->createFromActionString($actionString);
     }
 
-    public function testCreateFromEmptyActionString()
+    public function createFromActionStringForUnknownActionTypeDataProvider(): array
     {
-        $actionString = '';
-
-        $action = $this->actionFactory->createFromActionString($actionString);
-
-        $this->assertInstanceOf(UnrecognisedAction::class, $action);
-        $this->assertSame('', $action->getType());
-        $this->assertFalse($action->isRecognised());
+        return [
+            'no type' => [
+                'actionString' => '',
+                'expectedInvalidActionType' => '',
+            ],
+            'unknown type' => [
+                'actionString' => 'foo ".selector"',
+                'expectedInvalidActionType' => 'foo',
+            ],
+        ];
     }
 
     /**
