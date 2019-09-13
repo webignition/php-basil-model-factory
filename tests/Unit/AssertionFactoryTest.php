@@ -613,4 +613,40 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider createAssertableAssertionFromStringDataProvider
+     */
+    public function testCreateAssertableAssertionFromString(
+        string $assertionString,
+        AssertionInterface $expectedAssertion
+    ) {
+        $this->assertEquals(
+            $expectedAssertion,
+            $this->assertionFactory->createAssertableAssertionFromString($assertionString)
+        );
+    }
+
+    public function createAssertableAssertionFromStringDataProvider(): array
+    {
+        return [
+            'css element selector, is, scalar value' => [
+                'assertionString' => '".selector" is "value"',
+                'expectedAssertion' => new AssertableComparisonAssertion(
+                    '".selector" is "value"',
+                    new AssertableExaminedValue(
+                        new ElementValue(
+                            new ElementIdentifier(
+                                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                            )
+                        )
+                    ),
+                    AssertionComparison::IS,
+                    new AssertableExpectedValue(
+                        new LiteralValue('value')
+                    )
+                ),
+            ],
+        ];
+    }
 }
