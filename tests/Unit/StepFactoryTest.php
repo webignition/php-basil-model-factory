@@ -31,6 +31,7 @@ use webignition\BasilDataStructure\Step as StepData;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingValueException;
 use webignition\BasilModelFactory\StepFactory;
 
 class StepFactoryTest extends \PHPUnit\Framework\TestCase
@@ -340,6 +341,19 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     ExceptionContextInterface::KEY_TEST_NAME => null,
                     ExceptionContextInterface::KEY_STEP_NAME => null,
                     ExceptionContextInterface::KEY_CONTENT => 'foo ".selector"',
+                ]),
+            ],
+            'set action missing value' => [
+                'stepData' => new StepData([
+                    StepData::KEY_ACTIONS => [
+                        'set ".selector" to',
+                    ],
+                ]),
+                'expectedException' => MissingValueException::class,
+                'expectedExceptionContext' => new ExceptionContext([
+                    ExceptionContextInterface::KEY_TEST_NAME => null,
+                    ExceptionContextInterface::KEY_STEP_NAME => null,
+                    ExceptionContextInterface::KEY_CONTENT => 'set ".selector" to',
                 ]),
             ],
         ];
