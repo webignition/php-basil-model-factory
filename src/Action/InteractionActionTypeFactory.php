@@ -5,11 +5,12 @@ namespace webignition\BasilModelFactory\Action;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InteractionAction;
+use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelFactory\IdentifierTypes;
 
-class InteractionActionTypeFactory extends AbstractActionTypeFactory implements ActionTypeFactoryInterface
+class InteractionActionTypeFactory implements ActionTypeFactoryInterface
 {
     private $identifierFactory;
 
@@ -25,13 +26,13 @@ class InteractionActionTypeFactory extends AbstractActionTypeFactory implements 
         );
     }
 
-    protected function getHandledActionTypes(): array
+    public function handles(string $type): bool
     {
-        return [
+        return in_array($type, [
             ActionTypes::CLICK,
             ActionTypes::SUBMIT,
             ActionTypes::WAIT_FOR,
-        ];
+        ]);
     }
 
     /**
@@ -42,9 +43,14 @@ class InteractionActionTypeFactory extends AbstractActionTypeFactory implements 
      * @return ActionInterface
      *
      * @throws InvalidIdentifierStringException
+     * @throws InvalidActionTypeException
      */
-    protected function doCreateForActionType(string $actionString, string $type, string $arguments): ActionInterface
+    public function createForActionType(string $actionString, string $type, string $arguments): ActionInterface
     {
+        if (!$this->handles($type)) {
+            throw new InvalidActionTypeException($type);
+        }
+
         $identifier = $this->identifierFactory->create($arguments, [
             IdentifierTypes::ELEMENT_REFERENCE,
             IdentifierTypes::ELEMENT_SELECTOR,

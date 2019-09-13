@@ -7,7 +7,7 @@ use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModelFactory\ValueFactory;
 
-class WaitActionTypeFactory extends AbstractActionTypeFactory implements ActionTypeFactoryInterface
+class WaitActionTypeFactory implements ActionTypeFactoryInterface
 {
     private $valueFactory;
 
@@ -23,14 +23,12 @@ class WaitActionTypeFactory extends AbstractActionTypeFactory implements ActionT
         );
     }
 
-    protected function getHandledActionTypes(): array
+    public function handles(string $type): bool
     {
-        return [
-            ActionTypes::WAIT,
-        ];
+        return ActionTypes::WAIT === $type;
     }
 
-    protected function doCreateForActionType(string $actionString, string $type, string $arguments): ActionInterface
+    public function createForActionType(string $actionString, string $type, string $arguments): ActionInterface
     {
         $duration = $this->valueFactory->createFromValueString($arguments);
 

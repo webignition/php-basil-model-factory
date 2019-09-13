@@ -4,6 +4,8 @@ namespace webignition\BasilModelFactory\Action;
 
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\UnrecognisedAction;
+use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
+use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 
 class ActionFactory
 {
@@ -12,23 +14,32 @@ class ActionFactory
      */
     private $actionTypeFactories = [];
 
+    private $inputActionTypeFactory;
+    private $interactionActionTypeFactory;
+    private $noArgumentsActionTypeFactory;
+    private $waitActionTypeFactory;
+
+    public function __construct()
+    {
+        $this->inputActionTypeFactory = InputActionTypeFactory::createFactory();
+        $this->interactionActionTypeFactory = InteractionActionTypeFactory::createFactory();
+        $this->noArgumentsActionTypeFactory = NoArgumentsActionTypeFactory::createFactory();
+        $this->waitActionTypeFactory = WaitActionTypeFactory::createFactory();
+    }
+
     public static function createFactory(): ActionFactory
     {
-        $actionFactory = new ActionFactory();
-
-        $actionFactory->addActionTypeFactory(InputActionTypeFactory::createFactory());
-        $actionFactory->addActionTypeFactory(InteractionActionTypeFactory::createFactory());
-        $actionFactory->addActionTypeFactory(NoArgumentsActionTypeFactory::createFactory());
-        $actionFactory->addActionTypeFactory(WaitActionTypeFactory::createFactory());
-
-        return $actionFactory;
+        return new ActionFactory();
     }
 
-    public function addActionTypeFactory(ActionTypeFactoryInterface $actionTypeFactory)
-    {
-        $this->actionTypeFactories[] = $actionTypeFactory;
-    }
-
+    /**
+     * @param string $actionString
+     *
+     * @return ActionInterface
+     *
+     * @throws InvalidActionTypeException
+     * @throws InvalidIdentifierStringException
+     */
     public function createFromActionString(string $actionString): ActionInterface
     {
         $actionString = trim($actionString);
@@ -38,6 +49,22 @@ class ActionFactory
 
         if (mb_substr_count($actionString, ' ') > 0) {
             list($type, $arguments) = explode(' ', $actionString, 2);
+        }
+
+        if ($this->inputActionTypeFactory->handles($type)) {
+            return $this->inputActionTypeFactory->createForActionType($actionString, $type, $arguments);
+        }
+
+        if ($this->interactionActionTypeFactory->handles($type)) {
+            return $this->interactionActionTypeFactory->createForActionType($actionString, $type, $arguments);
+        }
+
+        if ($this->noArgumentsActionTypeFactory->handles($type)) {
+            return $this->noArgumentsActionTypeFactory->createForActionType($actionString, $type, $arguments);
+        }
+
+        if ($this->waitActionTypeFactory->handles($type)) {
+            return $this->waitActionTypeFactory->createForActionType($actionString, $type, $arguments);
         }
 
         $actionTypeFactory = $this->findActionTypeFactory($type);
