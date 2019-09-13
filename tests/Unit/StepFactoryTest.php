@@ -4,6 +4,7 @@
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
+use webignition\BasilContextAwareException\ContextAwareExceptionInterface;
 use webignition\BasilContextAwareException\ExceptionContext\ExceptionContext;
 use webignition\BasilContextAwareException\ExceptionContext\ExceptionContextInterface;
 use webignition\BasilModel\Action\ActionTypes;
@@ -28,7 +29,8 @@ use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilDataStructure\Step as StepData;
 use webignition\BasilModel\Value\PageElementReference;
-use webignition\BasilModelFactory\MalformedPageElementReferenceException;
+use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
+use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 use webignition\BasilModelFactory\StepFactory;
 
 class StepFactoryTest extends \PHPUnit\Framework\TestCase
@@ -290,37 +292,54 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider applyContextToMalformedPageElementReferenceExceptionDataProvider
+     * @dataProvider applyContextToContextAwareExceptionDataProvider
      */
-    public function testApplyContextToMalformedPageElementReferenceException(
+    public function testApplyContextToContextAwareException(
         StepData $stepData,
+        string $expectedException,
         ExceptionContext $expectedExceptionContext
     ) {
         try {
             $this->stepFactory->createFromStepData($stepData);
 
-            $this->fail('MalformedPageElementReferenceException not thrown');
-        } catch (MalformedPageElementReferenceException $malformedPageElementReferenceException) {
+            $this->fail('ContextAwareExceptionInterface not thrown');
+        } catch (ContextAwareExceptionInterface $contextAwareException) {
+            $this->assertInstanceOf($expectedException, $contextAwareException);
+
             $this->assertEquals(
                 $expectedExceptionContext,
-                $malformedPageElementReferenceException->getExceptionContext()
+                $contextAwareException->getExceptionContext()
             );
         }
     }
 
-    public function applyContextToMalformedPageElementReferenceExceptionDataProvider(): array
+    public function applyContextToContextAwareExceptionDataProvider(): array
     {
         return [
-            'within action string' => [
+            'invalid identifier string within action string' => [
                 'stepData' => new StepData([
                     StepData::KEY_ACTIONS => [
                         'click page.element',
                     ],
                 ]),
+                'expectedException' => InvalidIdentifierStringException::class,
                 'expectedExceptionContext' => new ExceptionContext([
                     ExceptionContextInterface::KEY_TEST_NAME => null,
                     ExceptionContextInterface::KEY_STEP_NAME => null,
                     ExceptionContextInterface::KEY_CONTENT => 'click page.element',
+                ]),
+            ],
+            'invalid action type' => [
+                'stepData' => new StepData([
+                    StepData::KEY_ACTIONS => [
+                        'foo ".selector"',
+                    ],
+                ]),
+                'expectedException' => InvalidActionTypeException::class,
+                'expectedExceptionContext' => new ExceptionContext([
+                    ExceptionContextInterface::KEY_TEST_NAME => null,
+                    ExceptionContextInterface::KEY_STEP_NAME => null,
+                    ExceptionContextInterface::KEY_CONTENT => 'foo ".selector"',
                 ]),
             ],
         ];

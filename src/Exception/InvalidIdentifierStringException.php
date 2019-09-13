@@ -2,8 +2,14 @@
 
 namespace webignition\BasilModelFactory\Exception;
 
-class InvalidIdentifierStringException extends \Exception
+use webignition\BasilContextAwareException\ContextAwareExceptionInterface;
+use webignition\BasilContextAwareException\ContextAwareExceptionTrait;
+use webignition\BasilContextAwareException\ExceptionContext\ExceptionContext;
+
+class InvalidIdentifierStringException extends \Exception implements ContextAwareExceptionInterface
 {
+    use ContextAwareExceptionTrait;
+
     private $identifierString;
 
     public function __construct(string $identifierString)
@@ -11,6 +17,7 @@ class InvalidIdentifierStringException extends \Exception
         parent::__construct('Invalid identifier string "' . $identifierString . '"');
 
         $this->identifierString = $identifierString;
+        $this->exceptionContext = new ExceptionContext();
     }
 
     public function getIdentifierString(): string
