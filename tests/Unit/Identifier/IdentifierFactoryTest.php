@@ -8,7 +8,6 @@ use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
-use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\Tests\DataProvider\AttributeIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\CssSelectorIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\ElementParameterIdentifierDataProviderTrait;
@@ -173,23 +172,32 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testCreateEmpty()
-    {
-        $this->assertNull($this->factory->create(''));
-        $this->assertNull($this->factory->create(' '));
-    }
-
     public function testCreateWithElementReferenceEmpty()
     {
         $this->assertNull($this->factory->createWithElementReference('', 'element_name', []));
         $this->assertNull($this->factory->createWithElementReference(' ', 'element_name', []));
     }
 
-    public function testCreateForMalformedPageElementReference()
+    /**
+     * @dataProvider createForUnknownTypeDataProvider
+     */
+    public function testCreateForUnknownType(string $identifierString)
     {
-        $this->expectException(MalformedPageElementReferenceException::class);
-        $this->expectExceptionMessage('Malformed page element reference "invalid-page-model-element-reference"');
+        $this->assertNull($this->factory->create($identifierString));
+    }
 
-        $this->factory->create('invalid-page-model-element-reference');
+    public function createForUnknownTypeDataProvider(): array
+    {
+        return [
+            'empty' => [
+                'identifierString' => '',
+            ],
+            'whitespace only' => [
+                'identifierString' => ' ',
+            ],
+            'unknown type' => [
+                'identifierString' => 'invalid-page-model-element-reference',
+            ],
+        ];
     }
 }
