@@ -5,9 +5,9 @@ namespace webignition\BasilModelFactory\Action;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
-use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingValueException;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
 use webignition\BasilModelFactory\IdentifierTypes;
@@ -54,6 +54,7 @@ class InputActionTypeFactory implements ActionTypeFactoryInterface
      *
      * @throws InvalidIdentifierStringException
      * @throws InvalidActionTypeException
+     * @throws MissingValueException
      */
     public function createForActionType(string $actionString, string $type, string $arguments): ActionInterface
     {
@@ -77,11 +78,11 @@ class InputActionTypeFactory implements ActionTypeFactoryInterface
         $endsWithStopStringRegex = '/(( ' . $trimmedStopWord . ' )|( ' . $trimmedStopWord . '))$/';
 
         if (preg_match($endsWithStopStringRegex, $arguments) > 0) {
-            return new InputAction($actionString, $identifier, new LiteralValue(''), $arguments);
+            throw new MissingValueException();
         }
 
         if ($arguments === $identifierString) {
-            return new InputAction($actionString, $identifier, new LiteralValue(''), $arguments);
+            throw new MissingValueException();
         }
 
         $keywordAndValueString = mb_substr($arguments, mb_strlen($identifierString));

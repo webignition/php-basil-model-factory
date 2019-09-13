@@ -22,6 +22,7 @@ use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingValueException;
 
 class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -464,15 +465,6 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '"//a[ends-with(@href to value, \".pdf\")]" to "value"'
                 ),
             ],
-            'lacking value' => [
-                'actionString' => 'set ".selector" to',
-                'expectedAction' => new InputAction(
-                    'set ".selector" to',
-                    $cssSelectorIdentifier,
-                    new LiteralValue(''),
-                    '".selector" to'
-                ),
-            ],
             '".selector" lacking "to" keyword' => [
                 'actionString' => 'set ".selector" "value"',
                 'expectedAction' => new InputAction(
@@ -493,23 +485,16 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector to value" "value"'
                 ),
             ],
-            '".selector" lacking "to" keyword and lacking value' => [
-                'actionString' => 'set ".selector"',
-                'expectedAction' => new InputAction(
-                    'set ".selector"',
-                    $cssSelectorIdentifier,
-                    new LiteralValue(''),
-                    '".selector"'
-                ),
-            ],
         ];
     }
 
     /**
      * @dataProvider createFromActionStringForUnknownActionTypeDataProvider
      */
-    public function testCreateFromActionForUnknownActionType(string $actionString, string $expectedInvalidActionType)
-    {
+    public function testCreateFromActionStringForUnknownActionType(
+        string $actionString,
+        string $expectedInvalidActionType
+    ) {
         $this->expectExceptionObject(new InvalidActionTypeException($expectedInvalidActionType));
 
         $this->actionFactory->createFromActionString($actionString);
@@ -525,6 +510,28 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
             'unknown type' => [
                 'actionString' => 'foo ".selector"',
                 'expectedInvalidActionType' => 'foo',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider createFromActionStringThrowsMissingValueExceptionDataProvider
+     */
+    public function testCreateFromActionStringThrowsMissingValueException(string $actionString)
+    {
+        $this->expectException(MissingValueException::class);
+
+        $this->actionFactory->createFromActionString($actionString);
+    }
+
+    public function createFromActionStringThrowsMissingValueExceptionDataProvider(): array
+    {
+        return [
+            'lacking value' => [
+                'actionString' => 'set ".selector" to',
+            ],
+            '".selector" lacking "to" keyword and lacking value' => [
+                'actionString' => 'set ".selector"',
             ],
         ];
     }
