@@ -29,6 +29,7 @@ use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModelFactory\AssertionFactory;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
+use webignition\BasilModelFactory\Exception\MissingValueException;
 
 class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -95,9 +96,6 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 
         $cssSelectorExaminedValue = new ExaminedValue($cssElementValue);
         $literalExpectedValue = new ExpectedValue($literalValue);
-        $emptyLiteralExpectedValue = new ExpectedValue(
-            new LiteralValue('')
-        );
 
         $cssSelectorWithPosition1ExaminedValue = new ExaminedValue(
             $cssElementValueWithPosition1
@@ -312,15 +310,6 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     )
                 ),
             ],
-            'css element selector, is, lacking value' => [
-                'assertionString' => '".selector" is',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector" is',
-                    $cssSelectorExaminedValue,
-                    AssertionComparison::IS,
-                    $emptyLiteralExpectedValue
-                ),
-            ],
             'css element selector, is-not, scalar value' => [
                 'assertionString' => '".selector" is-not "value"',
                 'expectedAssertion' => new ComparisonAssertion(
@@ -328,15 +317,6 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     $cssSelectorExaminedValue,
                     AssertionComparison::IS_NOT,
                     $literalExpectedValue
-                ),
-            ],
-            'css element selector, is-not, lacking value' => [
-                'assertionString' => '".selector" is-not',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector" is-not',
-                    $cssSelectorExaminedValue,
-                    AssertionComparison::IS_NOT,
-                    $emptyLiteralExpectedValue
                 ),
             ],
             'css element selector, exists, no value' => [
@@ -372,15 +352,6 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     $literalExpectedValue
                 ),
             ],
-            'css element selector, includes, lacking value' => [
-                'assertionString' => '".selector" includes',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector" includes',
-                    $cssSelectorExaminedValue,
-                    AssertionComparison::INCLUDES,
-                    $emptyLiteralExpectedValue
-                ),
-            ],
             'css element selector, excludes, scalar value' => [
                 'assertionString' => '".selector" excludes "value"',
                 'expectedAssertion' => new ComparisonAssertion(
@@ -390,15 +361,6 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     $literalExpectedValue
                 ),
             ],
-            'css element selector, excludes, lacking value' => [
-                'assertionString' => '".selector" excludes',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector" excludes',
-                    $cssSelectorExaminedValue,
-                    AssertionComparison::EXCLUDES,
-                    $emptyLiteralExpectedValue
-                ),
-            ],
             'css element selector, matches, scalar value' => [
                 'assertionString' => '".selector" matches "value"',
                 'expectedAssertion' => new ComparisonAssertion(
@@ -406,15 +368,6 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     $cssSelectorExaminedValue,
                     AssertionComparison::MATCHES,
                     $literalExpectedValue
-                ),
-            ],
-            'css element selector, matches, lacking value' => [
-                'assertionString' => '".selector" matches',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector" matches',
-                    $cssSelectorExaminedValue,
-                    AssertionComparison::MATCHES,
-                    $emptyLiteralExpectedValue
                 ),
             ],
             'comparison-including css element selector, is, scalar value' => [
@@ -610,6 +563,37 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                         new LiteralValue('foo')
                     )
                 )
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider createFromAssertionStringThrowsMissingValueExceptionDataProvider
+     */
+    public function testCreateFromAssertionStringThrowsMissingValueException(string $assertionString)
+    {
+        $this->expectException(MissingValueException::class);
+
+        $this->assertionFactory->createFromAssertionString($assertionString);
+    }
+
+    public function createFromAssertionStringThrowsMissingValueExceptionDataProvider(): array
+    {
+        return [
+            'css element selector, is, lacking value' => [
+                'assertionString' => '".selector" is',
+            ],
+            'css element selector, is-not, lacking value' => [
+                'assertionString' => '".selector" is-not',
+            ],
+            'css element selector, includes, lacking value' => [
+                'assertionString' => '".selector" includes',
+            ],
+            'css element selector, excludes, lacking value' => [
+                'assertionString' => '".selector" excludes',
+            ],
+            'css element selector, matches, lacking value' => [
+                'assertionString' => '".selector" matches',
             ],
         ];
     }

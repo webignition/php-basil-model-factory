@@ -15,6 +15,7 @@ use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingValueException;
 use webignition\BasilModelFactory\Identifier\PageElementReferenceIdentifierFactory;
 
 class StepFactory
@@ -51,6 +52,7 @@ class StepFactory
      * @throws InvalidActionTypeException
      * @throws InvalidIdentifierStringException
      * @throws MalformedPageElementReferenceException
+     * @throws MissingValueException
      */
     public function createFromStepData(StepData $stepData): StepInterface
     {
@@ -71,7 +73,10 @@ class StepFactory
             foreach ($assertionStrings as $assertionString) {
                 $assertions[] = $this->assertionFactory->createFromAssertionString(trim($assertionString));
             }
-        } catch (InvalidActionTypeException | InvalidIdentifierStringException $contextAwareException) {
+        } catch (InvalidActionTypeException |
+            InvalidIdentifierStringException |
+            MissingValueException $contextAwareException
+        ) {
             $contextAwareException->applyExceptionContext([
                 ExceptionContextInterface::KEY_CONTENT => $assertionString !== '' ? $assertionString : $actionString,
             ]);

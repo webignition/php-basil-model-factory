@@ -34,6 +34,7 @@ use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingValueException;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\Test\TestFactory;
 
@@ -363,7 +364,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider createFromTestDataThrowsMalformedPageElementReferenceExceptionDataProvider
+     * @dataProvider createFromTestDataThrowsExceptionDataProvider
      */
     public function testCreateFromTestDataThrowsException(
         string $name,
@@ -381,15 +382,8 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    public function createFromTestDataThrowsMalformedPageElementReferenceExceptionDataProvider(): array
+    public function createFromTestDataThrowsExceptionDataProvider(): array
     {
-        // MalformedPageElementReferenceException
-        //   thrown when trying to uses a page element reference that is not of the correct form
-        //
-        //   cases:
-        //   - action string contains malformed reference
-        //   - test.elements contains malformed reference
-
         return [
             'action string contains invalid identifier string' => [
                 'name' => 'test name',
@@ -437,6 +431,54 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                     ExceptionContextInterface::KEY_TEST_NAME => 'test name',
                     ExceptionContextInterface::KEY_STEP_NAME => 'step name',
                     ExceptionContextInterface::KEY_CONTENT => 'foo ".selector"',
+                ]),
+            ],
+            'action string lacks value' => [
+                'name' => 'test name',
+                'testData' => new TestData(
+                    PathResolver::create(),
+                    [
+                        TestData::KEY_CONFIGURATION => [
+                            ConfigurationData::KEY_BROWSER => 'chrome',
+                            ConfigurationData::KEY_URL => 'http://example.com',
+                        ],
+                        'step name' => [
+                            StepData::KEY_ACTIONS => [
+                                'set ".selector" to',
+                            ],
+                        ],
+                    ]
+                ),
+                'expectedException' => MissingValueException::class,
+                'expectedExceptionMessage' => '',
+                'expectedExceptionContext' =>  new ExceptionContext([
+                    ExceptionContextInterface::KEY_TEST_NAME => 'test name',
+                    ExceptionContextInterface::KEY_STEP_NAME => 'step name',
+                    ExceptionContextInterface::KEY_CONTENT => 'set ".selector" to',
+                ]),
+            ],
+            'assertion string lacks value' => [
+                'name' => 'test name',
+                'testData' => new TestData(
+                    PathResolver::create(),
+                    [
+                        TestData::KEY_CONFIGURATION => [
+                            ConfigurationData::KEY_BROWSER => 'chrome',
+                            ConfigurationData::KEY_URL => 'http://example.com',
+                        ],
+                        'step name' => [
+                            StepData::KEY_ASSERTIONS => [
+                                '".selector" is',
+                            ],
+                        ],
+                    ]
+                ),
+                'expectedException' => MissingValueException::class,
+                'expectedExceptionMessage' => '',
+                'expectedExceptionContext' =>  new ExceptionContext([
+                    ExceptionContextInterface::KEY_TEST_NAME => 'test name',
+                    ExceptionContextInterface::KEY_STEP_NAME => 'step name',
+                    ExceptionContextInterface::KEY_CONTENT => '".selector" is',
                 ]),
             ],
             'test.elements contains malformed reference' => [
