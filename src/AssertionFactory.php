@@ -124,6 +124,25 @@ class AssertionFactory
         );
     }
 
+    /**
+     * @param string $assertionString
+     *
+     * @return AssertionInterface
+     *
+     * @throws EmptyAssertionStringException
+     * @throws InvalidAssertionExaminedValueException
+     * @throws InvalidAssertionExpectedValueException
+     * @throws MalformedPageElementReferenceException
+     */
+    public function createAssertableAssertionFromString(string $assertionString): AssertionInterface
+    {
+        return $this->createAssertableAssertion(
+            $this->createFromAssertionString(
+                $assertionString
+            )
+        );
+    }
+
     private function findComparisonAndExpectedValue(string $comparisonAndExpectedValue): array
     {
         if (substr_count($comparisonAndExpectedValue, ' ') === 0) {
