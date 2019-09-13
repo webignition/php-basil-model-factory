@@ -65,23 +65,11 @@ class StepFactory
 
         try {
             foreach ($actionStrings as $actionString) {
-                if ('string' === gettype($actionString)) {
-                    $actionString = trim($actionString);
-
-                    if ('' !== $actionString) {
-                        $actions[] = $this->actionFactory->createFromActionString($actionString);
-                    }
-                }
+                $actions[] = $this->actionFactory->createFromActionString(trim($actionString));
             }
 
             foreach ($assertionStrings as $assertionString) {
-                if ('string' === gettype($assertionString)) {
-                    $assertionString = trim($assertionString);
-
-                    if ('' !== $assertionString) {
-                        $assertions[] = $this->assertionFactory->createFromAssertionString($assertionString);
-                    }
-                }
+                $assertions[] = $this->assertionFactory->createFromAssertionString(trim($assertionString));
             }
         } catch (InvalidActionTypeException | InvalidIdentifierStringException $contextAwareException) {
             $contextAwareException->applyExceptionContext([
