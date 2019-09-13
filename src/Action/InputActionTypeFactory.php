@@ -5,12 +5,10 @@ namespace webignition\BasilModelFactory\Action;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
-use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\PageElementReference\PageElementReference;
+use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
 use webignition\BasilModelFactory\IdentifierTypes;
-use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\ValueFactory;
 
 class InputActionTypeFactory extends AbstractActionTypeFactory implements ActionTypeFactoryInterface
@@ -54,15 +52,11 @@ class InputActionTypeFactory extends AbstractActionTypeFactory implements Action
      *
      * @return ActionInterface
      *
-     * @throws MalformedPageElementReferenceException
+     * @throws InvalidIdentifierStringException
      */
     protected function doCreateForActionType(string $actionString, string $type, string $arguments): ActionInterface
     {
         $identifierString = $this->identifierStringExtractor->extractFromStart($arguments);
-
-        if ('' === $identifierString) {
-            return new InputAction($actionString, null, null, $arguments);
-        }
 
         $identifier = $this->identifierFactory->create($identifierString, [
             IdentifierTypes::ELEMENT_REFERENCE,
@@ -70,10 +64,8 @@ class InputActionTypeFactory extends AbstractActionTypeFactory implements Action
             IdentifierTypes::PAGE_ELEMENT_REFERENCE,
         ]);
 
-        if (!$identifier instanceof IdentifierInterface) {
-            throw new MalformedPageElementReferenceException(
-                new PageElementReference($identifierString)
-            );
+        if (null === $identifier) {
+            throw new InvalidIdentifierStringException($identifierString);
         }
 
         $trimmedStopWord = trim(self::IDENTIFIER_STOP_WORD);

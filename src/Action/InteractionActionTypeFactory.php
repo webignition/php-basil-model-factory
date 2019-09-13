@@ -5,9 +5,9 @@ namespace webignition\BasilModelFactory\Action;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InteractionAction;
+use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelFactory\IdentifierTypes;
-use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 
 class InteractionActionTypeFactory extends AbstractActionTypeFactory implements ActionTypeFactoryInterface
 {
@@ -41,7 +41,7 @@ class InteractionActionTypeFactory extends AbstractActionTypeFactory implements 
      *
      * @return ActionInterface
      *
-     * @throws MalformedPageElementReferenceException
+     * @throws InvalidIdentifierStringException
      */
     protected function doCreateForActionType(string $actionString, string $type, string $arguments): ActionInterface
     {
@@ -50,6 +50,10 @@ class InteractionActionTypeFactory extends AbstractActionTypeFactory implements 
             IdentifierTypes::ELEMENT_SELECTOR,
             IdentifierTypes::PAGE_ELEMENT_REFERENCE,
         ]);
+
+        if (null === $identifier) {
+            throw new InvalidIdentifierStringException($arguments);
+        }
 
         return new InteractionAction($actionString, $type, $identifier, $arguments);
     }

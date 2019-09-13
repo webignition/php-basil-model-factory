@@ -20,7 +20,7 @@ use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelFactory\Action\ActionFactory;
-use webignition\BasilModelFactory\MalformedPageElementReferenceException;
+use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 
 class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -103,15 +103,6 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '$elements.name'
                 ),
             ],
-            'click with no arguments' => [
-                'actionString' => 'click',
-                'expectedAction' => new InteractionAction(
-                    'click',
-                    ActionTypes::CLICK,
-                    null,
-                    ''
-                ),
-            ],
         ];
     }
 
@@ -168,15 +159,6 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '$elements.name'
                 ),
             ],
-            'submit no arguments' => [
-                'actionString' => 'submit',
-                'expectedAction' => new InteractionAction(
-                    'submit',
-                    ActionTypes::SUBMIT,
-                    null,
-                    ''
-                ),
-            ],
         ];
     }
 
@@ -231,15 +213,6 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                         new ElementReference('$elements.name', 'name')
                     ),
                     '$elements.name'
-                ),
-            ],
-            'wait-for no arguments' => [
-                'actionString' => 'wait-for',
-                'expectedAction' => new InteractionAction(
-                    'wait-for',
-                    ActionTypes::WAIT_FOR,
-                    null,
-                    ''
                 ),
             ],
         ];
@@ -490,15 +463,6 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     '"//a[ends-with(@href to value, \".pdf\")]" to "value"'
                 ),
             ],
-            'no arguments' => [
-                'actionString' => 'set',
-                'expectedAction' => new InputAction(
-                    'set',
-                    null,
-                    null,
-                    ''
-                ),
-            ],
             'lacking value' => [
                 'actionString' => 'set ".selector" to',
                 'expectedAction' => new InputAction(
@@ -563,84 +527,99 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider createFromActionStringThrowsPageElementExceptionDataProvider
+     * @dataProvider createThrowsInvalidIdentifierStringExceptionDataProvider
      */
-    public function testCreateFromActionStringThrowsPageElementException(
+    public function testCreateThrowsInvalidIdentifierStringException(
         string $actionString,
-        string $expectedExceptionMessage
+        InvalidIdentifierStringException $expectedException
     ) {
-        $this->expectException(MalformedPageElementReferenceException::class);
-        $this->expectExceptionMessage($expectedExceptionMessage);
+        $this->expectExceptionObject($expectedException);
 
         $this->actionFactory->createFromActionString($actionString);
     }
 
-    public function createFromActionStringThrowsPageElementExceptionDataProvider(): array
+    public function createThrowsInvalidIdentifierStringExceptionDataProvider()
     {
         return [
+            'click with no arguments' => [
+                'actionString' => 'click',
+                'expectedException' => new InvalidIdentifierStringException(''),
+            ],
+            'submit no arguments' => [
+                'actionString' => 'submit',
+                'expectedException' => new InvalidIdentifierStringException(''),
+            ],
+            'wait-for no arguments' => [
+                'actionString' => 'wait-for',
+                'expectedException' => new InvalidIdentifierStringException(''),
+            ],
+            'input no arguments' => [
+                'actionString' => 'set',
+                'expectedException' => new InvalidIdentifierStringException(''),
+            ],
             'click malformed page element reference' => [
                 'actionString' => 'click invalid-page-element-reference',
-                'expectedExceptionMessage' => 'Malformed page element reference "invalid-page-element-reference"',
+                'expectedException' => new InvalidIdentifierStringException('invalid-page-element-reference'),
             ],
-            'click page object property' => [
+            'click page property' => [
                 'actionString' => 'click $page.title',
-                'expectedExceptionMessage' => 'Malformed page element reference "$page.title"',
+                'expectedException' => new InvalidIdentifierStringException('$page.title'),
             ],
-            'click browser object property' => [
+            'click browser property' => [
                 'actionString' => 'click $browser.size',
-                'expectedExceptionMessage' => 'Malformed page element reference "$browser.size"',
+                'expectedException' => new InvalidIdentifierStringException('$browser.size'),
             ],
             'click data parameter' => [
                 'actionString' => 'click $data.key',
-                'expectedExceptionMessage' => 'Malformed page element reference "$data.key"',
+                'expectedException' => new InvalidIdentifierStringException('$data.key'),
             ],
             'click environment parameter' => [
                 'actionString' => 'click $env.KEY',
-                'expectedExceptionMessage' => 'Malformed page element reference "$env.KEY"',
+                'expectedException' => new InvalidIdentifierStringException('$env.KEY'),
             ],
             'set malformed page element reference' => [
                 'actionString' => 'set invalid-page-element-reference to "value"',
-                'expectedExceptionMessage' => 'Malformed page element reference "invalid-page-element-reference"',
+                'expectedException' => new InvalidIdentifierStringException('invalid-page-element-reference'),
             ],
             'set attribute' => [
                 'actionString' => 'set $elements.element.attribute to "value"',
-                'expectedExceptionMessage' => 'Malformed page element reference "$elements.element.attribute"',
+                'expectedException' => new InvalidIdentifierStringException('$elements.element.attribute'),
             ],
-            'set page object property' => [
+            'set page property' => [
                 'actionString' => 'set $page.title to "value"',
-                'expectedExceptionMessage' => 'Malformed page element reference "$page.title"',
+                'expectedException' => new InvalidIdentifierStringException('$page.title'),
             ],
-            'set browser object property' => [
+            'set browser property' => [
                 'actionString' => 'set $browser.size to "value"',
-                'expectedExceptionMessage' => 'Malformed page element reference "$browser.size"',
+                'expectedException' => new InvalidIdentifierStringException('$browser.size'),
             ],
             'set data parameter' => [
                 'actionString' => 'set $data.key to "value"',
-                'expectedExceptionMessage' => 'Malformed page element reference "$data.key"',
+                'expectedException' => new InvalidIdentifierStringException('$data.key'),
             ],
             'set environment parameter' => [
                 'actionString' => 'set $env.KEY to "value"',
-                'expectedExceptionMessage' => 'Malformed page element reference "$env.KEY"',
+                'expectedException' => new InvalidIdentifierStringException('$env.KEY'),
             ],
             'submit malformed page element reference' => [
                 'actionString' => 'submit invalid-page-element-reference',
-                'expectedExceptionMessage' => 'Malformed page element reference "invalid-page-element-reference"',
+                'expectedException' => new InvalidIdentifierStringException('invalid-page-element-reference'),
             ],
             'wait-for malformed page element reference' => [
                 'actionString' => 'wait-for invalid-page-element-reference',
-                'expectedExceptionMessage' => 'Malformed page element reference "invalid-page-element-reference"',
+                'expectedException' => new InvalidIdentifierStringException('invalid-page-element-reference'),
             ],
-            'click css selector unquoted is treated as page model element reference' => [
+            'click css selector unquoted is treated as page element reference' => [
                 'actionString' => 'click .sign-in-form .submit-button',
-                'expectedExceptionMessage' => 'Malformed page element reference ".sign-in-form .submit-button"',
+                'expectedException' => new InvalidIdentifierStringException('.sign-in-form .submit-button'),
             ],
-            'submit css selector unquoted is treated as page model element reference' => [
+            'submit css selector unquoted is treated as page element reference' => [
                 'actionString' => 'submit .sign-in-form',
-                'expectedExceptionMessage' => 'Malformed page element reference ".sign-in-form"',
+                'expectedException' => new InvalidIdentifierStringException('.sign-in-form'),
             ],
-            'wait-for css selector unquoted is treated as page model element reference' => [
+            'wait-for css selector unquoted is treated as page element reference' => [
                 'actionString' => 'wait-for .sign-in-form .submit-button',
-                'expectedExceptionMessage' => 'Malformed page element reference ".sign-in-form .submit-button"',
+                'expectedException' => new InvalidIdentifierStringException('.sign-in-form .submit-button'),
             ],
         ];
     }
