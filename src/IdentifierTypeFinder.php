@@ -6,6 +6,7 @@ use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\ReferenceIdentifierInterface;
 use webignition\BasilModel\Identifier\ReferenceIdentifierTypes;
+use webignition\BasilModel\PageElementReference\PageElementReference;
 
 class IdentifierTypeFinder
 {
@@ -61,7 +62,7 @@ class IdentifierTypeFinder
         return 1 === preg_match(self::ELEMENT_PARAMETER_REGEX, $identifierString);
     }
 
-    public static function findTypeFromIdentifierString(string $identifierString): string
+    public static function findTypeFromIdentifierString(string $identifierString): ?string
     {
         if (self::isElementIdentifier($identifierString)) {
             return IdentifierTypes::ELEMENT_SELECTOR;
@@ -75,7 +76,13 @@ class IdentifierTypeFinder
             return IdentifierTypes::ATTRIBUTE_REFERENCE;
         }
 
-        return IdentifierTypes::PAGE_ELEMENT_REFERENCE;
+        $pageElementReference = new PageElementReference($identifierString);
+
+        if ($pageElementReference->isValid()) {
+            return IdentifierTypes::PAGE_ELEMENT_REFERENCE;
+        }
+
+        return null;
     }
 
     public static function findTypeFromIdentifier(IdentifierInterface $identifier): string

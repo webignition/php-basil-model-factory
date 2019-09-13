@@ -137,6 +137,14 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @dataProvider unknownTypeDataProvider
+     */
+    public function testFindTypeUnknownType(string $identifierString)
+    {
+        $this->assertNull(IdentifierTypeFinder::findTypeFromIdentifierString($identifierString));
+    }
+
     public function cssSelectorDataProvider(): array
     {
         return [
@@ -269,6 +277,18 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'identifierString' =>  '".selector":last.attribute_name',
+            ],
+        ];
+    }
+
+    public function unknownTypeDataProvider(): array
+    {
+        return  [
+            'empty' => [
+                'identifierString' => '',
+            ],
+            'unknown type' => [
+                'identifierString' => 'invalid',
             ],
         ];
     }
