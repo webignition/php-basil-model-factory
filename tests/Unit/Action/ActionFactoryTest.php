@@ -469,7 +469,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector" to',
                     $cssSelectorIdentifier,
-                    null,
+                    new LiteralValue(''),
                     '".selector" to'
                 ),
             ],
@@ -498,7 +498,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector"',
                     $cssSelectorIdentifier,
-                    null,
+                    new LiteralValue(''),
                     '".selector"'
                 ),
             ],
