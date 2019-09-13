@@ -1,10 +1,12 @@
 <?php
+/** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelFactory\Tests\Unit\Action;
 
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModelFactory\Action\InputActionTypeFactory;
+use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 
 class InputActionTypeFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -68,8 +70,7 @@ class InputActionTypeFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateForActionTypeThrowsException()
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Invalid action type');
+        $this->expectExceptionObject(new InvalidActionTypeException('click'));
 
         $this->actionFactory->createForActionType(
             'click ".selector"',
