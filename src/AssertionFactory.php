@@ -8,8 +8,8 @@ use webignition\BasilModel\Assertion\ComparisonAssertion;
 use webignition\BasilModel\Assertion\ExaminationAssertion;
 use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
-use webignition\BasilModel\Value\AssertionExaminedValue;
-use webignition\BasilModel\Value\AssertionExpectedValue;
+use webignition\BasilModel\Value\Assertion\ExaminedValue;
+use webignition\BasilModel\Value\Assertion\ExpectedValue;
 use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\ValueInterface;
@@ -81,7 +81,7 @@ class AssertionFactory
             $assertionString,
             $examinedValue,
             $comparison,
-            new AssertionExpectedValue($this->valueFactory->createFromValueString($expectedValueString))
+            new ExpectedValue($this->valueFactory->createFromValueString($expectedValueString))
         );
     }
 
@@ -100,7 +100,7 @@ class AssertionFactory
     /**
      * @param string $identifierString
      *
-     * @return AssertionExaminedValue
+     * @return ExaminedValue
      *
      * @throws MalformedPageElementReferenceException
      */
@@ -110,7 +110,7 @@ class AssertionFactory
             $elementIdentifier = $this->elementIdentifierFactory->create($identifierString);
 
             if ($elementIdentifier instanceof ElementIdentifierInterface) {
-                return new AssertionExaminedValue(
+                return new ExaminedValue(
                     new ElementValue($elementIdentifier)
                 );
             }
@@ -120,13 +120,13 @@ class AssertionFactory
             $attributeIdentifier = $this->attributeIdentifierFactory->create($identifierString);
 
             if ($attributeIdentifier instanceof AttributeIdentifierInterface) {
-                return new AssertionExaminedValue(
+                return new ExaminedValue(
                     new AttributeValue($attributeIdentifier)
                 );
             }
         }
 
-        return new AssertionExaminedValue(
+        return new ExaminedValue(
             $this->valueFactory->createFromValueString($identifierString)
         );
     }

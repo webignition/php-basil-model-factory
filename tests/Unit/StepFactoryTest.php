@@ -20,8 +20,8 @@ use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
-use webignition\BasilModel\Value\AssertionExaminedValue;
-use webignition\BasilModel\Value\AssertionExpectedValue;
+use webignition\BasilModel\Value\Assertion\ExaminedValue;
+use webignition\BasilModel\Value\Assertion\ExpectedValue;
 use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\ElementValue;
@@ -117,7 +117,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     [
                         new ComparisonAssertion(
                             '".selector" is "value"',
-                            new AssertionExaminedValue(
+                            new ExaminedValue(
                                 new ElementValue(
                                     new ElementIdentifier(
                                         new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
@@ -125,13 +125,13 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                                 )
                             ),
                             AssertionComparison::IS,
-                            new AssertionExpectedValue(
+                            new ExpectedValue(
                                 new LiteralValue('value')
                             )
                         ),
                         new ExaminationAssertion(
                             '".input" exists',
-                            new AssertionExaminedValue(
+                            new ExaminedValue(
                                 new ElementValue(
                                     new ElementIdentifier(
                                         new ElementExpression('.input', ElementExpressionType::CSS_SELECTOR)
@@ -170,7 +170,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     [
                         new ExaminationAssertion(
                             'page_import_name.elements.element_name exists',
-                            new AssertionExaminedValue(
+                            new ExaminedValue(
                                 new PageElementReference(
                                     'page_import_name.elements.element_name',
                                     'page_import_name',
@@ -271,7 +271,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         [
                             new ExaminationAssertion(
                                 '".selector" exists',
-                                new AssertionExaminedValue(
+                                new ExaminedValue(
                                     new ElementValue(
                                         new ElementIdentifier(
                                             new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)

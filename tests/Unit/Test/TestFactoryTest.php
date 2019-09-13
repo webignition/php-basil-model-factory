@@ -25,8 +25,8 @@ use webignition\BasilModel\Test\Configuration;
 use webignition\BasilModel\Test\Test;
 use webignition\BasilModel\Test\TestInterface;
 use webignition\BasilDataStructure\Test\Test as TestData;
-use webignition\BasilModel\Value\AssertionExaminedValue;
-use webignition\BasilModel\Value\AssertionExpectedValue;
+use webignition\BasilModel\Value\Assertion\ExaminedValue;
+use webignition\BasilModel\Value\Assertion\ExpectedValue;
 use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
@@ -132,11 +132,11 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                     'verify page is open' => new Step([], [
                         new ComparisonAssertion(
                             '$page.url is "http://example.com"',
-                            new AssertionExaminedValue(
+                            new ExaminedValue(
                                 new PageProperty('$page.url', 'url')
                             ),
                             AssertionComparison::IS,
-                            new AssertionExpectedValue(
+                            new ExpectedValue(
                                 new LiteralValue('http://example.com')
                             )
                         ),
@@ -155,11 +155,11 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                         [
                             new ComparisonAssertion(
                                 '$page.title is "example - Example Domain"',
-                                new AssertionExaminedValue(
+                                new ExaminedValue(
                                     new PageProperty('$page.title', 'title')
                                 ),
                                 AssertionComparison::IS,
-                                new AssertionExpectedValue(
+                                new ExpectedValue(
                                     new LiteralValue('example - Example Domain')
                                 )
                             ),
@@ -202,7 +202,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                         [
                             new ComparisonAssertion(
                                 'page_import_name.elements.heading is "example"',
-                                new AssertionExaminedValue(
+                                new ExaminedValue(
                                     new PageElementReference(
                                         'page_import_name.elements.heading',
                                         'page_import_name',
@@ -210,7 +210,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                                     )
                                 ),
                                 AssertionComparison::IS,
-                                new AssertionExpectedValue(
+                                new ExpectedValue(
                                     new LiteralValue('example')
                                 )
                             ),
