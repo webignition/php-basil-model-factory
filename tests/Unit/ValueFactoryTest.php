@@ -3,17 +3,15 @@
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
-use webignition\BasilModel\Value\AttributeReference;
-use webignition\BasilModel\Value\BrowserProperty;
-use webignition\BasilModel\Value\DataParameter;
+use webignition\BasilModel\Value\DomIdentifierReference;
+use webignition\BasilModel\Value\DomIdentifierReferenceType;
 use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionInterface;
 use webignition\BasilModel\Value\ElementExpressionType;
-use webignition\BasilModel\Value\ElementReference;
-use webignition\BasilModel\Value\EnvironmentValue;
 use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\ObjectValue;
+use webignition\BasilModel\Value\ObjectValueType;
 use webignition\BasilModel\Value\PageElementReference;
-use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelFactory\ValueFactory;
 
@@ -68,32 +66,36 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'data parameter' => [
                 'valueString' => '$data.data_name',
-                'expectedValue' => new DataParameter('$data.data_name', 'data_name'),
+                'expectedValue' => new ObjectValue(ObjectValueType::DATA_PARAMETER, '$data.data_name', 'data_name'),
             ],
             'element parameter' => [
                 'valueString' => '$elements.element_name',
-                'expectedValue' => new ElementReference(
+                'expectedValue' => new DomIdentifierReference(
+                    DomIdentifierReferenceType::ELEMENT,
                     '$elements.element_name',
                     'element_name'
                 ),
             ],
             'attribute parameter' => [
                 'valueString' => '$elements.element_name.attribute_name',
-                'expectedValue' => new AttributeReference(
+                'expectedValue' => new DomIdentifierReference(
+                    DomIdentifierReferenceType::ATTRIBUTE,
                     '$elements.element_name.attribute_name',
                     'element_name.attribute_name'
                 ),
             ],
             'page property' => [
                 'valueString' => '$page.url',
-                'expectedValue' => new PageProperty(
+                'expectedValue' => new ObjectValue(
+                    ObjectValueType::PAGE_PROPERTY,
                     '$page.url',
                     'url'
                 ),
             ],
             'browser property' => [
                 'valueString' => '$browser.size',
-                'expectedValue' => new BrowserProperty(
+                'expectedValue' => new ObjectValue(
+                    ObjectValueType::BROWSER_PROPERTY,
                     '$browser.size',
                     'size'
                 ),
@@ -116,14 +118,16 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'environment parameter, no default' => [
                 'valueString' => '$env.KEY',
-                'expectedValue' => new EnvironmentValue(
+                'expectedValue' => new ObjectValue(
+                    ObjectValueType::ENVIRONMENT_PARAMETER,
                     '$env.KEY',
                     'KEY'
                 ),
             ],
             'environment parameter, has default' => [
                 'valueString' => '$env.KEY|"default_value"',
-                'expectedValue' => new EnvironmentValue(
+                'expectedValue' => new ObjectValue(
+                    ObjectValueType::ENVIRONMENT_PARAMETER,
                     '$env.KEY|"default_value"',
                     'KEY',
                     'default_value'
@@ -131,7 +135,8 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'environment parameter, empty default' => [
                 'valueString' => '$env.KEY|""',
-                'expectedValue' => new EnvironmentValue(
+                'expectedValue' => new ObjectValue(
+                    ObjectValueType::ENVIRONMENT_PARAMETER,
                     '$env.KEY|""',
                     'KEY',
                     ''
@@ -139,7 +144,8 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'environment parameter, missing default' => [
                 'valueString' => '$env.KEY|',
-                'expectedValue' => new EnvironmentValue(
+                'expectedValue' => new ObjectValue(
+                    ObjectValueType::ENVIRONMENT_PARAMETER,
                     '$env.KEY|',
                     'KEY',
                     ''
@@ -147,7 +153,8 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'environment parameter, has escaped-quote default' => [
                 'valueString' => '$env.KEY|"\"default_value\""',
-                'expectedValue' => new EnvironmentValue(
+                'expectedValue' => new ObjectValue(
+                    ObjectValueType::ENVIRONMENT_PARAMETER,
                     '$env.KEY|"\"default_value\""',
                     'KEY',
                     '"default_value"'
