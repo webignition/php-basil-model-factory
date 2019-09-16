@@ -3,7 +3,8 @@
 namespace webignition\BasilModelFactory\Tests\DataProvider;
 
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
-use webignition\BasilModel\Value\ElementReference;
+use webignition\BasilModel\Value\DomIdentifierReference;
+use webignition\BasilModel\Value\DomIdentifierReferenceType;
 
 trait ElementParameterIdentifierDataProviderTrait
 {
@@ -13,7 +14,8 @@ trait ElementParameterIdentifierDataProviderTrait
             'element parameter' => [
                 'identifierString' => '$elements.name',
                 'expectedIdentifier' => ReferenceIdentifier::createElementReferenceIdentifier(
-                    new ElementReference(
+                    new DomIdentifierReference(
+                        DomIdentifierReferenceType::ELEMENT,
                         '$elements.name',
                         'name'
                     )

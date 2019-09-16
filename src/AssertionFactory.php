@@ -24,7 +24,7 @@ use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
 use webignition\BasilModelFactory\Exception\MissingValueException;
 use webignition\BasilModelFactory\Identifier\AttributeIdentifierFactory;
-use webignition\BasilModelFactory\Identifier\ElementIdentifierFactory;
+use webignition\BasilModelFactory\Identifier\DomIdentifierFactory;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
 
 class AssertionFactory
@@ -37,7 +37,7 @@ class AssertionFactory
     public function __construct(
         ValueFactory $valueFactory,
         IdentifierStringExtractor $identifierStringExtractor,
-        ElementIdentifierFactory $elementIdentifierFactory,
+        DomIdentifierFactory $elementIdentifierFactory,
         AttributeIdentifierFactory $attributeIdentifierFactory
     ) {
         $this->valueFactory = $valueFactory;
@@ -51,7 +51,7 @@ class AssertionFactory
         return new AssertionFactory(
             ValueFactory::createFactory(),
             IdentifierStringExtractor::create(),
-            ElementIdentifierFactory::createFactory(),
+            DomIdentifierFactory::createFactory(),
             AttributeIdentifierFactory::createFactory()
         );
     }

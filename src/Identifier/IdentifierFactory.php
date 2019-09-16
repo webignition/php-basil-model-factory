@@ -29,7 +29,7 @@ class IdentifierFactory
     public static function createFactory()
     {
         return new IdentifierFactory([
-            ElementIdentifierFactory::createFactory(),
+            DomIdentifierFactory::createFactory(),
             AttributeIdentifierFactory::createFactory(),
             ElementReferenceIdentifierFactory::createFactory(),
             PageElementReferenceIdentifierFactory::createFactory(),
