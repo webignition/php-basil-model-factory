@@ -2,7 +2,7 @@
 
 namespace webignition\BasilModelFactory\Identifier;
 
-use webignition\BasilModel\Identifier\ElementIdentifierInterface;
+use webignition\BasilModel\Identifier\DomIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\IdentifierTypes;
@@ -30,7 +30,6 @@ class IdentifierFactory
     {
         return new IdentifierFactory([
             DomIdentifierFactory::createFactory(),
-            AttributeIdentifierFactory::createFactory(),
             DomReferenceIdentifierFactory::createFactory(),
             PageElementReferenceIdentifierFactory::createFactory(),
         ]);
@@ -73,8 +72,7 @@ class IdentifierFactory
             $identifier = $identifier->withName($elementName);
         }
 
-        if ($identifier instanceof ElementIdentifierInterface &&
-            $parentIdentifier instanceof ElementIdentifierInterface) {
+        if ($identifier instanceof DomIdentifierInterface && $parentIdentifier instanceof DomIdentifierInterface) {
             return $identifier->withParentIdentifier($parentIdentifier);
         }
 
