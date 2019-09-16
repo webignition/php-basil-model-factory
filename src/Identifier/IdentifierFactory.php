@@ -86,7 +86,7 @@ class IdentifierFactory
      * @return IdentifierInterface|null
      */
     public function create(string $identifierString, array $allowedTypes = [
-        IdentifierTypes::ATTRIBUTE_REFERENCE,
+        IdentifierTypes::ATTRIBUTE_SELECTOR,
         IdentifierTypes::ELEMENT_REFERENCE,
         IdentifierTypes::ELEMENT_SELECTOR,
         IdentifierTypes::PAGE_ELEMENT_REFERENCE,

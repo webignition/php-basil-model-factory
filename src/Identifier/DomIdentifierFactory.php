@@ -26,7 +26,7 @@ class DomIdentifierFactory implements IdentifierTypeFactoryInterface
 
         return in_array($identifierType, [
             IdentifierTypes::ELEMENT_SELECTOR,
-            IdentifierTypes::ATTRIBUTE_REFERENCE
+            IdentifierTypes::ATTRIBUTE_SELECTOR
         ]);
     }
 
@@ -42,7 +42,7 @@ class DomIdentifierFactory implements IdentifierTypeFactoryInterface
 
         $identifierType = IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
 
-        if (IdentifierTypes::ATTRIBUTE_REFERENCE === $identifierType) {
+        if (IdentifierTypes::ATTRIBUTE_SELECTOR === $identifierType) {
             list($elementExpressionAndPosition, $attributeName) = $this->extractAttributeNameAndElementIdentifier(
                 $identifierString
             );

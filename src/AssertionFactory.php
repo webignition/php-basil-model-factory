@@ -12,18 +12,15 @@ use webignition\BasilModel\Assertion\ExaminationAssertion;
 use webignition\BasilModel\Assertion\ExaminationAssertionInterface;
 use webignition\BasilModel\Exception\InvalidAssertionExaminedValueException;
 use webignition\BasilModel\Exception\InvalidAssertionExpectedValueException;
-use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
-use webignition\BasilModel\Identifier\ElementIdentifierInterface;
+use webignition\BasilModel\Identifier\DomIdentifierInterface;
 use webignition\BasilModel\Value\Assertion\AssertableExaminedValue;
 use webignition\BasilModel\Value\Assertion\AssertableExpectedValue;
 use webignition\BasilModel\Value\Assertion\ExaminedValue;
 use webignition\BasilModel\Value\Assertion\ExpectedValue;
-use webignition\BasilModel\Value\AttributeValue;
-use webignition\BasilModel\Value\ElementValue;
+use webignition\BasilModel\Value\DomIdentifierValue;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
 use webignition\BasilModelFactory\Exception\MissingValueException;
-use webignition\BasilModelFactory\Identifier\AttributeIdentifierFactory;
 use webignition\BasilModelFactory\Identifier\DomIdentifierFactory;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
 
@@ -31,19 +28,16 @@ class AssertionFactory
 {
     private $valueFactory;
     private $identifierStringExtractor;
-    private $elementIdentifierFactory;
-    private $attributeIdentifierFactory;
+    private $domIdentifierFactory;
 
     public function __construct(
         ValueFactory $valueFactory,
         IdentifierStringExtractor $identifierStringExtractor,
-        DomIdentifierFactory $elementIdentifierFactory,
-        AttributeIdentifierFactory $attributeIdentifierFactory
+        DomIdentifierFactory $elementIdentifierFactory
     ) {
         $this->valueFactory = $valueFactory;
         $this->identifierStringExtractor = $identifierStringExtractor;
-        $this->elementIdentifierFactory = $elementIdentifierFactory;
-        $this->attributeIdentifierFactory = $attributeIdentifierFactory;
+        $this->domIdentifierFactory = $elementIdentifierFactory;
     }
 
     public static function createFactory(): AssertionFactory
@@ -51,8 +45,7 @@ class AssertionFactory
         return new AssertionFactory(
             ValueFactory::createFactory(),
             IdentifierStringExtractor::create(),
-            DomIdentifierFactory::createFactory(),
-            AttributeIdentifierFactory::createFactory()
+            DomIdentifierFactory::createFactory()
         );
     }
 
@@ -167,22 +160,14 @@ class AssertionFactory
      */
     private function createExaminedValue(string $identifierString): ValueInterface
     {
-        if (IdentifierTypeFinder::isElementIdentifier($identifierString)) {
-            $elementIdentifier = $this->elementIdentifierFactory->create($identifierString);
+        $identifierType = IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
 
-            if ($elementIdentifier instanceof ElementIdentifierInterface) {
+        if (in_array($identifierType, [IdentifierTypes::ELEMENT_SELECTOR, IdentifierTypes::ATTRIBUTE_SELECTOR])) {
+            $domIdentifier = $this->domIdentifierFactory->create($identifierString);
+
+            if ($domIdentifier instanceof DomIdentifierInterface) {
                 return new ExaminedValue(
-                    new ElementValue($elementIdentifier)
-                );
-            }
-        }
-
-        if (IdentifierTypeFinder::isAttributeReference($identifierString)) {
-            $attributeIdentifier = $this->attributeIdentifierFactory->create($identifierString);
-
-            if ($attributeIdentifier instanceof AttributeIdentifierInterface) {
-                return new ExaminedValue(
-                    new AttributeValue($attributeIdentifier)
+                    new DomIdentifierValue($domIdentifier)
                 );
             }
         }

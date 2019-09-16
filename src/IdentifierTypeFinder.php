@@ -73,7 +73,7 @@ class IdentifierTypeFinder
         }
 
         if (self::isAttributeReference($identifierString)) {
-            return IdentifierTypes::ATTRIBUTE_REFERENCE;
+            return IdentifierTypes::ATTRIBUTE_SELECTOR;
         }
 
         $pageElementReference = new PageElementReference($identifierString);
@@ -99,7 +99,7 @@ class IdentifierTypeFinder
             }
 
             if (ReferenceIdentifierTypes::ATTRIBUTE_REFERENCE === $identifierType) {
-                return IdentifierTypes::ATTRIBUTE_REFERENCE;
+                return IdentifierTypes::ATTRIBUTE_SELECTOR;
             }
         }
 

@@ -132,7 +132,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     public function testFindTypeAttributeReference(string $identifierString)
     {
         $this->assertSame(
-            IdentifierTypes::ATTRIBUTE_REFERENCE,
+            IdentifierTypes::ATTRIBUTE_SELECTOR,
             IdentifierTypeFinder::findTypeFromIdentifierString($identifierString)
         );
     }
