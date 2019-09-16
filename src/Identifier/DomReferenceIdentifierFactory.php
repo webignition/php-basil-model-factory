@@ -4,17 +4,17 @@ namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
-use webignition\BasilModel\Value\AttributeReference;
-use webignition\BasilModel\Value\ElementReference;
+use webignition\BasilModel\Value\DomIdentifierReference;
+use webignition\BasilModel\Value\DomIdentifierReferenceType;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\IdentifierTypes;
 use webignition\BasilModelFactory\ValueTypes;
 
-class ElementReferenceIdentifierFactory implements IdentifierTypeFactoryInterface
+class DomReferenceIdentifierFactory implements IdentifierTypeFactoryInterface
 {
     public static function createFactory()
     {
-        return new ElementReferenceIdentifierFactory();
+        return new DomReferenceIdentifierFactory();
     }
 
     public function handles(string $identifierString): bool
@@ -46,14 +46,16 @@ class ElementReferenceIdentifierFactory implements IdentifierTypeFactoryInterfac
             $identifierString
         );
 
-        if (0 === substr_count($elementReferenceProperty, '.')) {
-            return ReferenceIdentifier::createElementReferenceIdentifier(
-                new ElementReference($identifierString, $elementReferenceProperty)
-            );
-        }
+        $domIdentifierReferenceType = 0 === substr_count($elementReferenceProperty, '.')
+            ? DomIdentifierReferenceType::ELEMENT
+            : DomIdentifierReferenceType::ATTRIBUTE;
 
-        return ReferenceIdentifier::createAttributeReferenceIdentifier(
-            new AttributeReference($identifierString, $elementReferenceProperty)
+        return ReferenceIdentifier::createElementReferenceIdentifier(
+            new DomIdentifierReference(
+                $domIdentifierReferenceType,
+                $identifierString,
+                $elementReferenceProperty
+            )
         );
     }
 }

@@ -31,7 +31,7 @@ class IdentifierFactory
         return new IdentifierFactory([
             DomIdentifierFactory::createFactory(),
             AttributeIdentifierFactory::createFactory(),
-            ElementReferenceIdentifierFactory::createFactory(),
+            DomReferenceIdentifierFactory::createFactory(),
             PageElementReferenceIdentifierFactory::createFactory(),
         ]);
     }

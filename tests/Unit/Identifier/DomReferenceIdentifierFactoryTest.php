@@ -5,27 +5,27 @@
 namespace webignition\BasilModelFactory\Tests\Unit\Identifier;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModelFactory\Identifier\ElementReferenceIdentifierFactory;
+use webignition\BasilModelFactory\Identifier\DomReferenceIdentifierFactory;
 use webignition\BasilModelFactory\Tests\DataProvider\AttributeIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\AttributeIdentifierStringDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\CssSelectorDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\CssSelectorIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\ElementParameterDataProviderTrait;
-use webignition\BasilModelFactory\Tests\DataProvider\ElementParameterIdentifierDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\DomReferenceIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\PageElementReferenceDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\PageElementReferenceIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\UnhandledIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\XpathExpressionDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\XpathExpressionIdentifierDataProviderTrait;
 
-class ElementParameterIdentifierFactoryTest extends \PHPUnit\Framework\TestCase
+class DomReferenceIdentifierFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use AttributeIdentifierDataProviderTrait;
     use AttributeIdentifierStringDataProviderTrait;
     use CssSelectorDataProviderTrait;
     use CssSelectorIdentifierDataProviderTrait;
     use ElementParameterDataProviderTrait;
-    use ElementParameterIdentifierDataProviderTrait;
+    use DomReferenceIdentifierDataProviderTrait;
     use PageElementReferenceDataProviderTrait;
     use PageElementReferenceIdentifierDataProviderTrait;
     use UnhandledIdentifierDataProviderTrait;
@@ -33,7 +33,7 @@ class ElementParameterIdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     use XpathExpressionIdentifierDataProviderTrait;
 
     /**
-     * @var ElementReferenceIdentifierFactory
+     * @var DomReferenceIdentifierFactory
      */
     private $factory;
 
@@ -41,7 +41,7 @@ class ElementParameterIdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->factory = ElementReferenceIdentifierFactory::createFactory();
+        $this->factory = DomReferenceIdentifierFactory::createFactory();
     }
 
     /**
@@ -65,7 +65,7 @@ class ElementParameterIdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider elementParameterIdentifierDataProvider
+     * @dataProvider domReferenceIdentifierDataProvider
      */
     public function testCreateSuccess(string $identifierString, IdentifierInterface $expectedIdentifier)
     {

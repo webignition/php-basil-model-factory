@@ -11,7 +11,7 @@ use webignition\BasilModelFactory\Tests\DataProvider\AttributeIdentifierStringDa
 use webignition\BasilModelFactory\Tests\DataProvider\CssSelectorDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\CssSelectorIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\ElementParameterDataProviderTrait;
-use webignition\BasilModelFactory\Tests\DataProvider\ElementParameterIdentifierDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\DomReferenceIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\PageElementReferenceDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\PageElementReferenceIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\UnhandledIdentifierDataProviderTrait;
@@ -25,7 +25,7 @@ class DomIdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     use CssSelectorDataProviderTrait;
     use CssSelectorIdentifierDataProviderTrait;
     use ElementParameterDataProviderTrait;
-    use ElementParameterIdentifierDataProviderTrait;
+    use DomReferenceIdentifierDataProviderTrait;
     use PageElementReferenceDataProviderTrait;
     use PageElementReferenceIdentifierDataProviderTrait;
     use UnhandledIdentifierDataProviderTrait;
@@ -78,7 +78,7 @@ class DomIdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider elementParameterIdentifierDataProvider
+     * @dataProvider domReferenceIdentifierDataProvider
      * @dataProvider pageElementReferenceIdentifierDataProvider
      */
     public function testCreateReturnsNull(string $identifierString)
