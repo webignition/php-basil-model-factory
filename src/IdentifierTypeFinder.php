@@ -2,6 +2,7 @@
 
 namespace webignition\BasilModelFactory;
 
+use webignition\BasilModel\Identifier\DomIdentifierInterface;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\ReferenceIdentifierInterface;
@@ -97,8 +98,12 @@ class IdentifierTypeFinder
 
     public static function findTypeFromIdentifier(IdentifierInterface $identifier): string
     {
-        if ($identifier instanceof ElementIdentifierInterface) {
-            return IdentifierTypes::ELEMENT_SELECTOR;
+        if ($identifier instanceof DomIdentifierInterface) {
+            if (null === $identifier->getAttributeName()) {
+                return IdentifierTypes::ELEMENT_SELECTOR;
+            }
+
+            return IdentifierTypes::ATTRIBUTE_SELECTOR;
         }
 
         if ($identifier instanceof ReferenceIdentifierInterface) {
@@ -109,7 +114,7 @@ class IdentifierTypeFinder
             }
 
             if (ReferenceIdentifierTypes::ATTRIBUTE_REFERENCE === $identifierType) {
-                return IdentifierTypes::ATTRIBUTE_SELECTOR;
+                return IdentifierTypes::ATTRIBUTE_REFERENCE;
             }
         }
 
