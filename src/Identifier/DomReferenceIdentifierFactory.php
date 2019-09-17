@@ -54,12 +54,16 @@ class DomReferenceIdentifierFactory implements IdentifierTypeFactoryInterface
             ? DomIdentifierReferenceType::ELEMENT
             : DomIdentifierReferenceType::ATTRIBUTE;
 
-        return ReferenceIdentifier::createElementReferenceIdentifier(
-            new DomIdentifierReference(
-                $domIdentifierReferenceType,
-                $identifierString,
-                $elementReferenceProperty
-            )
+        $domIdentifierReference = new DomIdentifierReference(
+            $domIdentifierReferenceType,
+            $identifierString,
+            $elementReferenceProperty
         );
+
+        if (DomIdentifierReferenceType::ATTRIBUTE === $domIdentifierReferenceType) {
+            return ReferenceIdentifier::createAttributeReferenceIdentifier($domIdentifierReference);
+        }
+
+        return ReferenceIdentifier::createElementReferenceIdentifier($domIdentifierReference);
     }
 }

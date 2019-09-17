@@ -23,7 +23,7 @@ trait DomReferenceIdentifierDataProviderTrait
             ],
             'attribute reference' => [
                 'identifierString' => '$elements.element_name.attribute_name',
-                'expectedIdentifier' => ReferenceIdentifier::createElementReferenceIdentifier(
+                'expectedIdentifier' => ReferenceIdentifier::createAttributeReferenceIdentifier(
                     new DomIdentifierReference(
                         DomIdentifierReferenceType::ATTRIBUTE,
                         '$elements.element_name.attribute_name',
