@@ -68,9 +68,11 @@ class PageFactory
                 $elementIdentifiers
             );
 
-            if (null !== $identifier && !$identifier instanceof DomIdentifierInterface ||
-                ($identifier instanceof DomIdentifierInterface && null !== $identifier->getAttributeName())) {
-                throw new InvalidPageElementIdentifierException($identifier);
+            if (null !== $identifier) {
+                if (!$identifier instanceof DomIdentifierInterface ||
+                    ($identifier instanceof DomIdentifierInterface && null !== $identifier->getAttributeName())) {
+                    throw new InvalidPageElementIdentifierException($identifier);
+                }
             }
 
             if ($identifier instanceof DomIdentifierInterface) {
