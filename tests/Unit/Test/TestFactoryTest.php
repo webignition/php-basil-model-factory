@@ -16,7 +16,7 @@ use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\ComparisonAssertion;
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
-use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
@@ -30,8 +30,9 @@ use webignition\BasilModel\Value\Assertion\ExpectedValue;
 use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\ObjectValue;
+use webignition\BasilModel\Value\ObjectValueType;
 use webignition\BasilModel\Value\PageElementReference;
-use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 use webignition\BasilModelFactory\Exception\MissingValueException;
@@ -136,7 +137,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                         new ComparisonAssertion(
                             '$page.url is "http://example.com"',
                             new ExaminedValue(
-                                new PageProperty('$page.url', 'url')
+                                new ObjectValue(ObjectValueType::PAGE_PROPERTY, '$page.url', 'url')
                             ),
                             AssertionComparison::IS,
                             new ExpectedValue(
@@ -149,7 +150,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             new InteractionAction(
                                 'click ".form .submit"',
                                 ActionTypes::CLICK,
-                                new ElementIdentifier(
+                                new DomIdentifier(
                                     new ElementExpression('.form .submit', ElementExpressionType::CSS_SELECTOR)
                                 ),
                                 '".form .submit"'
@@ -159,7 +160,7 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                             new ComparisonAssertion(
                                 '$page.title is "example - Example Domain"',
                                 new ExaminedValue(
-                                    new PageProperty('$page.title', 'title')
+                                    new ObjectValue(ObjectValueType::PAGE_PROPERTY, '$page.title', 'title')
                                 ),
                                 AssertionComparison::IS,
                                 new ExpectedValue(
