@@ -11,7 +11,7 @@ use webignition\BasilModelFactory\Tests\DataProvider\AttributeIdentifierStringDa
 use webignition\BasilModelFactory\Tests\DataProvider\CssSelectorDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\CssSelectorIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\ElementParameterDataProviderTrait;
-use webignition\BasilModelFactory\Tests\DataProvider\ElementParameterIdentifierDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\DomReferenceIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\PageElementReferenceDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\PageElementReferenceIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\XpathExpressionDataProviderTrait;
@@ -26,7 +26,7 @@ class PageElementReferenceIdentifierFactoryTest extends \PHPUnit\Framework\TestC
     use AttributeIdentifierStringDataProviderTrait;
     use CssSelectorIdentifierDataProviderTrait;
     use XpathExpressionIdentifierDataProviderTrait;
-    use ElementParameterIdentifierDataProviderTrait;
+    use DomReferenceIdentifierDataProviderTrait;
     use PageElementReferenceIdentifierDataProviderTrait;
     use AttributeIdentifierDataProviderTrait;
 
@@ -76,7 +76,7 @@ class PageElementReferenceIdentifierFactoryTest extends \PHPUnit\Framework\TestC
      * @dataProvider attributeIdentifierDataProvider
      * @dataProvider cssSelectorIdentifierDataProvider
      * @dataProvider xpathExpressionIdentifierDataProvider
-     * @dataProvider elementParameterIdentifierDataProvider
+     * @dataProvider domReferenceIdentifierDataProvider
      *
      */
     public function testCreateReturnsNull(string $identifierString)

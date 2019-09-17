@@ -10,7 +10,7 @@ use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelFactory\Tests\DataProvider\AttributeIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\CssSelectorIdentifierDataProviderTrait;
-use webignition\BasilModelFactory\Tests\DataProvider\ElementParameterIdentifierDataProviderTrait;
+use webignition\BasilModelFactory\Tests\DataProvider\DomReferenceIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\PageElementReferenceIdentifierDataProviderTrait;
 use webignition\BasilModelFactory\Tests\DataProvider\XpathExpressionIdentifierDataProviderTrait;
 use webignition\BasilTestIdentifierFactory\TestIdentifierFactory;
@@ -19,7 +19,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use CssSelectorIdentifierDataProviderTrait;
     use XpathExpressionIdentifierDataProviderTrait;
-    use ElementParameterIdentifierDataProviderTrait;
+    use DomReferenceIdentifierDataProviderTrait;
     use PageElementReferenceIdentifierDataProviderTrait;
     use AttributeIdentifierDataProviderTrait;
 
@@ -38,7 +38,7 @@ class IdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider cssSelectorIdentifierDataProvider
      * @dataProvider xpathExpressionIdentifierDataProvider
-     * @dataProvider elementParameterIdentifierDataProvider
+     * @dataProvider domReferenceIdentifierDataProvider
      * @dataProvider pageElementReferenceIdentifierDataProvider
      * @dataProvider attributeIdentifierDataProvider
      */

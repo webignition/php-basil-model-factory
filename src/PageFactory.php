@@ -3,8 +3,8 @@
 namespace webignition\BasilModelFactory;
 
 use Nyholm\Psr7\Uri;
-use webignition\BasilModel\Identifier\ElementIdentifierCollection;
-use webignition\BasilModel\Identifier\ElementIdentifierInterface;
+use webignition\BasilModel\Identifier\DomIdentifierCollection;
+use webignition\BasilModel\Identifier\DomIdentifierInterface;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilDataStructure\Page as PageData;
@@ -52,13 +52,13 @@ class PageFactory
     /**
      * @param array $elementData
      *
-     * @return ElementIdentifierCollection
+     * @return DomIdentifierCollection
      *
      * @throws InvalidPageElementIdentifierException
      */
-    private function createElementIdentifiers(array $elementData): ElementIdentifierCollection
+    private function createElementIdentifiers(array $elementData): DomIdentifierCollection
     {
-        /** @var ElementIdentifierInterface[] $elementIdentifiers */
+        /** @var DomIdentifierInterface[] $elementIdentifiers */
         $elementIdentifiers = [];
 
         foreach ($elementData as $elementName => $identifierString) {
@@ -68,26 +68,29 @@ class PageFactory
                 $elementIdentifiers
             );
 
-            if (null !== $identifier && !$identifier instanceof ElementIdentifierInterface) {
-                throw new InvalidPageElementIdentifierException($identifier);
+            if (null !== $identifier) {
+                if (!$identifier instanceof DomIdentifierInterface ||
+                    ($identifier instanceof DomIdentifierInterface && null !== $identifier->getAttributeName())) {
+                    throw new InvalidPageElementIdentifierException($identifier);
+                }
             }
 
-            if ($identifier instanceof ElementIdentifierInterface) {
+            if ($identifier instanceof DomIdentifierInterface) {
                 $elementIdentifiers[$elementName] = $identifier;
             }
         }
 
-        return new ElementIdentifierCollection($elementIdentifiers);
+        return new DomIdentifierCollection($elementIdentifiers);
     }
 
     /**
-     * @param ElementIdentifierCollection $elementIdentifiers
+     * @param DomIdentifierCollection $elementIdentifiers
      *
-     * @return ElementIdentifierCollection]
+     * @return DomIdentifierCollection
      */
     private function resolveNonPositionedParentIdentifiers(
-        ElementIdentifierCollection $elementIdentifiers
-    ): ElementIdentifierCollection {
+        DomIdentifierCollection $elementIdentifiers
+    ): DomIdentifierCollection {
         foreach ($elementIdentifiers as $identifier) {
             $isParentIdentifier = $this->isParentIdentifier($identifier, $elementIdentifiers);
             $hasPosition = null !== $identifier->getPosition();
@@ -106,11 +109,11 @@ class PageFactory
     }
 
     private function isParentIdentifier(
-        ElementIdentifierInterface $identifier,
-        ElementIdentifierCollection $elementIdentifiers
+        DomIdentifierInterface $identifier,
+        DomIdentifierCollection $elementIdentifiers
     ): bool {
         foreach ($elementIdentifiers as $elementIdentifier) {
-            if ($elementIdentifier instanceof ElementIdentifierInterface) {
+            if ($elementIdentifier instanceof DomIdentifierInterface) {
                 $parentIdentifier = $elementIdentifier->getParentIdentifier();
 
                 if (null !== $parentIdentifier) {

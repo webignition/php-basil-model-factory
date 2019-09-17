@@ -2,7 +2,7 @@
 
 namespace webignition\BasilModelFactory;
 
-use webignition\BasilModel\Identifier\ElementIdentifierInterface;
+use webignition\BasilModel\Identifier\DomIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\ReferenceIdentifierInterface;
 use webignition\BasilModel\Identifier\ReferenceIdentifierTypes;
@@ -35,7 +35,8 @@ class IdentifierTypeFinder
         '\.(.+)' .
         '$/';
 
-    const ELEMENT_PARAMETER_REGEX = '/^\$elements\.+/';
+    const ELEMENT_REFERENCE_REGEX = '/^\$elements\.[^.]+$/';
+    const ATTRIBUTE_REFERENCE_REGEX = '/^\$elements\.[^.]+\.[^.]+$/';
 
     public static function isCssSelector(string $identifierString): bool
     {
@@ -52,14 +53,23 @@ class IdentifierTypeFinder
         return self::isCssSelector($identifierString) || self::isXpathExpression($identifierString);
     }
 
-    public static function isAttributeReference(string $identifierString): bool
+    public static function isAttributeIdentifier(string $identifierString): bool
     {
+        if (self::isElementIdentifier($identifierString)) {
+            return false;
+        }
+
         return 1 === preg_match(self::ATTRIBUTE_IDENTIFIER_REGEX, $identifierString);
     }
 
     public static function isElementReference(string $identifierString): bool
     {
-        return 1 === preg_match(self::ELEMENT_PARAMETER_REGEX, $identifierString);
+        return 1 === preg_match(self::ELEMENT_REFERENCE_REGEX, $identifierString);
+    }
+
+    public static function isAttributeReference(string $identifierString): bool
+    {
+        return 1 === preg_match(self::ATTRIBUTE_REFERENCE_REGEX, $identifierString);
     }
 
     public static function findTypeFromIdentifierString(string $identifierString): ?string
@@ -70,6 +80,10 @@ class IdentifierTypeFinder
 
         if (self::isElementReference($identifierString)) {
             return IdentifierTypes::ELEMENT_REFERENCE;
+        }
+
+        if (self::isAttributeIdentifier($identifierString)) {
+            return IdentifierTypes::ATTRIBUTE_SELECTOR;
         }
 
         if (self::isAttributeReference($identifierString)) {
@@ -87,8 +101,12 @@ class IdentifierTypeFinder
 
     public static function findTypeFromIdentifier(IdentifierInterface $identifier): string
     {
-        if ($identifier instanceof ElementIdentifierInterface) {
-            return IdentifierTypes::ELEMENT_SELECTOR;
+        if ($identifier instanceof DomIdentifierInterface) {
+            if (null === $identifier->getAttributeName()) {
+                return IdentifierTypes::ELEMENT_SELECTOR;
+            }
+
+            return IdentifierTypes::ATTRIBUTE_SELECTOR;
         }
 
         if ($identifier instanceof ReferenceIdentifierInterface) {
