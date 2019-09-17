@@ -3,7 +3,6 @@
 namespace webignition\BasilModelFactory;
 
 use webignition\BasilModel\Identifier\DomIdentifierInterface;
-use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\ReferenceIdentifierInterface;
 use webignition\BasilModel\Identifier\ReferenceIdentifierTypes;
@@ -85,6 +84,10 @@ class IdentifierTypeFinder
 
         if (self::isAttributeIdentifier($identifierString)) {
             return IdentifierTypes::ATTRIBUTE_SELECTOR;
+        }
+
+        if (self::isAttributeReference($identifierString)) {
+            return IdentifierTypes::ATTRIBUTE_REFERENCE;
         }
 
         $pageElementReference = new PageElementReference($identifierString);

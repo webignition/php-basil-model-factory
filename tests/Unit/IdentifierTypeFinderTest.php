@@ -149,6 +149,17 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @dataProvider attributeReferenceDataProvider
+     */
+    public function testFindTypeAttributeReference(string $identifierString)
+    {
+        $this->assertSame(
+            IdentifierTypes::ATTRIBUTE_REFERENCE,
+            IdentifierTypeFinder::findTypeFromIdentifierString($identifierString)
+        );
+    }
+
+    /**
      * @dataProvider elementReferenceDataProvider
      */
     public function testFindTypeElementReference(string $identifierString)
@@ -173,7 +184,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider attributeSelectorDataProvider
      */
-    public function testFindTypeAttributeReference(string $identifierString)
+    public function testFindTypeAttributeSelector(string $identifierString)
     {
         $this->assertSame(
             IdentifierTypes::ATTRIBUTE_SELECTOR,
