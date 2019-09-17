@@ -15,7 +15,7 @@ use webignition\BasilModel\Assertion\ComparisonAssertion;
 use webignition\BasilModel\Assertion\ExaminationAssertion;
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
-use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
@@ -23,9 +23,9 @@ use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModel\Value\Assertion\ExaminedValue;
 use webignition\BasilModel\Value\Assertion\ExpectedValue;
+use webignition\BasilModel\Value\DomIdentifierValue;
 use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionType;
-use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilDataStructure\Step as StepData;
 use webignition\BasilModel\Value\PageElementReference;
@@ -90,14 +90,14 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         new InteractionAction(
                             'click ".selector"',
                             ActionTypes::CLICK,
-                            new ElementIdentifier(
+                            new DomIdentifier(
                                 new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                             ),
                             '".selector"'
                         ),
                         new InputAction(
                             'set ".input" to "value"',
-                            new ElementIdentifier(
+                            new DomIdentifier(
                                 new ElementExpression('.input', ElementExpressionType::CSS_SELECTOR)
                             ),
                             new LiteralValue('value'),
@@ -121,8 +121,8 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         new ComparisonAssertion(
                             '".selector" is "value"',
                             new ExaminedValue(
-                                new ElementValue(
-                                    new ElementIdentifier(
+                                new DomIdentifierValue(
+                                    new DomIdentifier(
                                         new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                                     )
                                 )
@@ -135,8 +135,8 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         new ExaminationAssertion(
                             '".input" exists',
                             new ExaminedValue(
-                                new ElementValue(
-                                    new ElementIdentifier(
+                                new DomIdentifierValue(
+                                    new DomIdentifier(
                                         new ElementExpression('.input', ElementExpressionType::CSS_SELECTOR)
                                     )
                                 )
@@ -265,7 +265,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             new InteractionAction(
                                 'click ".selector"',
                                 ActionTypes::CLICK,
-                                new ElementIdentifier(
+                                new DomIdentifier(
                                     new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                                 ),
                                 '".selector"'
@@ -275,8 +275,8 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             new ExaminationAssertion(
                                 '".selector" exists',
                                 new ExaminedValue(
-                                    new ElementValue(
-                                        new ElementIdentifier(
+                                    new DomIdentifierValue(
+                                        new DomIdentifier(
                                             new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                                         )
                                     )
