@@ -23,8 +23,12 @@ class DomReferenceIdentifierFactory implements IdentifierTypeFactoryInterface
             return false;
         }
 
-        return IdentifierTypes::ELEMENT_REFERENCE ===
-            IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
+        $identifierType = IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
+
+        return in_array($identifierType, [
+            IdentifierTypes::ATTRIBUTE_REFERENCE,
+            IdentifierTypes::ELEMENT_REFERENCE,
+        ]);
     }
 
     /**
