@@ -20,6 +20,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider xPathExpressionDataProvider
      * @dataProvider elementReferenceDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider attributeSelectorDataProvider
      * @dataProvider attributeReferenceDataProvider
      */
     public function testIsNotCssSelector(string $identifierString)
@@ -39,6 +40,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider cssSelectorDataProvider
      * @dataProvider elementReferenceDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider attributeSelectorDataProvider
      * @dataProvider attributeReferenceDataProvider
      */
     public function testIsNotXpathExpression(string $identifierString)
@@ -58,6 +60,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider elementReferenceDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider attributeSelectorDataProvider
      * @dataProvider attributeReferenceDataProvider
      */
     public function testIsNotElementIdentifier(string $identifierString)
@@ -68,7 +71,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider elementReferenceDataProvider
      */
-    public function testIsElementParameterReference(string $identifierString)
+    public function testIsElementReference(string $identifierString)
     {
         $this->assertTrue(IdentifierTypeFinder::isElementReference($identifierString));
     }
@@ -77,19 +80,52 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider cssSelectorDataProvider
      * @dataProvider xPathExpressionDataProvider
      * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider attributeSelectorDataProvider
      * @dataProvider attributeReferenceDataProvider
      */
-    public function testIsNotElementParameterReference(string $identifierString)
+    public function testIsNotElementReference(string $identifierString)
     {
         $this->assertFalse(IdentifierTypeFinder::isElementReference($identifierString));
     }
 
     /**
-     * @dataProvider attributeReferenceDataProvider
+     * @dataProvider attributeSelectorDataProvider
      */
     public function testIsAttributeIdentifier(string $identifierString)
     {
+        $this->assertTrue(IdentifierTypeFinder::isAttributeIdentifier($identifierString));
+    }
+
+    /**
+     * @dataProvider cssSelectorDataProvider
+     * @dataProvider xPathExpressionDataProvider
+     * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider elementReferenceDataProvider
+     * @dataProvider attributeReferenceDataProvider
+     */
+    public function testIsNotAttributeIdentifier(string $identifierString)
+    {
+        $this->assertFalse(IdentifierTypeFinder::isAttributeIdentifier($identifierString));
+    }
+
+    /**
+     * @dataProvider attributeReferenceDataProvider
+     */
+    public function testIsAttributeReference(string $identifierString)
+    {
         $this->assertTrue(IdentifierTypeFinder::isAttributeReference($identifierString));
+    }
+
+    /**
+     * @dataProvider cssSelectorDataProvider
+     * @dataProvider xPathExpressionDataProvider
+     * @dataProvider pageElementReferenceDataProvider
+     * @dataProvider elementReferenceDataProvider
+     * @dataProvider attributeSelectorDataProvider
+     */
+    public function testIsNotAttributeReference(string $identifierString)
+    {
+        $this->assertFalse(IdentifierTypeFinder::isAttributeReference($identifierString));
     }
 
     /**
@@ -127,7 +163,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider attributeReferenceDataProvider
+     * @dataProvider attributeSelectorDataProvider
      */
     public function testFindTypeAttributeReference(string $identifierString)
     {
@@ -224,6 +260,15 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function attributeReferenceDataProvider(): array
+    {
+        return [
+            [
+                'identifierString' =>  '$elements.element_name.attribute_name',
+            ],
+        ];
+    }
+
     public function pageElementReferenceDataProvider(): array
     {
         return [
@@ -233,7 +278,7 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function attributeReferenceDataProvider(): array
+    public function attributeSelectorDataProvider(): array
     {
         return [
             [

@@ -35,7 +35,8 @@ class IdentifierTypeFinder
         '\.(.+)' .
         '$/';
 
-    const ELEMENT_PARAMETER_REGEX = '/^\$elements\.+/';
+    const ELEMENT_REFERENCE_REGEX = '/^\$elements\.[^.]+$/';
+    const ATTRIBUTE_REFERENCE_REGEX = '/^\$elements\.[^.]+\.[^.]+$/';
 
     public static function isCssSelector(string $identifierString): bool
     {
@@ -52,14 +53,23 @@ class IdentifierTypeFinder
         return self::isCssSelector($identifierString) || self::isXpathExpression($identifierString);
     }
 
-    public static function isAttributeReference(string $identifierString): bool
+    public static function isAttributeIdentifier(string $identifierString): bool
     {
+        if (self::isElementIdentifier($identifierString)) {
+            return false;
+        }
+
         return 1 === preg_match(self::ATTRIBUTE_IDENTIFIER_REGEX, $identifierString);
     }
 
     public static function isElementReference(string $identifierString): bool
     {
-        return 1 === preg_match(self::ELEMENT_PARAMETER_REGEX, $identifierString);
+        return 1 === preg_match(self::ELEMENT_REFERENCE_REGEX, $identifierString);
+    }
+
+    public static function isAttributeReference(string $identifierString): bool
+    {
+        return 1 === preg_match(self::ATTRIBUTE_REFERENCE_REGEX, $identifierString);
     }
 
     public static function findTypeFromIdentifierString(string $identifierString): ?string
@@ -72,7 +82,7 @@ class IdentifierTypeFinder
             return IdentifierTypes::ELEMENT_REFERENCE;
         }
 
-        if (self::isAttributeReference($identifierString)) {
+        if (self::isAttributeIdentifier($identifierString)) {
             return IdentifierTypes::ATTRIBUTE_SELECTOR;
         }
 
