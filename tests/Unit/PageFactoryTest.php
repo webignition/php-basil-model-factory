@@ -43,7 +43,7 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $parentIdentifier = TestIdentifierFactory::createElementIdentifier(
             '.form',
-            1,
+            null,
             'form'
         );
 
