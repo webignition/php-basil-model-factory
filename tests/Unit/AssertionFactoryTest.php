@@ -18,8 +18,6 @@ use webignition\BasilModel\Value\Assertion\ExpectedValue;
 use webignition\BasilModel\Value\DomIdentifierReference;
 use webignition\BasilModel\Value\DomIdentifierReferenceType;
 use webignition\BasilModel\Value\DomIdentifierValue;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ObjectValueType;
@@ -55,17 +53,14 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromAssertionString(): array
     {
-        $cssElementExpression = new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR);
-        $cssElementExpressionWithParentReference = new ElementExpression(
-            '{{ reference }} .selector',
-            ElementExpressionType::CSS_SELECTOR
-        );
+        $elementLocator = '.selector';
+        $elementLocatorWithParentReference = '{{ reference }} .selector';
 
-        $cssIdentifier = new DomIdentifier($cssElementExpression);
-        $cssIdentifierPosition1 = $cssIdentifier->withPosition(1);
-        $cssIdentifierPosition2 = $cssIdentifier->withPosition(2);
-        $cssIdentifierPositionMinus1 = $cssIdentifier->withPosition(-1);
-        $cssIdentifierWithElementReference = new DomIdentifier($cssElementExpressionWithParentReference);
+        $cssIdentifier = new DomIdentifier($elementLocator);
+        $cssIdentifierPosition1 = $cssIdentifier->withOrdinalPosition(1);
+        $cssIdentifierPosition2 = $cssIdentifier->withOrdinalPosition(2);
+        $cssIdentifierPositionMinus1 = $cssIdentifier->withOrdinalPosition(-1);
+        $cssIdentifierWithElementReference = new DomIdentifier($elementLocatorWithParentReference);
 
         $literalValue = new LiteralValue('value');
 
@@ -275,7 +270,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector".data-heading-title is $elements.element_name.attribute_name',
                     new ExaminedValue(
                         new DomIdentifierValue(
-                            (new DomIdentifier($cssElementExpression))->withAttributeName('data-heading-title')
+                            (new DomIdentifier($elementLocator))->withAttributeName('data-heading-title')
                         )
                     ),
                     AssertionComparison::IS,
@@ -365,12 +360,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector is is-not exists not-exists includes excludes matches foo" is "value"',
                     new ExaminedValue(
                         new DomIdentifierValue(
-                            new DomIdentifier(
-                                new ElementExpression(
-                                    '.selector is is-not exists not-exists includes excludes matches foo',
-                                    ElementExpressionType::CSS_SELECTOR
-                                )
-                            )
+                            new DomIdentifier('.selector is is-not exists not-exists includes excludes matches foo')
                         )
                     ),
                     AssertionComparison::IS,
@@ -383,9 +373,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '"//foo" is "value"',
                     new ExaminedValue(
                         new DomIdentifierValue(
-                            new DomIdentifier(
-                                new ElementExpression('//foo', ElementExpressionType::XPATH_EXPRESSION)
-                            )
+                            new DomIdentifier('//foo')
                         )
                     ),
                     AssertionComparison::IS,
@@ -400,10 +388,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     new ExaminedValue(
                         new DomIdentifierValue(
                             new DomIdentifier(
-                                new ElementExpression(
-                                    '//a[ends-with(@href is exists not-exists matches includes excludes, \".pdf\")]',
-                                    ElementExpressionType::XPATH_EXPRESSION
-                                )
+                                '//a[ends-with(@href is exists not-exists matches includes excludes, \".pdf\")]'
                             )
                         )
                     ),
@@ -510,9 +495,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" exists',
                     new ExaminedValue(
                         new DomIdentifierValue(
-                            new DomIdentifier(
-                                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                            )
+                            new DomIdentifier('.selector')
                         )
                     ),
                     AssertionComparison::EXISTS
@@ -521,9 +504,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" exists',
                     new AssertableExaminedValue(
                         new DomIdentifierValue(
-                            new DomIdentifier(
-                                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                            )
+                            new DomIdentifier('.selector')
                         )
                     ),
                     AssertionComparison::EXISTS
@@ -534,9 +515,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" is "foo"',
                     new ExaminedValue(
                         new DomIdentifierValue(
-                            new DomIdentifier(
-                                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                            )
+                            new DomIdentifier('.selector')
                         )
                     ),
                     AssertionComparison::EXISTS,
@@ -548,9 +527,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" is "foo"',
                     new AssertableExaminedValue(
                         new DomIdentifierValue(
-                            new DomIdentifier(
-                                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                            )
+                            new DomIdentifier('.selector')
                         )
                     ),
                     AssertionComparison::EXISTS,
@@ -615,9 +592,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     '".selector" is "value"',
                     new AssertableExaminedValue(
                         new DomIdentifierValue(
-                            new DomIdentifier(
-                                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                            )
+                            new DomIdentifier('.selector')
                         )
                     ),
                     AssertionComparison::IS,

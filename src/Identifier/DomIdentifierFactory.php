@@ -4,8 +4,6 @@ namespace webignition\BasilModelFactory\Identifier;
 
 use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\IdentifierTypes;
 
@@ -37,30 +35,25 @@ class DomIdentifierFactory implements IdentifierTypeFactoryInterface
         }
 
         $identifierString = trim($identifierString);
-        $elementExpressionAndPosition = $identifierString;
+        $elementLocatorAndPosition = $identifierString;
         $attributeName = '';
 
         $identifierType = IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
 
         if (IdentifierTypes::ATTRIBUTE_SELECTOR === $identifierType) {
-            list($elementExpressionAndPosition, $attributeName) = $this->extractAttributeNameAndElementIdentifier(
+            list($elementLocatorAndPosition, $attributeName) = $this->extractAttributeNameAndElementIdentifier(
                 $identifierString
             );
         }
 
-        list($elementExpressionString, $position) = IdentifierStringValueAndPositionExtractor::extract(
-            $elementExpressionAndPosition
+        list($elementLocatorString, $position) = IdentifierStringValueAndPositionExtractor::extract(
+            $elementLocatorAndPosition
         );
 
-        $elementExpressionType = IdentifierTypeFinder::isCssSelector($elementExpressionString)
-            ? ElementExpressionType::CSS_SELECTOR
-            : ElementExpressionType::XPATH_EXPRESSION;
-
-        $elementExpression = new ElementExpression(trim($elementExpressionString, '"'), $elementExpressionType);
-        $identifier = new DomIdentifier($elementExpression);
+        $identifier = new DomIdentifier(trim($elementLocatorString, '"'));
 
         if (null !== $position) {
-            $identifier = $identifier->withPosition($position);
+            $identifier = $identifier->withOrdinalPosition($position);
         }
 
         if ('' !== $attributeName) {

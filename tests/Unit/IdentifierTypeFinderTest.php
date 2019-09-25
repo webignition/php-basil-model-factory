@@ -8,8 +8,6 @@ use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Value\DomIdentifierReference;
 use webignition\BasilModel\Value\DomIdentifierReferenceType;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\IdentifierTypes;
@@ -369,21 +367,15 @@ class IdentifierTypeFinderTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'attribute selector' => [
-                'identifier' => (new DomIdentifier(
-                    new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                ))->withAttributeName('attribute_name'),
+                'identifier' => (new DomIdentifier('.selector'))->withAttributeName('attribute_name'),
                 'expectedType' => IdentifierTypes::ATTRIBUTE_SELECTOR,
             ],
             'css element selector' => [
-                'identifier' => new DomIdentifier(
-                    new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                ),
+                'identifier' => new DomIdentifier('.selector'),
                 'expectedType' => IdentifierTypes::ELEMENT_SELECTOR,
             ],
             'xpath element selector' => [
-                'identifier' => new DomIdentifier(
-                    new ElementExpression('//h1', ElementExpressionType::XPATH_EXPRESSION)
-                ),
+                'identifier' => new DomIdentifier('//h1'),
                 'expectedType' => IdentifierTypes::ELEMENT_SELECTOR,
             ],
             'attribute reference' => [

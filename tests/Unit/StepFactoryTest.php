@@ -24,8 +24,6 @@ use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModel\Value\Assertion\ExaminedValue;
 use webignition\BasilModel\Value\Assertion\ExpectedValue;
 use webignition\BasilModel\Value\DomIdentifierValue;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilDataStructure\Step as StepData;
 use webignition\BasilModel\Value\PageElementReference;
@@ -90,16 +88,12 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         new InteractionAction(
                             'click ".selector"',
                             ActionTypes::CLICK,
-                            new DomIdentifier(
-                                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                            ),
+                            new DomIdentifier('.selector'),
                             '".selector"'
                         ),
                         new InputAction(
                             'set ".input" to "value"',
-                            new DomIdentifier(
-                                new ElementExpression('.input', ElementExpressionType::CSS_SELECTOR)
-                            ),
+                            new DomIdentifier('.input'),
                             new LiteralValue('value'),
                             '".input" to "value"'
                         )
@@ -122,9 +116,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             '".selector" is "value"',
                             new ExaminedValue(
                                 new DomIdentifierValue(
-                                    new DomIdentifier(
-                                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                                    )
+                                    new DomIdentifier('.selector')
                                 )
                             ),
                             AssertionComparison::IS,
@@ -136,9 +128,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             '".input" exists',
                             new ExaminedValue(
                                 new DomIdentifierValue(
-                                    new DomIdentifier(
-                                        new ElementExpression('.input', ElementExpressionType::CSS_SELECTOR)
-                                    )
+                                    new DomIdentifier('.input')
                                 )
                             ),
                             AssertionComparison::EXISTS
@@ -265,9 +255,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                             new InteractionAction(
                                 'click ".selector"',
                                 ActionTypes::CLICK,
-                                new DomIdentifier(
-                                    new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                                ),
+                                new DomIdentifier('.selector'),
                                 '".selector"'
                             ),
                         ],
@@ -276,9 +264,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                                 '".selector" exists',
                                 new ExaminedValue(
                                     new DomIdentifierValue(
-                                        new DomIdentifier(
-                                            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                                        )
+                                        new DomIdentifier('.selector')
                                     )
                                 ),
                                 AssertionComparison::EXISTS

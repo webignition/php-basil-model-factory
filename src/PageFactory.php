@@ -93,12 +93,12 @@ class PageFactory
     ): DomIdentifierCollection {
         foreach ($elementIdentifiers as $identifier) {
             $isParentIdentifier = $this->isParentIdentifier($identifier, $elementIdentifiers);
-            $hasPosition = null !== $identifier->getPosition();
+            $hasPosition = null !== $identifier->getOrdinalPosition();
 
             if ($isParentIdentifier && !$hasPosition) {
                 $elementIdentifiers = $elementIdentifiers->replace(
                     $identifier,
-                    $identifier->withPosition(1)
+                    $identifier->withOrdinalPosition(1)
                 );
             }
         }

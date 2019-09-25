@@ -13,8 +13,6 @@ use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Value\DomIdentifierReference;
 use webignition\BasilModel\Value\DomIdentifierReferenceType;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ObjectValueType;
@@ -54,8 +52,8 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionStringForClickActionDataProvider(): array
     {
-        $cssSelectorValue = new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR);
-        $cssSelectorIdentifier = new DomIdentifier($cssSelectorValue);
+        $elementLocator = '.selector';
+        $cssSelectorIdentifier = new DomIdentifier($elementLocator);
 
         return [
             'click css selector with null position double-quoted' => [
@@ -72,7 +70,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'click ".selector":3',
                     ActionTypes::CLICK,
-                    (new DomIdentifier($cssSelectorValue))->withPosition(3),
+                    (new DomIdentifier($elementLocator))->withOrdinalPosition(3),
                     '".selector":3'
                 ),
             ],
@@ -107,8 +105,8 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionStringForSubmitActionDataProvider(): array
     {
-        $cssSelectorValue = new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR);
-        $cssSelectorIdentifier = new DomIdentifier($cssSelectorValue);
+        $elementLocator = '.selector';
+        $cssSelectorIdentifier = new DomIdentifier($elementLocator);
 
         return [
             'submit css selector with null position double-quoted' => [
@@ -125,7 +123,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'submit ".selector":3',
                     ActionTypes::SUBMIT,
-                    (new DomIdentifier($cssSelectorValue))->withPosition(3),
+                    (new DomIdentifier($elementLocator))->withOrdinalPosition(3),
                     '".selector":3'
                 ),
             ],
@@ -160,8 +158,8 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionStringForWaitForActionDataProvider(): array
     {
-        $cssSelectorValue = new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR);
-        $cssSelectorIdentifier = new DomIdentifier($cssSelectorValue);
+        $elementLocator = '.selector';
+        $cssSelectorIdentifier = new DomIdentifier($elementLocator);
 
         return [
             'wait-for css selector with null position double-quoted' => [
@@ -178,7 +176,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'wait-for ".selector":3',
                     ActionTypes::WAIT_FOR,
-                    (new DomIdentifier($cssSelectorValue))->withPosition(3),
+                    (new DomIdentifier($elementLocator))->withOrdinalPosition(3),
                     '".selector":3'
                 ),
             ],
@@ -297,11 +295,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionStringForInputActionDataProvider(): array
     {
-        $cssSelectorValue = new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR);
-        $cssSelectorIdentifier = new DomIdentifier($cssSelectorValue);
-        $cssSelectorIdentifierWithPosition1 = (new DomIdentifier(
-            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-        ))->withPosition(1);
+        $elementLocator = '.selector';
+        $cssSelectorIdentifier = new DomIdentifier($elementLocator);
+        $cssSelectorIdentifierWithPosition1 = (new DomIdentifier('.selector'))->withOrdinalPosition(1);
         $scalarValue = new LiteralValue('value');
 
         return [
@@ -358,8 +354,8 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector":2 to "value"',
                     (new DomIdentifier(
-                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                    ))->withPosition(2),
+                        '.selector'
+                    ))->withOrdinalPosition(2),
                     $scalarValue,
                     '".selector":2 to "value"'
                 ),
@@ -378,8 +374,8 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InputAction(
                     'set ".selector":last to "value"',
                     (new DomIdentifier(
-                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                    ))->withPosition(-1),
+                        '.selector'
+                    ))->withOrdinalPosition(-1),
                     $scalarValue,
                     '".selector":last to "value"'
                 ),
@@ -432,9 +428,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set ".selector to value" to "value"',
                 'expectedAction' => new InputAction(
                     'set ".selector to value" to "value"',
-                    new DomIdentifier(
-                        new ElementExpression('.selector to value', ElementExpressionType::CSS_SELECTOR)
-                    ),
+                    new DomIdentifier('.selector to value'),
                     new LiteralValue('value'),
                     '".selector to value" to "value"'
                 ),
@@ -443,9 +437,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set "//foo" to "value"',
                 'expectedAction' => new InputAction(
                     'set "//foo" to "value"',
-                    new DomIdentifier(
-                        new ElementExpression('//foo', ElementExpressionType::XPATH_EXPRESSION)
-                    ),
+                    new DomIdentifier('//foo'),
                     new LiteralValue('value'),
                     '"//foo" to "value"'
                 ),
@@ -454,12 +446,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set "//a[ends-with(@href to value, \".pdf\")]" to "value"',
                 'expectedAction' => new InputAction(
                     'set "//a[ends-with(@href to value, \".pdf\")]" to "value"',
-                    new DomIdentifier(
-                        new ElementExpression(
-                            '//a[ends-with(@href to value, \".pdf\")]',
-                            ElementExpressionType::XPATH_EXPRESSION
-                        )
-                    ),
+                    new DomIdentifier('//a[ends-with(@href to value, \".pdf\")]'),
                     new LiteralValue('value'),
                     '"//a[ends-with(@href to value, \".pdf\")]" to "value"'
                 ),
@@ -477,9 +464,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set ".selector to value" "value"',
                 'expectedAction' => new InputAction(
                     'set ".selector to value" "value"',
-                    new DomIdentifier(
-                        new ElementExpression('.selector to value', ElementExpressionType::CSS_SELECTOR)
-                    ),
+                    new DomIdentifier('.selector to value'),
                     new LiteralValue('value'),
                     '".selector to value" "value"'
                 ),
