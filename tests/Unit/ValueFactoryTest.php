@@ -5,9 +5,6 @@ namespace webignition\BasilModelFactory\Tests\Unit;
 
 use webignition\BasilModel\Value\DomIdentifierReference;
 use webignition\BasilModel\Value\DomIdentifierReferenceType;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionInterface;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ObjectValueType;
@@ -163,40 +160,6 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
             'malformed page element reference' => [
                 'valueString' => 'page_import_name.foo.element_name',
                 'expectedValue' => new LiteralValue('page_import_name.foo.element_name'),
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider createFromIdentifierStringDataProvider
-     */
-    public function testCreateFromIdentifierString(
-        string $identifierString,
-        ?ElementExpressionInterface $expectedElementExpression
-    ) {
-        $elementExpression = $this->valueFactory->createFromIdentifierString($identifierString);
-
-        $this->assertEquals($expectedElementExpression, $elementExpression);
-    }
-
-    public function createFromIdentifierStringDataProvider(): array
-    {
-        return [
-            'empty' => [
-                'identifierString' => '',
-                'expectedElementExpression' => null,
-            ],
-            'css selector' => [
-                'identifierString' => '".selector"',
-                'expectedElementExpression' => new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR),
-            ],
-            'xpath expression' => [
-                'identifierString' => '"//foo"',
-                'expectedElementExpression' => new ElementExpression('//foo', ElementExpressionType::XPATH_EXPRESSION),
-            ],
-            'non-selector' => [
-                'identifierString' => 'value',
-                'expectedElementExpression' => null,
             ],
         ];
     }

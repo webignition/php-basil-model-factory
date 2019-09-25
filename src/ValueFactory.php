@@ -5,9 +5,6 @@ namespace webignition\BasilModelFactory;
 use webignition\BasilModel\PageElementReference\PageElementReference as PageElementReferenceModel;
 use webignition\BasilModel\Value\DomIdentifierReference;
 use webignition\BasilModel\Value\DomIdentifierReferenceType;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionInterface;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ObjectValueType;
@@ -79,28 +76,6 @@ class ValueFactory
         }
 
         return new LiteralValue($valueString);
-    }
-
-    public function createFromIdentifierString(string $identifierString): ?ElementExpressionInterface
-    {
-        $identifierString = trim($identifierString);
-
-        if ('' === $identifierString) {
-            return null;
-        }
-
-        if (IdentifierTypeFinder::isCssSelector($identifierString)) {
-            return new ElementExpression($this->getQuotedValue($identifierString), ElementExpressionType::CSS_SELECTOR);
-        }
-
-        if (IdentifierTypeFinder::isXpathExpression($identifierString)) {
-            return new ElementExpression(
-                $this->getQuotedValue($identifierString),
-                ElementExpressionType::XPATH_EXPRESSION
-            );
-        }
-
-        return null;
     }
 
     private function findObjectValueProperties(string $valueString): ?array
