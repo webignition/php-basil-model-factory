@@ -19,33 +19,27 @@ trait CssSelectorIdentifierDataProviderTrait
             ],
             'css class selector; position: 1' => [
                 'identifierString' => '".listed-item":1',
-                'expectedIdentifier' => (new DomIdentifier('.listed-item'))
-                    ->withOrdinalPosition(1),
+                'expectedIdentifier' => new DomIdentifier('.listed-item', 1),
             ],
             'css class selector; position: 3' => [
                 'identifierString' => '".listed-item":3',
-                'expectedIdentifier' => (new DomIdentifier('.listed-item'))
-                    ->withOrdinalPosition(3),
+                'expectedIdentifier' => new DomIdentifier('.listed-item', 3),
             ],
             'css class selector; position: -1' => [
                 'identifierString' => '".listed-item":-1',
-                'expectedIdentifier' => (new DomIdentifier('.listed-item'))
-                    ->withOrdinalPosition(-1),
+                'expectedIdentifier' => new DomIdentifier('.listed-item', -1),
             ],
             'css class selector; position: -3' => [
                 'identifierString' => '".listed-item":-3',
-                'expectedIdentifier' => (new DomIdentifier('.listed-item'))
-                    ->withOrdinalPosition(-3),
+                'expectedIdentifier' => new DomIdentifier('.listed-item', -3),
             ],
             'css class selector; position: first' => [
                 'identifierString' => '".listed-item":first',
-                'expectedIdentifier' => (new DomIdentifier('.listed-item'))
-                    ->withOrdinalPosition(1),
+                'expectedIdentifier' => new DomIdentifier('.listed-item', 1),
             ],
             'css class selector; position: last' => [
                 'identifierString' => '".listed-item":last',
-                'expectedIdentifier' => (new DomIdentifier('.listed-item'))
-                    ->withOrdinalPosition(-1),
+                'expectedIdentifier' => new DomIdentifier('.listed-item', -1),
             ],
         ];
     }

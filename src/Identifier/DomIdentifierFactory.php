@@ -50,11 +50,7 @@ class DomIdentifierFactory implements IdentifierTypeFactoryInterface
             $elementLocatorAndPosition
         );
 
-        $identifier = new DomIdentifier(trim($elementLocatorString, '"'));
-
-        if (null !== $position) {
-            $identifier = $identifier->withOrdinalPosition($position);
-        }
+        $identifier = new DomIdentifier(trim($elementLocatorString, '"'), $position);
 
         if ('' !== $attributeName) {
             $identifier = $identifier->withAttributeName($attributeName);

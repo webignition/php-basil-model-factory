@@ -57,9 +57,9 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
         $elementLocatorWithParentReference = '{{ reference }} .selector';
 
         $cssIdentifier = new DomIdentifier($elementLocator);
-        $cssIdentifierPosition1 = $cssIdentifier->withOrdinalPosition(1);
-        $cssIdentifierPosition2 = $cssIdentifier->withOrdinalPosition(2);
-        $cssIdentifierPositionMinus1 = $cssIdentifier->withOrdinalPosition(-1);
+        $cssIdentifierPosition1 = new DomIdentifier($elementLocator, 1);
+        $cssIdentifierPosition2 = new DomIdentifier($elementLocator, 2);
+        $cssIdentifierPositionMinus1 = new DomIdentifier($elementLocator, -1);
         $cssIdentifierWithElementReference = new DomIdentifier($elementLocatorWithParentReference);
 
         $literalValue = new LiteralValue('value');

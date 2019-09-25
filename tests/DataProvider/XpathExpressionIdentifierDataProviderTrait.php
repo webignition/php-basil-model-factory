@@ -19,33 +19,27 @@ trait XpathExpressionIdentifierDataProviderTrait
             ],
             'xpath attribute selector; position: 1' => [
                 'identifierString' => '"//input[@type="submit"]":1',
-                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]'))
-                    ->withOrdinalPosition(1),
+                'expectedIdentifier' => new DomIdentifier('//input[@type="submit"]', 1),
             ],
             'xpath attribute selector; position: 3' => [
                 'identifierString' => '"//input[@type="submit"]":3',
-                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]'))
-                    ->withOrdinalPosition(3),
+                'expectedIdentifier' => new DomIdentifier('//input[@type="submit"]', 3),
             ],
             'xpath attribute selector; position: -1' => [
                 'identifierString' => '"//input[@type="submit"]":-1',
-                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]'))
-                    ->withOrdinalPosition(-1),
+                'expectedIdentifier' => new DomIdentifier('//input[@type="submit"]', -1),
             ],
             'xpath attribute selector; position: -3' => [
                 'identifierString' => '"//input[@type="submit"]":-3',
-                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]'))
-                    ->withOrdinalPosition(-3),
+                'expectedIdentifier' => new DomIdentifier('//input[@type="submit"]', -3),
             ],
             'xpath attribute selector; position: first' => [
                 'identifierString' => '"//input[@type="submit"]":first',
-                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]'))
-                    ->withOrdinalPosition(1),
+                'expectedIdentifier' => new DomIdentifier('//input[@type="submit"]', 1),
             ],
             'xpath attribute selector; position: last' => [
                 'identifierString' => '"//input[@type="submit"]":last',
-                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]'))
-                    ->withOrdinalPosition(-1),
+                'expectedIdentifier' => new DomIdentifier('//input[@type="submit"]', -1),
             ],
         ];
     }

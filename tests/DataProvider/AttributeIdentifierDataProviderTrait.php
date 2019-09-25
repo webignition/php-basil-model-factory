@@ -16,26 +16,22 @@ trait AttributeIdentifierDataProviderTrait
             ],
             'attribute identifier: css class selector; position: 1' => [
                 'identifierString' => '".listed-item":1.attribute_name',
-                'expectedIdentifier' => (new DomIdentifier('.listed-item'))
-                    ->withOrdinalPosition(1)
+                'expectedIdentifier' => (new DomIdentifier('.listed-item', 1))
                     ->withAttributeName('attribute_name'),
             ],
             'attribute identifier: css class selector; position: -1' => [
                 'identifierString' => '".listed-item":-1.attribute_name',
-                'expectedIdentifier' => (new DomIdentifier('.listed-item'))
-                    ->withOrdinalPosition(-1)
+                'expectedIdentifier' => (new DomIdentifier('.listed-item', -1))
                     ->withAttributeName('attribute_name'),
             ],
             'attribute identifier: css class selector; position: first' => [
                 'identifierString' => '".listed-item":first.attribute_name',
-                'expectedIdentifier' => (new DomIdentifier('.listed-item'))
-                    ->withOrdinalPosition(1)
+                'expectedIdentifier' => (new DomIdentifier('.listed-item', 1))
                     ->withAttributeName('attribute_name'),
             ],
             'attribute identifier: css class selector; position: last' => [
                 'identifierString' => '".listed-item":last.attribute_name',
-                'expectedIdentifier' => (new DomIdentifier('.listed-item'))
-                    ->withOrdinalPosition(-1)
+                'expectedIdentifier' => (new DomIdentifier('.listed-item', -1))
                     ->withAttributeName('attribute_name'),
             ],
             'attribute identifier: xpath id selector' => [
@@ -50,26 +46,22 @@ trait AttributeIdentifierDataProviderTrait
             ],
             'attribute identifier: xpath attribute selector; position: 1' => [
                 'identifierString' => '"//input[@type="submit"]":1.attribute_name',
-                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]'))
-                    ->withOrdinalPosition(1)
+                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]', 1))
                     ->withAttributeName('attribute_name'),
             ],
             'attribute identifier: xpath attribute selector; position: -1' => [
                 'identifierString' => '"//input[@type="submit"]":-1.attribute_name',
-                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]'))
-                    ->withOrdinalPosition(-1)
+                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]', -1))
                     ->withAttributeName('attribute_name'),
             ],
             'attribute identifier: xpath attribute selector; position: first' => [
                 'identifierString' => '"//input[@type="submit"]":first.attribute_name',
-                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]'))
-                    ->withOrdinalPosition(1)
+                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]', 1))
                     ->withAttributeName('attribute_name'),
             ],
             'attribute identifier: xpath attribute selector; position: last' => [
                 'identifierString' => '"//input[@type="submit"]":last.attribute_name',
-                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]'))
-                    ->withOrdinalPosition(-1)
+                'expectedIdentifier' => (new DomIdentifier('//input[@type="submit"]', -1))
                     ->withAttributeName('attribute_name'),
             ],
         ];
