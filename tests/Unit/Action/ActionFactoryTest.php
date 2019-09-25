@@ -70,7 +70,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'click ".selector":3',
                     ActionTypes::CLICK,
-                    (new DomIdentifier($elementLocator))->withOrdinalPosition(3),
+                    new DomIdentifier($elementLocator, 3),
                     '".selector":3'
                 ),
             ],
@@ -123,7 +123,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'submit ".selector":3',
                     ActionTypes::SUBMIT,
-                    (new DomIdentifier($elementLocator))->withOrdinalPosition(3),
+                    new DomIdentifier($elementLocator, 3),
                     '".selector":3'
                 ),
             ],
@@ -176,7 +176,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAction' => new InteractionAction(
                     'wait-for ".selector":3',
                     ActionTypes::WAIT_FOR,
-                    (new DomIdentifier($elementLocator))->withOrdinalPosition(3),
+                    new DomIdentifier($elementLocator, 3),
                     '".selector":3'
                 ),
             ],
@@ -297,7 +297,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $elementLocator = '.selector';
         $cssSelectorIdentifier = new DomIdentifier($elementLocator);
-        $cssSelectorIdentifierWithPosition1 = (new DomIdentifier('.selector'))->withOrdinalPosition(1);
+        $cssSelectorIdentifierWithPosition1 = new DomIdentifier('.selector', 1);
         $scalarValue = new LiteralValue('value');
 
         return [
@@ -353,9 +353,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set ".selector":2 to "value"',
                 'expectedAction' => new InputAction(
                     'set ".selector":2 to "value"',
-                    (new DomIdentifier(
-                        '.selector'
-                    ))->withOrdinalPosition(2),
+                    new DomIdentifier('.selector', 2),
                     $scalarValue,
                     '".selector":2 to "value"'
                 ),
@@ -373,9 +371,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 'actionString' => 'set ".selector":last to "value"',
                 'expectedAction' => new InputAction(
                     'set ".selector":last to "value"',
-                    (new DomIdentifier(
-                        '.selector'
-                    ))->withOrdinalPosition(-1),
+                    new DomIdentifier('.selector', -1),
                     $scalarValue,
                     '".selector":last to "value"'
                 ),
