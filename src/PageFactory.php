@@ -44,7 +44,6 @@ class PageFactory
         $uri = new Uri($uriString);
 
         $elementIdentifiers = $this->createElementIdentifiers($elementData);
-        $elementIdentifiers = $this->resolveNonPositionedParentIdentifiers($elementIdentifiers);
 
         return new Page($uri, $elementIdentifiers);
     }
@@ -81,47 +80,5 @@ class PageFactory
         }
 
         return new DomIdentifierCollection($elementIdentifiers);
-    }
-
-    /**
-     * @param DomIdentifierCollection $elementIdentifiers
-     *
-     * @return DomIdentifierCollection
-     */
-    private function resolveNonPositionedParentIdentifiers(
-        DomIdentifierCollection $elementIdentifiers
-    ): DomIdentifierCollection {
-        foreach ($elementIdentifiers as $identifier) {
-            $isParentIdentifier = $this->isParentIdentifier($identifier, $elementIdentifiers);
-            $hasPosition = null !== $identifier->getOrdinalPosition();
-
-            if ($isParentIdentifier && !$hasPosition) {
-                $elementIdentifiers = $elementIdentifiers->replace(
-                    $identifier,
-                    $identifier->withOrdinalPosition(1)
-                );
-            }
-        }
-
-        $elementIdentifiers->rewind();
-
-        return $elementIdentifiers;
-    }
-
-    private function isParentIdentifier(
-        DomIdentifierInterface $identifier,
-        DomIdentifierCollection $elementIdentifiers
-    ): bool {
-        foreach ($elementIdentifiers as $elementIdentifier) {
-            if ($elementIdentifier instanceof DomIdentifierInterface) {
-                $parentIdentifier = $elementIdentifier->getParentIdentifier();
-
-                if (null !== $parentIdentifier) {
-                    return $parentIdentifier === $identifier;
-                }
-            }
-        }
-
-        return false;
     }
 }
