@@ -4,15 +4,11 @@
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
-use webignition\BasilModel\Assertion\AssertableComparisonAssertion;
-use webignition\BasilModel\Assertion\AssertableExaminationAssertion;
 use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Assertion\ComparisonAssertion;
 use webignition\BasilModel\Assertion\ExaminationAssertion;
 use webignition\BasilModel\Identifier\DomIdentifier;
-use webignition\BasilModel\Value\Assertion\AssertableExaminedValue;
-use webignition\BasilModel\Value\Assertion\AssertableExpectedValue;
 use webignition\BasilModel\Value\DomIdentifierReference;
 use webignition\BasilModel\Value\DomIdentifierReferenceType;
 use webignition\BasilModel\Value\DomIdentifierValue;
@@ -407,81 +403,6 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider createAssertableAssertionReturnsAssertionDataProvider
-     */
-    public function testCreateAssertableAssertionReturnsAssertion(AssertionInterface $assertion)
-    {
-        $this->assertSame(
-            $assertion,
-            $this->assertionFactory->createAssertableAssertion($assertion)
-        );
-    }
-
-    public function createAssertableAssertionReturnsAssertionDataProvider(): array
-    {
-        return [
-            'non-examination, non-comparison' => [
-                'assertion' => \Mockery::mock(AssertionInterface::class),
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider createAssertableAssertionDataProvider
-     */
-    public function testCreateAssertableAssertion(
-        AssertionInterface $assertion,
-        AssertionInterface $expectedAssertion
-    ) {
-        $assertableAssertion = $this->assertionFactory->createAssertableAssertion($assertion);
-
-        $this->assertNotSame($assertion, $assertableAssertion);
-        $this->assertEquals($expectedAssertion, $assertableAssertion);
-    }
-
-    public function createAssertableAssertionDataProvider(): array
-    {
-        return [
-            'examination assertion' => [
-                'assertion' => new ExaminationAssertion(
-                    '".selector" exists',
-                    DomIdentifierValue::create('.selector'),
-                    AssertionComparison::EXISTS
-                ),
-                'expectedAssertion' => new AssertableExaminationAssertion(
-                    '".selector" exists',
-                    new AssertableExaminedValue(
-                        new DomIdentifierValue(
-                            new DomIdentifier('.selector')
-                        )
-                    ),
-                    AssertionComparison::EXISTS
-                )
-            ],
-            'comparison assertion' => [
-                'assertion' => new ComparisonAssertion(
-                    '".selector" is "foo"',
-                    DomIdentifierValue::create('.selector'),
-                    AssertionComparison::EXISTS,
-                    new LiteralValue('foo')
-                ),
-                'expectedAssertion' => new AssertableComparisonAssertion(
-                    '".selector" is "foo"',
-                    new AssertableExaminedValue(
-                        new DomIdentifierValue(
-                            new DomIdentifier('.selector')
-                        )
-                    ),
-                    AssertionComparison::EXISTS,
-                    new AssertableExpectedValue(
-                        new LiteralValue('foo')
-                    )
-                )
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider createFromAssertionStringThrowsMissingValueExceptionDataProvider
      */
     public function testCreateFromAssertionStringThrowsMissingValueException(string $assertionString)
@@ -508,40 +429,6 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'css element selector, matches, lacking value' => [
                 'assertionString' => '".selector" matches',
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider createAssertableAssertionFromStringDataProvider
-     */
-    public function testCreateAssertableAssertionFromString(
-        string $assertionString,
-        AssertionInterface $expectedAssertion
-    ) {
-        $this->assertEquals(
-            $expectedAssertion,
-            $this->assertionFactory->createAssertableAssertionFromString($assertionString)
-        );
-    }
-
-    public function createAssertableAssertionFromStringDataProvider(): array
-    {
-        return [
-            'css element selector, is, scalar value' => [
-                'assertionString' => '".selector" is "value"',
-                'expectedAssertion' => new AssertableComparisonAssertion(
-                    '".selector" is "value"',
-                    new AssertableExaminedValue(
-                        new DomIdentifierValue(
-                            new DomIdentifier('.selector')
-                        )
-                    ),
-                    AssertionComparison::IS,
-                    new AssertableExpectedValue(
-                        new LiteralValue('value')
-                    )
-                ),
             ],
         ];
     }
