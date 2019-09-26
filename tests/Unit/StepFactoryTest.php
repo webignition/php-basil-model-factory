@@ -21,8 +21,6 @@ use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Step\PendingImportResolutionStep;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
-use webignition\BasilModel\Value\Assertion\ExaminedValue;
-use webignition\BasilModel\Value\Assertion\ExpectedValue;
 use webignition\BasilModel\Value\DomIdentifierValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilDataStructure\Step as StepData;
@@ -114,23 +112,13 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     [
                         new ComparisonAssertion(
                             '".selector" is "value"',
-                            new ExaminedValue(
-                                new DomIdentifierValue(
-                                    new DomIdentifier('.selector')
-                                )
-                            ),
+                            DomIdentifierValue::create('.selector'),
                             AssertionComparison::IS,
-                            new ExpectedValue(
-                                new LiteralValue('value')
-                            )
+                            new LiteralValue('value')
                         ),
                         new ExaminationAssertion(
                             '".input" exists',
-                            new ExaminedValue(
-                                new DomIdentifierValue(
-                                    new DomIdentifier('.input')
-                                )
-                            ),
+                            DomIdentifierValue::create('.input'),
                             AssertionComparison::EXISTS
                         ),
                     ]
@@ -163,12 +151,10 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     [
                         new ExaminationAssertion(
                             'page_import_name.elements.element_name exists',
-                            new ExaminedValue(
-                                new PageElementReference(
-                                    'page_import_name.elements.element_name',
-                                    'page_import_name',
-                                    'element_name'
-                                )
+                            new PageElementReference(
+                                'page_import_name.elements.element_name',
+                                'page_import_name',
+                                'element_name'
                             ),
                             AssertionComparison::EXISTS
                         ),
@@ -262,11 +248,7 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                         [
                             new ExaminationAssertion(
                                 '".selector" exists',
-                                new ExaminedValue(
-                                    new DomIdentifierValue(
-                                        new DomIdentifier('.selector')
-                                    )
-                                ),
+                                DomIdentifierValue::create('.selector'),
                                 AssertionComparison::EXISTS
                             ),
                         ]
