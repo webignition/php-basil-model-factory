@@ -2,17 +2,11 @@
 
 namespace webignition\BasilModelFactory;
 
-use webignition\BasilModel\Assertion\AssertableComparisonAssertion;
-use webignition\BasilModel\Assertion\AssertableExaminationAssertion;
 use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Assertion\ComparisonAssertion;
-use webignition\BasilModel\Assertion\ComparisonAssertionInterface;
 use webignition\BasilModel\Assertion\ExaminationAssertion;
-use webignition\BasilModel\Assertion\ExaminationAssertionInterface;
 use webignition\BasilModel\Identifier\DomIdentifierInterface;
-use webignition\BasilModel\Value\Assertion\AssertableExaminedValue;
-use webignition\BasilModel\Value\Assertion\AssertableExpectedValue;
 use webignition\BasilModel\Value\DomIdentifierValue;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
@@ -84,51 +78,6 @@ class AssertionFactory
             $examinedValue,
             $comparison,
             $this->valueFactory->createFromValueString($expectedValueString)
-        );
-    }
-
-    /**
-     * @param AssertionInterface $assertion
-     *
-     * @return AssertionInterface
-     */
-    public function createAssertableAssertion(AssertionInterface $assertion): AssertionInterface
-    {
-        if (!($assertion instanceof ExaminationAssertionInterface ||
-            $assertion instanceof ComparisonAssertionInterface)) {
-            return $assertion;
-        }
-
-        if ($assertion instanceof ComparisonAssertionInterface) {
-            return new AssertableComparisonAssertion(
-                $assertion->getAssertionString(),
-                new AssertableExaminedValue($assertion->getExaminedValue()),
-                $assertion->getComparison(),
-                new AssertableExpectedValue($assertion->getExpectedValue())
-            );
-        }
-
-        return new AssertableExaminationAssertion(
-            $assertion->getAssertionString(),
-            new AssertableExaminedValue($assertion->getExaminedValue()),
-            $assertion->getComparison()
-        );
-    }
-
-    /**
-     * @param string $assertionString
-     *
-     * @return AssertionInterface
-     *
-     * @throws EmptyAssertionStringException
-     * @throws MissingValueException
-     */
-    public function createAssertableAssertionFromString(string $assertionString): AssertionInterface
-    {
-        return $this->createAssertableAssertion(
-            $this->createFromAssertionString(
-                $assertionString
-            )
         );
     }
 
