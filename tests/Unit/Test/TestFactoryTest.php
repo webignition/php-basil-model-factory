@@ -25,8 +25,6 @@ use webignition\BasilModel\Test\Configuration;
 use webignition\BasilModel\Test\Test;
 use webignition\BasilModel\Test\TestInterface;
 use webignition\BasilDataStructure\Test\Test as TestData;
-use webignition\BasilModel\Value\Assertion\ExaminedValue;
-use webignition\BasilModel\Value\Assertion\ExpectedValue;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ObjectValueType;
@@ -134,13 +132,9 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                     'verify page is open' => new Step([], [
                         new ComparisonAssertion(
                             '$page.url is "http://example.com"',
-                            new ExaminedValue(
-                                new ObjectValue(ObjectValueType::PAGE_PROPERTY, '$page.url', 'url')
-                            ),
+                            new ObjectValue(ObjectValueType::PAGE_PROPERTY, '$page.url', 'url'),
                             AssertionComparison::IS,
-                            new ExpectedValue(
-                                new LiteralValue('http://example.com')
-                            )
+                            new LiteralValue('http://example.com')
                         ),
                     ]),
                     'query "example"' => new Step(
@@ -155,13 +149,9 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                         [
                             new ComparisonAssertion(
                                 '$page.title is "example - Example Domain"',
-                                new ExaminedValue(
-                                    new ObjectValue(ObjectValueType::PAGE_PROPERTY, '$page.title', 'title')
-                                ),
+                                new ObjectValue(ObjectValueType::PAGE_PROPERTY, '$page.title', 'title'),
                                 AssertionComparison::IS,
-                                new ExpectedValue(
-                                    new LiteralValue('example - Example Domain')
-                                )
+                                new LiteralValue('example - Example Domain')
                             ),
                         ]
                     ),
@@ -202,17 +192,13 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                         [
                             new ComparisonAssertion(
                                 'page_import_name.elements.heading is "example"',
-                                new ExaminedValue(
-                                    new PageElementReference(
-                                        'page_import_name.elements.heading',
-                                        'page_import_name',
-                                        'heading'
-                                    )
+                                new PageElementReference(
+                                    'page_import_name.elements.heading',
+                                    'page_import_name',
+                                    'heading'
                                 ),
                                 AssertionComparison::IS,
-                                new ExpectedValue(
-                                    new LiteralValue('example')
-                                )
+                                new LiteralValue('example')
                             ),
                         ]
                     ),

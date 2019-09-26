@@ -10,13 +10,9 @@ use webignition\BasilModel\Assertion\ComparisonAssertion;
 use webignition\BasilModel\Assertion\ComparisonAssertionInterface;
 use webignition\BasilModel\Assertion\ExaminationAssertion;
 use webignition\BasilModel\Assertion\ExaminationAssertionInterface;
-use webignition\BasilModel\Exception\InvalidAssertionExaminedValueException;
-use webignition\BasilModel\Exception\InvalidAssertionExpectedValueException;
 use webignition\BasilModel\Identifier\DomIdentifierInterface;
 use webignition\BasilModel\Value\Assertion\AssertableExaminedValue;
 use webignition\BasilModel\Value\Assertion\AssertableExpectedValue;
-use webignition\BasilModel\Value\Assertion\ExaminedValue;
-use webignition\BasilModel\Value\Assertion\ExpectedValue;
 use webignition\BasilModel\Value\DomIdentifierValue;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
@@ -87,7 +83,7 @@ class AssertionFactory
             $assertionString,
             $examinedValue,
             $comparison,
-            new ExpectedValue($this->valueFactory->createFromValueString($expectedValueString))
+            $this->valueFactory->createFromValueString($expectedValueString)
         );
     }
 
@@ -95,9 +91,6 @@ class AssertionFactory
      * @param AssertionInterface $assertion
      *
      * @return AssertionInterface
-     *
-     * @throws InvalidAssertionExaminedValueException
-     * @throws InvalidAssertionExpectedValueException
      */
     public function createAssertableAssertion(AssertionInterface $assertion): AssertionInterface
     {
@@ -109,15 +102,15 @@ class AssertionFactory
         if ($assertion instanceof ComparisonAssertionInterface) {
             return new AssertableComparisonAssertion(
                 $assertion->getAssertionString(),
-                new AssertableExaminedValue($assertion->getExaminedValue()->getExaminedValue()),
+                new AssertableExaminedValue($assertion->getExaminedValue()),
                 $assertion->getComparison(),
-                new AssertableExpectedValue($assertion->getExpectedValue()->getExpectedValue())
+                new AssertableExpectedValue($assertion->getExpectedValue())
             );
         }
 
         return new AssertableExaminationAssertion(
             $assertion->getAssertionString(),
-            new AssertableExaminedValue($assertion->getExaminedValue()->getExaminedValue()),
+            new AssertableExaminedValue($assertion->getExaminedValue()),
             $assertion->getComparison()
         );
     }
@@ -128,8 +121,6 @@ class AssertionFactory
      * @return AssertionInterface
      *
      * @throws EmptyAssertionStringException
-     * @throws InvalidAssertionExaminedValueException
-     * @throws InvalidAssertionExpectedValueException
      * @throws MissingValueException
      */
     public function createAssertableAssertionFromString(string $assertionString): AssertionInterface
@@ -156,7 +147,7 @@ class AssertionFactory
     /**
      * @param string $identifierString
      *
-     * @return ExaminedValue
+     * @return ValueInterface
      */
     private function createExaminedValue(string $identifierString): ValueInterface
     {
@@ -166,14 +157,10 @@ class AssertionFactory
             $domIdentifier = $this->domIdentifierFactory->create($identifierString);
 
             if ($domIdentifier instanceof DomIdentifierInterface) {
-                return new ExaminedValue(
-                    new DomIdentifierValue($domIdentifier)
-                );
+                return new DomIdentifierValue($domIdentifier);
             }
         }
 
-        return new ExaminedValue(
-            $this->valueFactory->createFromValueString($identifierString)
-        );
+        return $this->valueFactory->createFromValueString($identifierString);
     }
 }
