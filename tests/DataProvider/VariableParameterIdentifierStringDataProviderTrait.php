@@ -19,6 +19,26 @@ trait VariableParameterIdentifierStringDataProviderTrait
                 'string' => '$page.title',
                 'expectedIdentifierString' => '$page.title',
             ],
+            'variable parameter: page parameter is environment value' => [
+                'string' => '$page.title is $env.KEY',
+                'expectedIdentifierString' => '$page.title',
+            ],
+            'variable parameter: page parameter is environment value with default' => [
+                'string' => '$page.title is $env.KEY|"default"',
+                'expectedIdentifierString' => '$page.title',
+            ],
+            'variable parameter: assertion: environment parameter is value' => [
+                'string' => '$env.KEY is "value"',
+                'expectedIdentifierString' => '$env.KEY',
+            ],
+            'variable parameter: assertion: environment parameter with default without whitespace is value' => [
+                'string' => '$env.KEY|"default" is "value"',
+                'expectedIdentifierString' => '$env.KEY|"default"',
+            ],
+            'variable parameter: assertion: environment parameter with default with whitespace is value' => [
+                'string' => '$env.KEY|"default value" is "value"',
+                'expectedIdentifierString' => '$env.KEY|"default value"',
+            ],
         ];
     }
 }

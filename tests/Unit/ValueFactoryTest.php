@@ -130,6 +130,15 @@ class ValueFactoryTest extends \PHPUnit\Framework\TestCase
                     'default_value'
                 ),
             ],
+            'environment parameter, has default containing whitespace' => [
+                'valueString' => '$env.KEY|"default value"',
+                'expectedValue' => new ObjectValue(
+                    ObjectValueType::ENVIRONMENT_PARAMETER,
+                    '$env.KEY|"default value"',
+                    'KEY',
+                    'default value'
+                ),
+            ],
             'environment parameter, empty default' => [
                 'valueString' => '$env.KEY|""',
                 'expectedValue' => new ObjectValue(
