@@ -17,12 +17,37 @@ class VariableParameterIdentifierStringExtractor implements IdentifierStringType
             return null;
         }
 
-        $spacePosition = mb_strpos($string, ' ');
+        return $this->parse($string);
+    }
 
-        if (false === $spacePosition) {
-            return $string;
+    private function parse(string $string): ?string
+    {
+        $defaultValueDelimiter = '|';
+
+        $length = mb_strlen($string);
+        $identifier = '';
+        $isInDefaultValue = false;
+        $previousCharacter = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $currentCharacter = mb_substr($string, $i, 1);
+
+            if ($defaultValueDelimiter === $currentCharacter) {
+                $isInDefaultValue = true;
+            }
+
+            if (false === $isInDefaultValue && ' ' === $currentCharacter) {
+                return $identifier;
+            }
+
+            if (true === $isInDefaultValue && '" ' === $previousCharacter . $currentCharacter) {
+                return $identifier;
+            }
+
+            $identifier .= $currentCharacter;
+            $previousCharacter = $currentCharacter;
         }
 
-        return mb_substr($string, 0, $spacePosition);
+        return $identifier;
     }
 }

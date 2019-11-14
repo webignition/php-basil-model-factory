@@ -392,6 +392,99 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     new LiteralValue('1024,768')
                 ),
             ],
+            'page object parameter, is, environment value' => [
+                'actionString' => '$page.url is $env.KEY',
+                'expectedAssertion' => new ComparisonAssertion(
+                    '$page.url is $env.KEY',
+                    new ObjectValue(ObjectValueType::PAGE_PROPERTY, '$page.url', 'url'),
+                    AssertionComparison::IS,
+                    new ObjectValue(ObjectValueType::ENVIRONMENT_PARAMETER, '$env.KEY', 'KEY')
+                ),
+            ],
+            'page object parameter, is, environment value with default' => [
+                'actionString' => '$page.url is $env.KEY|"default"',
+                'expectedAssertion' => new ComparisonAssertion(
+                    '$page.url is $env.KEY|"default"',
+                    new ObjectValue(ObjectValueType::PAGE_PROPERTY, '$page.url', 'url'),
+                    AssertionComparison::IS,
+                    new ObjectValue(
+                        ObjectValueType::ENVIRONMENT_PARAMETER,
+                        '$env.KEY|"default"',
+                        'KEY',
+                        'default'
+                    )
+                ),
+            ],
+            'page object parameter, is, environment value with default with whitespace' => [
+                'actionString' => '$page.url is $env.KEY|"default value"',
+                'expectedAssertion' => new ComparisonAssertion(
+                    '$page.url is $env.KEY|"default value"',
+                    new ObjectValue(ObjectValueType::PAGE_PROPERTY, '$page.url', 'url'),
+                    AssertionComparison::IS,
+                    new ObjectValue(
+                        ObjectValueType::ENVIRONMENT_PARAMETER,
+                        '$env.KEY|"default value"',
+                        'KEY',
+                        'default value'
+                    )
+                ),
+            ],
+            'environment value, is, environment value' => [
+                'actionString' => '$env.KEY1 is $env.KEY2',
+                'expectedAssertion' => new ComparisonAssertion(
+                    '$env.KEY1 is $env.KEY2',
+                    new ObjectValue(ObjectValueType::ENVIRONMENT_PARAMETER, '$env.KEY1', 'KEY1'),
+                    AssertionComparison::IS,
+                    new ObjectValue(ObjectValueType::ENVIRONMENT_PARAMETER, '$env.KEY2', 'KEY2')
+                ),
+            ],
+            'environment value with default, is, environment value with default' => [
+                'actionString' => '$env.KEY1|"default1" is $env.KEY2|"default2"',
+                'expectedAssertion' => new ComparisonAssertion(
+                    '$env.KEY1|"default1" is $env.KEY2|"default2"',
+                    new ObjectValue(
+                        ObjectValueType::ENVIRONMENT_PARAMETER,
+                        '$env.KEY1|"default1"',
+                        'KEY1',
+                        'default1'
+                    ),
+                    AssertionComparison::IS,
+                    new ObjectValue(
+                        ObjectValueType::ENVIRONMENT_PARAMETER,
+                        '$env.KEY2|"default2"',
+                        'KEY2',
+                        'default2'
+                    )
+                ),
+            ],
+            'environment value with default without whitespace, is, literal value' => [
+                'actionString' => '$env.KEY1|"default" is "literal value"',
+                'expectedAssertion' => new ComparisonAssertion(
+                    '$env.KEY1|"default" is "literal value"',
+                    new ObjectValue(
+                        ObjectValueType::ENVIRONMENT_PARAMETER,
+                        '$env.KEY1|"default"',
+                        'KEY1',
+                        'default'
+                    ),
+                    AssertionComparison::IS,
+                    new LiteralValue('literal value')
+                ),
+            ],
+            'environment value with default with whitespace, is, literal value' => [
+                'actionString' => '$env.KEY1|"default value" is "literal value"',
+                'expectedAssertion' => new ComparisonAssertion(
+                    '$env.KEY1|"default value" is "literal value"',
+                    new ObjectValue(
+                        ObjectValueType::ENVIRONMENT_PARAMETER,
+                        '$env.KEY1|"default value"',
+                        'KEY1',
+                        'default value'
+                    ),
+                    AssertionComparison::IS,
+                    new LiteralValue('literal value')
+                ),
+            ],
         ];
     }
 
