@@ -2,6 +2,7 @@
 
 namespace webignition\BasilModelFactory\Action;
 
+use webignition\BasilDataStructure\Action\Action as ActionData;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
@@ -25,5 +26,14 @@ class NoArgumentsActionTypeFactory implements ActionTypeFactoryInterface
     public function createForActionType(string $actionString, string $type, string $arguments): ActionInterface
     {
         return new NoArgumentsAction($actionString, $type, $arguments);
+    }
+
+    public function create(ActionData $actionData): ActionInterface
+    {
+        return new NoArgumentsAction(
+            $actionData->getSource(),
+            $actionData->getType(),
+            (string) $actionData->getArguments()
+        );
     }
 }

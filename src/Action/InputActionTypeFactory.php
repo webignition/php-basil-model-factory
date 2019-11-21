@@ -2,6 +2,8 @@
 
 namespace webignition\BasilModelFactory\Action;
 
+use webignition\BasilDataStructure\Action\Action as ActionData;
+use webignition\BasilDataStructure\Action\InputAction as InputActionData;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
@@ -98,5 +100,36 @@ class InputActionTypeFactory implements ActionTypeFactoryInterface
         }
 
         return new InputAction($actionString, $identifier, $value, $arguments);
+    }
+
+    /**
+     * @param ActionData $actionData
+     *
+     * @return ActionInterface
+     *
+     * @throws InvalidIdentifierStringException
+     * @throws InvalidActionTypeException
+     */
+    public function create(ActionData $actionData): ActionInterface
+    {
+        $type = $actionData->getType();
+        if (!$actionData instanceof InputActionData) {
+            throw new InvalidActionTypeException($type);
+        }
+
+        $identifierString = (string) $actionData->getIdentifier();
+        $identifier = $this->identifierFactory->create($identifierString, [
+            IdentifierTypes::ELEMENT_REFERENCE,
+            IdentifierTypes::ELEMENT_SELECTOR,
+            IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+        ]);
+
+        if (null === $identifier) {
+            throw new InvalidIdentifierStringException($identifierString);
+        }
+
+        $value = $this->valueFactory->createFromValueString($actionData->getValue());
+
+        return new InputAction($actionData->getSource(), $identifier, $value, (string) $actionData->getArguments());
     }
 }

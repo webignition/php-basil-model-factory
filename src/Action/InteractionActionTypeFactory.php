@@ -2,6 +2,8 @@
 
 namespace webignition\BasilModelFactory\Action;
 
+use webignition\BasilDataStructure\Action\Action as ActionData;
+use webignition\BasilDataStructure\Action\InteractionAction as InteractionActionData;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InteractionAction;
@@ -62,5 +64,35 @@ class InteractionActionTypeFactory implements ActionTypeFactoryInterface
         }
 
         return new InteractionAction($actionString, $type, $identifier, $arguments);
+    }
+
+    /**
+     * @param ActionData $actionData
+     *
+     * @return ActionInterface
+     *
+     * @throws InvalidActionTypeException
+     * @throws InvalidIdentifierStringException
+     */
+    public function create(ActionData $actionData): ActionInterface
+    {
+        $type = $actionData->getType();
+        if (!$actionData instanceof InteractionActionData) {
+            throw new InvalidActionTypeException($type);
+        }
+
+        $identifierString = (string) $actionData->getIdentifier();
+
+        $identifier = $this->identifierFactory->create($identifierString, [
+            IdentifierTypes::ELEMENT_REFERENCE,
+            IdentifierTypes::ELEMENT_SELECTOR,
+            IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+        ]);
+
+        if (null === $identifier) {
+            throw new InvalidIdentifierStringException($identifierString);
+        }
+
+        return new InteractionAction($actionData->getSource(), $type, $identifier, $actionData->getArguments());
     }
 }

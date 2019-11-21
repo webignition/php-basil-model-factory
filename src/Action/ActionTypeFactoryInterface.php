@@ -2,6 +2,7 @@
 
 namespace webignition\BasilModelFactory\Action;
 
+use webignition\BasilDataStructure\Action\Action as ActionData;
 use webignition\BasilModel\Action\ActionInterface;
 
 interface ActionTypeFactoryInterface
@@ -16,4 +17,6 @@ interface ActionTypeFactoryInterface
      * @return ActionInterface
      */
     public function createForActionType(string $actionString, string $type, string $arguments): ActionInterface;
+
+    public function create(ActionData $actionData): ActionInterface;
 }

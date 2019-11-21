@@ -1,9 +1,12 @@
 <?php
-/** @noinspection PhpUnhandledExceptionInspection */
-/** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelFactory\Tests\Unit\Action;
 
+use webignition\BasilDataStructure\Action\Action as ActionData;
+use webignition\BasilDataStructure\Action\InputAction as InputActionData;
+use webignition\BasilDataStructure\Action\InteractionAction as InteractionActionData;
+use webignition\BasilDataStructure\Action\WaitAction as WaitActionData;
+use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
 use webignition\BasilModel\Action\InteractionAction;
@@ -34,6 +37,268 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
         parent::setUp();
 
         $this->actionFactory = ActionFactory::createFactory();
+    }
+
+    /**
+     * @dataProvider createFromActionDataForInputActionDataProvider
+     * @dataProvider createFromActionDataForInteractionActionDataProvider
+     * @dataProvider createFromActionDataForNoArgumentsActionDataProvider
+     * @dataProvider createFromActionDataForWaitActionDataProvider
+     */
+    public function testCreateFromActionData(ActionData $actionData, ActionInterface $expectedAction)
+    {
+        $action = $this->actionFactory->createFromActionData($actionData);
+
+        $this->assertEquals($expectedAction, $action);
+    }
+
+    public function createFromActionDataForInputActionDataProvider(): array
+    {
+        $elementLocator = '.selector';
+        $cssSelectorIdentifier = new DomIdentifier($elementLocator);
+        $scalarValue = new LiteralValue('value');
+
+        return [
+            'css element selector, scalar value' => [
+                'actionData' => new InputActionData(
+                    'set ".selector" to "value"',
+                    '".selector" to "value"',
+                    '".selector"',
+                    '"value"'
+                ),
+                'expectedAction' => new InputAction(
+                    'set ".selector" to "value"',
+                    $cssSelectorIdentifier,
+                    $scalarValue,
+                    '".selector" to "value"'
+                ),
+            ],
+            'page model element reference, scalar value' => [
+                'actionData' => new InputActionData(
+                    'set page_import_name.elements.element_name to "value"',
+                    'page_import_name.elements.element_name to "value"',
+                    'page_import_name.elements.element_name',
+                    '"value"'
+                ),
+                'expectedAction' => new InputAction(
+                    'set page_import_name.elements.element_name to "value"',
+                    ReferenceIdentifier::createPageElementReferenceIdentifier(
+                        new PageElementReference(
+                            'page_import_name.elements.element_name',
+                            'page_import_name',
+                            'element_name'
+                        )
+                    ),
+                    $scalarValue,
+                    'page_import_name.elements.element_name to "value"'
+                ),
+            ],
+            'element parameter, scalar value' => [
+                'actionData' => new InputActionData(
+                    'set $elements.element_name to "value"',
+                    '$elements.element_name to "value"',
+                    '$elements.element_name',
+                    '"value"'
+                ),
+                'expectedAction' => new InputAction(
+                    'set $elements.element_name to "value"',
+                    ReferenceIdentifier::createElementReferenceIdentifier(
+                        new DomIdentifierReference(
+                            DomIdentifierReferenceType::ELEMENT,
+                            '$elements.element_name',
+                            'element_name'
+                        )
+                    ),
+                    $scalarValue,
+                    '$elements.element_name to "value"'
+                ),
+            ],
+            'css element selector, data parameter value' => [
+                'actionData' => new InputActionData(
+                    'set ".selector" to $data.name',
+                    '".selector" to $data.name',
+                    '".selector"',
+                    '$data.name'
+                ),
+                'expectedAction' => new InputAction(
+                    'set ".selector" to $data.name',
+                    $cssSelectorIdentifier,
+                    new ObjectValue(ObjectValueType::DATA_PARAMETER, '$data.name', 'name'),
+                    '".selector" to $data.name'
+                ),
+            ],
+            'css element selector, element parameter value' => [
+                'actionData' => new InputActionData(
+                    'set ".selector" to $elements.element_name',
+                    '".selector" to $elements.element_name',
+                    '".selector"',
+                    '$elements.element_name'
+                ),
+                'expectedAction' => new InputAction(
+                    'set ".selector" to $elements.element_name',
+                    $cssSelectorIdentifier,
+                    new DomIdentifierReference(
+                        DomIdentifierReferenceType::ELEMENT,
+                        '$elements.element_name',
+                        'element_name'
+                    ),
+                    '".selector" to $elements.element_name'
+                ),
+            ],
+            'css element selector, attribute parameter value' => [
+                'actionData' => new InputActionData(
+                    'set ".selector" to $elements.element_name.attribute_name',
+                    '".selector" to $elements.element_name.attribute_name',
+                    '".selector"',
+                    '$elements.element_name.attribute_name'
+                ),
+                'expectedAction' => new InputAction(
+                    'set ".selector" to $elements.element_name.attribute_name',
+                    $cssSelectorIdentifier,
+                    new DomIdentifierReference(
+                        DomIdentifierReferenceType::ATTRIBUTE,
+                        '$elements.element_name.attribute_name',
+                        'element_name.attribute_name'
+                    ),
+                    '".selector" to $elements.element_name.attribute_name'
+                ),
+            ],
+        ];
+    }
+
+    public function createFromActionDataForInteractionActionDataProvider(): array
+    {
+        $elementLocator = '.selector';
+        $cssSelectorIdentifier = new DomIdentifier($elementLocator);
+
+        return [
+            'click css selector' => [
+                'actionData' => new InteractionActionData(
+                    'click ".selector"',
+                    'click',
+                    '".selector"',
+                    '".selector"'
+                ),
+                'expectedAction' => new InteractionAction(
+                    'click ".selector"',
+                    ActionTypes::CLICK,
+                    $cssSelectorIdentifier,
+                    '".selector"'
+                ),
+            ],
+            'click page element reference' => [
+                'actionData' => new InteractionActionData(
+                    'click page_import_name.elements.element_name',
+                    'click',
+                    'page_import_name.elements.element_name',
+                    'page_import_name.elements.element_name'
+                ),
+                'expectedAction' => new InteractionAction(
+                    'click page_import_name.elements.element_name',
+                    ActionTypes::CLICK,
+                    ReferenceIdentifier::createPageElementReferenceIdentifier(
+                        new PageElementReference(
+                            'page_import_name.elements.element_name',
+                            'page_import_name',
+                            'element_name'
+                        )
+                    ),
+                    'page_import_name.elements.element_name'
+                ),
+            ],
+            'click element parameter reference' => [
+                'actionData' => new InteractionActionData(
+                    'click $elements.name',
+                    'click',
+                    '$elements.name',
+                    '$elements.name'
+                ),
+                'expectedAction' => new InteractionAction(
+                    'click $elements.name',
+                    ActionTypes::CLICK,
+                    ReferenceIdentifier::createElementReferenceIdentifier(
+                        new DomIdentifierReference(DomIdentifierReferenceType::ELEMENT, '$elements.name', 'name')
+                    ),
+                    '$elements.name'
+                ),
+            ],
+            'submit css selector' => [
+                'actionData' => new InteractionActionData(
+                    'submit ".selector"',
+                    'submit',
+                    '".selector"',
+                    '".selector"'
+                ),
+                'expectedAction' => new InteractionAction(
+                    'submit ".selector"',
+                    ActionTypes::SUBMIT,
+                    $cssSelectorIdentifier,
+                    '".selector"'
+                ),
+            ],
+            'wait-for css selector' => [
+                'actionData' => new InteractionActionData(
+                    'wait-for ".selector"',
+                    'wait-for',
+                    '".selector"',
+                    '".selector"'
+                ),
+                'expectedAction' => new InteractionAction(
+                    'wait-for ".selector"',
+                    ActionTypes::WAIT_FOR,
+                    $cssSelectorIdentifier,
+                    '".selector"'
+                ),
+            ],
+        ];
+    }
+
+    public function createFromActionDataForNoArgumentsActionDataProvider(): array
+    {
+        return [
+            'reload' => [
+                'actionData' => new ActionData('reload', 'reload'),
+                'expectedAction' => new NoArgumentsAction('reload', ActionTypes::RELOAD, ''),
+            ],
+            'back' => [
+                'actionData' => new ActionData('back', 'back'),
+                'expectedAction' => new NoArgumentsAction('back', ActionTypes::BACK, ''),
+            ],
+            'forward' => [
+                'actionData' => new ActionData('forward', 'forward'),
+                'expectedAction' => new NoArgumentsAction('forward', ActionTypes::FORWARD, ''),
+            ],
+        ];
+    }
+
+    public function createFromActionDataForWaitActionDataProvider(): array
+    {
+        return [
+            'wait 1' => [
+                'actionData' => new WaitActionData('wait 1', '1'),
+                'expectedAction' => new WaitAction('wait 1', new LiteralValue('1')),
+            ],
+            'wait $data.name' => [
+                'actionData' => new WaitActionData('wait $data.name', '$data.name'),
+                'expectedAction' => new WaitAction('wait $data.name', new ObjectValue(
+                    ObjectValueType::DATA_PARAMETER,
+                    '$data.name',
+                    'name'
+                )),
+            ],
+            'wait no arguments' => [
+                'actionData' => new WaitActionData('wait', ''),
+                'expectedAction' => new WaitAction('wait', new LiteralValue('')),
+            ],
+            'wait $env.DURATION' => [
+                'actionData' => new WaitActionData('wait $env.DURATION', '$env.DURATION'),
+                'expectedAction' => new WaitAction('wait $env.DURATION', new ObjectValue(
+                    ObjectValueType::ENVIRONMENT_PARAMETER,
+                    '$env.DURATION',
+                    'DURATION'
+                )),
+            ],
+        ];
     }
 
     /**
