@@ -1,6 +1,4 @@
 <?php
-/** @noinspection PhpUnhandledExceptionInspection */
-/** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
@@ -48,38 +46,11 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
     public function createFromAssertionString(): array
     {
         $elementLocator = '.selector';
-        $elementLocatorWithParentReference = '{{ reference }} .selector';
 
         $cssIdentifier = new DomIdentifier($elementLocator);
-        $cssIdentifierPosition1 = new DomIdentifier($elementLocator, 1);
-        $cssIdentifierPosition2 = new DomIdentifier($elementLocator, 2);
-        $cssIdentifierPositionMinus1 = new DomIdentifier($elementLocator, -1);
-        $cssIdentifierWithElementReference = new DomIdentifier($elementLocatorWithParentReference);
-
         $literalValue = new LiteralValue('value');
 
         $cssDomIdentifierValue = new DomIdentifierValue($cssIdentifier);
-
-        $cssIdentifierValueWithAttribute = new DomIdentifierValue(
-            $cssIdentifier->withAttributeName('attribute_name')
-        );
-
-        $cssIdentifierValuePosition1WithAttribute = new DomIdentifierValue(
-            $cssIdentifierPosition1->withAttributeName('attribute_name')
-        );
-
-        $cssIdentifierValuePosition2WithAttribute = new DomIdentifierValue(
-            $cssIdentifierPosition2->withAttributeName('attribute_name')
-        );
-
-        $cssIdentifierPositionMinus1WithAttribute = new DomIdentifierValue(
-            $cssIdentifierPositionMinus1->withAttributeName('attribute_name')
-        );
-
-        $cssIdentifierPosition1ExaminedValue = new DomIdentifierValue($cssIdentifierPosition1);
-        $cssIdentifierPosition2ExaminedValue = new DomIdentifierValue($cssIdentifierPosition2);
-        $cssIdentifierPositionMinus1ExaminedValue = new DomIdentifierValue($cssIdentifierPositionMinus1);
-        $cssSelectorWithElementReferenceExaminedValue = new DomIdentifierValue($cssIdentifierWithElementReference);
 
         return [
             'css element selector, is, scalar value' => [
@@ -87,96 +58,6 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAssertion' => new ComparisonAssertion(
                     '".selector" is "value"',
                     $cssDomIdentifierValue,
-                    AssertionComparison::IS,
-                    $literalValue
-                ),
-            ],
-            'css element selector with position 1, is, scalar value' => [
-                'assertionString' => '".selector":1 is "value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector":1 is "value"',
-                    $cssIdentifierPosition1ExaminedValue,
-                    AssertionComparison::IS,
-                    $literalValue
-                ),
-            ],
-            'css element selector with position 2, is, scalar value' => [
-                'assertionString' => '".selector":2 is "value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector":2 is "value"',
-                    $cssIdentifierPosition2ExaminedValue,
-                    AssertionComparison::IS,
-                    $literalValue
-                ),
-            ],
-            'css element selector with position first, is, scalar value' => [
-                'assertionString' => '".selector":first is "value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector":first is "value"',
-                    $cssIdentifierPosition1ExaminedValue,
-                    AssertionComparison::IS,
-                    $literalValue
-                ),
-            ],
-            'css element selector with position last, is, scalar value' => [
-                'assertionString' => '".selector":last is "value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector":last is "value"',
-                    $cssIdentifierPositionMinus1ExaminedValue,
-                    AssertionComparison::IS,
-                    $literalValue
-                ),
-            ],
-            'css attribute selector, is, scalar value' => [
-                'assertionString' => '".selector".attribute_name is "value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector".attribute_name is "value"',
-                    $cssIdentifierValueWithAttribute,
-                    AssertionComparison::IS,
-                    $literalValue
-                ),
-            ],
-            'css attribute selector with position 1, is, scalar value' => [
-                'assertionString' => '".selector":1.attribute_name is "value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector":1.attribute_name is "value"',
-                    $cssIdentifierValuePosition1WithAttribute,
-                    AssertionComparison::IS,
-                    $literalValue
-                ),
-            ],
-            'css attribute selector with position 2, is, scalar value' => [
-                'assertionString' => '".selector":2.attribute_name is "value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector":2.attribute_name is "value"',
-                    $cssIdentifierValuePosition2WithAttribute,
-                    AssertionComparison::IS,
-                    $literalValue
-                ),
-            ],
-            'css attribute selector with position first, is, scalar value' => [
-                'assertionString' => '".selector":first.attribute_name is "value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector":first.attribute_name is "value"',
-                    $cssIdentifierValuePosition1WithAttribute,
-                    AssertionComparison::IS,
-                    $literalValue
-                ),
-            ],
-            'css attribute selector with position last, is, scalar value' => [
-                'assertionString' => '".selector":last.attribute_name is "value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '".selector":last.attribute_name is "value"',
-                    $cssIdentifierPositionMinus1WithAttribute,
-                    AssertionComparison::IS,
-                    $literalValue
-                ),
-            ],
-            'css element selector with element reference, is, scalar value' => [
-                'assertionString' => '"{{ reference }} .selector" is "value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '"{{ reference }} .selector" is "value"',
-                    $cssSelectorWithElementReferenceExaminedValue,
                     AssertionComparison::IS,
                     $literalValue
                 ),
@@ -234,7 +115,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     )
                 ),
             ],
-            'css attribute selector,  is, attribute value' => [
+            'css attribute selector, is, attribute value' => [
                 'actionString' => '".selector".data-heading-title is $elements.element_name.attribute_name',
                 'expectedAssertion' => new ComparisonAssertion(
                     '".selector".data-heading-title is $elements.element_name.attribute_name',
@@ -323,15 +204,6 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 'expectedAssertion' => new ComparisonAssertion(
                     '".selector is is-not exists not-exists includes excludes matches foo" is "value"',
                     DomIdentifierValue::create('.selector is is-not exists not-exists includes excludes matches foo'),
-                    AssertionComparison::IS,
-                    $literalValue
-                ),
-            ],
-            'simple xpath expression, is, scalar value' => [
-                'assertionString' => '"//foo" is "value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '"//foo" is "value"',
-                    DomIdentifierValue::create('//foo'),
                     AssertionComparison::IS,
                     $literalValue
                 ),
@@ -436,53 +308,6 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                     new ObjectValue(ObjectValueType::ENVIRONMENT_PARAMETER, '$env.KEY1', 'KEY1'),
                     AssertionComparison::IS,
                     new ObjectValue(ObjectValueType::ENVIRONMENT_PARAMETER, '$env.KEY2', 'KEY2')
-                ),
-            ],
-            'environment value with default, is, environment value with default' => [
-                'actionString' => '$env.KEY1|"default1" is $env.KEY2|"default2"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '$env.KEY1|"default1" is $env.KEY2|"default2"',
-                    new ObjectValue(
-                        ObjectValueType::ENVIRONMENT_PARAMETER,
-                        '$env.KEY1|"default1"',
-                        'KEY1',
-                        'default1'
-                    ),
-                    AssertionComparison::IS,
-                    new ObjectValue(
-                        ObjectValueType::ENVIRONMENT_PARAMETER,
-                        '$env.KEY2|"default2"',
-                        'KEY2',
-                        'default2'
-                    )
-                ),
-            ],
-            'environment value with default without whitespace, is, literal value' => [
-                'actionString' => '$env.KEY1|"default" is "literal value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '$env.KEY1|"default" is "literal value"',
-                    new ObjectValue(
-                        ObjectValueType::ENVIRONMENT_PARAMETER,
-                        '$env.KEY1|"default"',
-                        'KEY1',
-                        'default'
-                    ),
-                    AssertionComparison::IS,
-                    new LiteralValue('literal value')
-                ),
-            ],
-            'environment value with default with whitespace, is, literal value' => [
-                'actionString' => '$env.KEY1|"default value" is "literal value"',
-                'expectedAssertion' => new ComparisonAssertion(
-                    '$env.KEY1|"default value" is "literal value"',
-                    new ObjectValue(
-                        ObjectValueType::ENVIRONMENT_PARAMETER,
-                        '$env.KEY1|"default value"',
-                        'KEY1',
-                        'default value'
-                    ),
-                    AssertionComparison::IS,
-                    new LiteralValue('literal value')
                 ),
             ],
         ];

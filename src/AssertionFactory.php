@@ -6,28 +6,24 @@ use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Assertion\ComparisonAssertion;
 use webignition\BasilModel\Assertion\ExaminationAssertion;
-use webignition\BasilModel\Identifier\DomIdentifierInterface;
-use webignition\BasilModel\Value\DomIdentifierValue;
-use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
 use webignition\BasilModelFactory\Exception\MissingValueException;
-use webignition\BasilModelFactory\Identifier\DomIdentifierFactory;
 use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
 
 class AssertionFactory
 {
     private $valueFactory;
     private $identifierStringExtractor;
-    private $domIdentifierFactory;
+    private $examinedValueFactory;
 
     public function __construct(
         ValueFactory $valueFactory,
         IdentifierStringExtractor $identifierStringExtractor,
-        DomIdentifierFactory $elementIdentifierFactory
+        AssertionExaminedValueFactory $examinedValueFactory
     ) {
         $this->valueFactory = $valueFactory;
         $this->identifierStringExtractor = $identifierStringExtractor;
-        $this->domIdentifierFactory = $elementIdentifierFactory;
+        $this->examinedValueFactory = $examinedValueFactory;
     }
 
     public static function createFactory(): AssertionFactory
@@ -35,7 +31,7 @@ class AssertionFactory
         return new AssertionFactory(
             ValueFactory::createFactory(),
             IdentifierStringExtractor::create(),
-            DomIdentifierFactory::createFactory()
+            AssertionExaminedValueFactory::createFactory()
         );
     }
 
@@ -56,7 +52,7 @@ class AssertionFactory
 
         $identifierString = $this->identifierStringExtractor->extractFromStart($assertionString);
 
-        $examinedValue = $this->createExaminedValue($identifierString);
+        $examinedValue = $this->examinedValueFactory->create($identifierString);
 
         $comparisonAndExpectedValue = trim(mb_substr($assertionString, mb_strlen($identifierString)));
         list($comparison, $expectedValueString) = $this->findComparisonAndExpectedValue($comparisonAndExpectedValue);
@@ -91,25 +87,5 @@ class AssertionFactory
         }
 
         return explode(' ', $comparisonAndExpectedValue, 2);
-    }
-
-    /**
-     * @param string $identifierString
-     *
-     * @return ValueInterface
-     */
-    private function createExaminedValue(string $identifierString): ValueInterface
-    {
-        $identifierType = IdentifierTypeFinder::findTypeFromIdentifierString($identifierString);
-
-        if (in_array($identifierType, [IdentifierTypes::ELEMENT_SELECTOR, IdentifierTypes::ATTRIBUTE_SELECTOR])) {
-            $domIdentifier = $this->domIdentifierFactory->create($identifierString);
-
-            if ($domIdentifier instanceof DomIdentifierInterface) {
-                return new DomIdentifierValue($domIdentifier);
-            }
-        }
-
-        return $this->valueFactory->createFromValueString($identifierString);
     }
 }
