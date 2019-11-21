@@ -18,6 +18,7 @@ use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelFactory\AssertionFactory;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
 use webignition\BasilModelFactory\Exception\MissingValueException;
+use webignition\BasilParser\AssertionParser;
 
 class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -327,6 +328,8 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromAssertionDataDataProvider(): array
     {
+        $assertionParser = AssertionParser::create();
+
         $elementLocator = '.selector';
 
         $cssIdentifier = new DomIdentifier($elementLocator);
@@ -336,11 +339,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
 
         return [
             'examination comparison: exists' => [
-                'assertionData' => new AssertionData(
-                    '".selector" exists',
-                    '".selector"',
-                    'exists'
-                ),
+                'assertionData' => $assertionParser->parse('".selector" exists'),
                 'expectedAssertion' => new ExaminationAssertion(
                     '".selector" exists',
                     $cssDomIdentifierValue,
@@ -348,11 +347,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'examination comparison: not-exists' => [
-                'assertionData' => new AssertionData(
-                    '".selector" not-exists',
-                    '".selector"',
-                    'not-exists'
-                ),
+                'assertionData' => $assertionParser->parse('".selector" not-exists'),
                 'expectedAssertion' => new ExaminationAssertion(
                     '".selector" not-exists',
                     $cssDomIdentifierValue,
@@ -360,12 +355,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'comparison assertion: is' => [
-                'assertionData' => new AssertionData(
-                    '".selector" is "value"',
-                    '".selector"',
-                    'is',
-                    '"value"'
-                ),
+                'assertionData' => $assertionParser->parse('".selector" is "value"'),
                 'expectedAssertion' => new ComparisonAssertion(
                     '".selector" is "value"',
                     $cssDomIdentifierValue,
@@ -374,12 +364,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'comparison assertion: is-not' => [
-                'assertionData' => new AssertionData(
-                    '".selector" is-not "value"',
-                    '".selector"',
-                    'is-not',
-                    '"value"'
-                ),
+                'assertionData' => $assertionParser->parse('".selector" is-not "value"'),
                 'expectedAssertion' => new ComparisonAssertion(
                     '".selector" is-not "value"',
                     $cssDomIdentifierValue,
@@ -388,12 +373,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'comparison assertion: includes' => [
-                'assertionData' => new AssertionData(
-                    '".selector" includes "value"',
-                    '".selector"',
-                    'includes',
-                    '"value"'
-                ),
+                'assertionData' => $assertionParser->parse('".selector" includes "value"'),
                 'expectedAssertion' => new ComparisonAssertion(
                     '".selector" includes "value"',
                     $cssDomIdentifierValue,
@@ -402,12 +382,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'comparison assertion: excludes' => [
-                'assertionData' => new AssertionData(
-                    '".selector" excludes "value"',
-                    '".selector"',
-                    'excludes',
-                    '"value"'
-                ),
+                'assertionData' => $assertionParser->parse('".selector" excludes "value"'),
                 'expectedAssertion' => new ComparisonAssertion(
                     '".selector" excludes "value"',
                     $cssDomIdentifierValue,
@@ -416,12 +391,7 @@ class AssertionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'comparison assertion: matches' => [
-                'assertionData' => new AssertionData(
-                    '".selector" matches "value"',
-                    '".selector"',
-                    'matches',
-                    '"value"'
-                ),
+                'assertionData' => $assertionParser->parse('".selector" matches "value"'),
                 'expectedAssertion' => new ComparisonAssertion(
                     '".selector" matches "value"',
                     $cssDomIdentifierValue,

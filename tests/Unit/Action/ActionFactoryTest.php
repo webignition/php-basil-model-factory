@@ -3,9 +3,6 @@
 namespace webignition\BasilModelFactory\Tests\Unit\Action;
 
 use webignition\BasilDataStructure\Action\Action as ActionData;
-use webignition\BasilDataStructure\Action\InputAction as InputActionData;
-use webignition\BasilDataStructure\Action\InteractionAction as InteractionActionData;
-use webignition\BasilDataStructure\Action\WaitAction as WaitActionData;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
@@ -24,6 +21,7 @@ use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 use webignition\BasilModelFactory\Exception\MissingValueException;
+use webignition\BasilParser\ActionParser;
 
 class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -41,9 +39,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider createFromActionDataForInputActionDataProvider
-     * @dataProvider createFromActionDataForInteractionActionDataProvider
-     * @dataProvider createFromActionDataForNoArgumentsActionDataProvider
-     * @dataProvider createFromActionDataForWaitActionDataProvider
+     * @!dataProvider createFromActionDataForInteractionActionDataProvider
+     * @!dataProvider createFromActionDataForNoArgumentsActionDataProvider
+     * @!dataProvider createFromActionDataForWaitActionDataProvider
      */
     public function testCreateFromActionData(ActionData $actionData, ActionInterface $expectedAction)
     {
@@ -54,18 +52,15 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionDataForInputActionDataProvider(): array
     {
+        $actionParser = ActionParser::create();
+
         $elementLocator = '.selector';
         $cssSelectorIdentifier = new DomIdentifier($elementLocator);
         $scalarValue = new LiteralValue('value');
 
         return [
             'css element selector, scalar value' => [
-                'actionData' => new InputActionData(
-                    'set ".selector" to "value"',
-                    '".selector" to "value"',
-                    '".selector"',
-                    '"value"'
-                ),
+                'actionData' => $actionParser->parse('set ".selector" to "value"'),
                 'expectedAction' => new InputAction(
                     'set ".selector" to "value"',
                     $cssSelectorIdentifier,
@@ -74,12 +69,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'page model element reference, scalar value' => [
-                'actionData' => new InputActionData(
-                    'set page_import_name.elements.element_name to "value"',
-                    'page_import_name.elements.element_name to "value"',
-                    'page_import_name.elements.element_name',
-                    '"value"'
-                ),
+                'actionData' => $actionParser->parse('set page_import_name.elements.element_name to "value"'),
                 'expectedAction' => new InputAction(
                     'set page_import_name.elements.element_name to "value"',
                     ReferenceIdentifier::createPageElementReferenceIdentifier(
@@ -94,12 +84,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'element parameter, scalar value' => [
-                'actionData' => new InputActionData(
-                    'set $elements.element_name to "value"',
-                    '$elements.element_name to "value"',
-                    '$elements.element_name',
-                    '"value"'
-                ),
+                'actionData' => $actionParser->parse('set $elements.element_name to "value"'),
                 'expectedAction' => new InputAction(
                     'set $elements.element_name to "value"',
                     ReferenceIdentifier::createElementReferenceIdentifier(
@@ -114,12 +99,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'css element selector, data parameter value' => [
-                'actionData' => new InputActionData(
-                    'set ".selector" to $data.name',
-                    '".selector" to $data.name',
-                    '".selector"',
-                    '$data.name'
-                ),
+                'actionData' => $actionParser->parse('set ".selector" to $data.name'),
                 'expectedAction' => new InputAction(
                     'set ".selector" to $data.name',
                     $cssSelectorIdentifier,
@@ -128,12 +108,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'css element selector, element parameter value' => [
-                'actionData' => new InputActionData(
-                    'set ".selector" to $elements.element_name',
-                    '".selector" to $elements.element_name',
-                    '".selector"',
-                    '$elements.element_name'
-                ),
+                'actionData' => $actionParser->parse('set ".selector" to $elements.element_name'),
                 'expectedAction' => new InputAction(
                     'set ".selector" to $elements.element_name',
                     $cssSelectorIdentifier,
@@ -146,12 +121,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'css element selector, attribute parameter value' => [
-                'actionData' => new InputActionData(
-                    'set ".selector" to $elements.element_name.attribute_name',
-                    '".selector" to $elements.element_name.attribute_name',
-                    '".selector"',
-                    '$elements.element_name.attribute_name'
-                ),
+                'actionData' => $actionParser->parse('set ".selector" to $elements.element_name.attribute_name'),
                 'expectedAction' => new InputAction(
                     'set ".selector" to $elements.element_name.attribute_name',
                     $cssSelectorIdentifier,
@@ -168,17 +138,14 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionDataForInteractionActionDataProvider(): array
     {
+        $actionParser = ActionParser::create();
+
         $elementLocator = '.selector';
         $cssSelectorIdentifier = new DomIdentifier($elementLocator);
 
         return [
             'click css selector' => [
-                'actionData' => new InteractionActionData(
-                    'click ".selector"',
-                    'click',
-                    '".selector"',
-                    '".selector"'
-                ),
+                'actionData' => $actionParser->parse('click ".selector"'),
                 'expectedAction' => new InteractionAction(
                     'click ".selector"',
                     ActionTypes::CLICK,
@@ -187,12 +154,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'click page element reference' => [
-                'actionData' => new InteractionActionData(
-                    'click page_import_name.elements.element_name',
-                    'click',
-                    'page_import_name.elements.element_name',
-                    'page_import_name.elements.element_name'
-                ),
+                'actionData' => $actionParser->parse('click page_import_name.elements.element_name'),
                 'expectedAction' => new InteractionAction(
                     'click page_import_name.elements.element_name',
                     ActionTypes::CLICK,
@@ -207,12 +169,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'click element parameter reference' => [
-                'actionData' => new InteractionActionData(
-                    'click $elements.name',
-                    'click',
-                    '$elements.name',
-                    '$elements.name'
-                ),
+                'actionData' => $actionParser->parse('click $elements.name'),
                 'expectedAction' => new InteractionAction(
                     'click $elements.name',
                     ActionTypes::CLICK,
@@ -223,12 +180,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'submit css selector' => [
-                'actionData' => new InteractionActionData(
-                    'submit ".selector"',
-                    'submit',
-                    '".selector"',
-                    '".selector"'
-                ),
+                'actionData' => $actionParser->parse('submit ".selector"'),
                 'expectedAction' => new InteractionAction(
                     'submit ".selector"',
                     ActionTypes::SUBMIT,
@@ -237,12 +189,7 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'wait-for css selector' => [
-                'actionData' => new InteractionActionData(
-                    'wait-for ".selector"',
-                    'wait-for',
-                    '".selector"',
-                    '".selector"'
-                ),
+                'actionData' => $actionParser->parse('wait-for ".selector"'),
                 'expectedAction' => new InteractionAction(
                     'wait-for ".selector"',
                     ActionTypes::WAIT_FOR,
@@ -255,17 +202,19 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionDataForNoArgumentsActionDataProvider(): array
     {
+        $actionParser = ActionParser::create();
+
         return [
             'reload' => [
-                'actionData' => new ActionData('reload', 'reload'),
+                'actionData' => $actionParser->parse('reload'),
                 'expectedAction' => new NoArgumentsAction('reload', ActionTypes::RELOAD, ''),
             ],
             'back' => [
-                'actionData' => new ActionData('back', 'back'),
+                'actionData' => $actionParser->parse('back'),
                 'expectedAction' => new NoArgumentsAction('back', ActionTypes::BACK, ''),
             ],
             'forward' => [
-                'actionData' => new ActionData('forward', 'forward'),
+                'actionData' => $actionParser->parse('forward'),
                 'expectedAction' => new NoArgumentsAction('forward', ActionTypes::FORWARD, ''),
             ],
         ];
@@ -273,13 +222,15 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromActionDataForWaitActionDataProvider(): array
     {
+        $actionParser = ActionParser::create();
+
         return [
             'wait 1' => [
-                'actionData' => new WaitActionData('wait 1', '1'),
+                'actionData' => $actionParser->parse('wait 1'),
                 'expectedAction' => new WaitAction('wait 1', new LiteralValue('1')),
             ],
             'wait $data.name' => [
-                'actionData' => new WaitActionData('wait $data.name', '$data.name'),
+                'actionData' => $actionParser->parse('wait $data.name'),
                 'expectedAction' => new WaitAction('wait $data.name', new ObjectValue(
                     ObjectValueType::DATA_PARAMETER,
                     '$data.name',
@@ -287,11 +238,11 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                 )),
             ],
             'wait no arguments' => [
-                'actionData' => new WaitActionData('wait', ''),
+                'actionData' => $actionParser->parse('wait'),
                 'expectedAction' => new WaitAction('wait', new LiteralValue('')),
             ],
             'wait $env.DURATION' => [
-                'actionData' => new WaitActionData('wait $env.DURATION', '$env.DURATION'),
+                'actionData' => $actionParser->parse('wait $env.DURATION'),
                 'expectedAction' => new WaitAction('wait $env.DURATION', new ObjectValue(
                     ObjectValueType::ENVIRONMENT_PARAMETER,
                     '$env.DURATION',
