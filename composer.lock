@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0f3a703fc49b1a4d81178b3bed78de78",
+    "content-hash": "e2e48db64b8bcb40379fb9a7ba43cc9c",
     "packages": [
         {
             "name": "nyholm/psr7",
@@ -222,16 +222,16 @@
         },
         {
             "name": "webignition/basil-data-structures",
-            "version": "0.3",
+            "version": "0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/basil-data-structures.git",
-                "reference": "4d97e081bf0762302fc74c09b555c132c44cb048"
+                "reference": "a1da108f93d54c7cd2b9cd55190c768bb217ee24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/basil-data-structures/zipball/4d97e081bf0762302fc74c09b555c132c44cb048",
-                "reference": "4d97e081bf0762302fc74c09b555c132c44cb048",
+                "url": "https://api.github.com/repos/webignition/basil-data-structures/zipball/a1da108f93d54c7cd2b9cd55190c768bb217ee24",
+                "reference": "a1da108f93d54c7cd2b9cd55190c768bb217ee24",
                 "shasum": ""
             },
             "require": {
@@ -260,7 +260,7 @@
             ],
             "description": "Data structures for basil language",
             "homepage": "https://github.com/webignition/basil-data-structures",
-            "time": "2019-11-19T17:35:31+00:00"
+            "time": "2019-11-21T15:53:30+00:00"
         },
         {
             "name": "webignition/php-basil-context-aware-exception",
