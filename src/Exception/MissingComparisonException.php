@@ -2,10 +2,11 @@
 
 namespace webignition\BasilModelFactory\Exception;
 
+use webignition\BasilContextAwareException\ContextAwareExceptionInterface;
 use webignition\BasilContextAwareException\ContextAwareExceptionTrait;
 use webignition\BasilContextAwareException\ExceptionContext\ExceptionContext;
 
-class MissingComparisonException extends \Exception
+class MissingComparisonException extends \Exception implements ContextAwareExceptionInterface
 {
     use ContextAwareExceptionTrait;
 
