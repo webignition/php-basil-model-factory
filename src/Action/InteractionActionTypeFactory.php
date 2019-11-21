@@ -38,35 +38,6 @@ class InteractionActionTypeFactory implements ActionTypeFactoryInterface
     }
 
     /**
-     * @param string $actionString
-     * @param string $type
-     * @param string $arguments
-     *
-     * @return ActionInterface
-     *
-     * @throws InvalidIdentifierStringException
-     * @throws InvalidActionTypeException
-     */
-    public function createForActionType(string $actionString, string $type, string $arguments): ActionInterface
-    {
-        if (!$this->handles($type)) {
-            throw new InvalidActionTypeException($type);
-        }
-
-        $identifier = $this->identifierFactory->create($arguments, [
-            IdentifierTypes::ELEMENT_REFERENCE,
-            IdentifierTypes::ELEMENT_SELECTOR,
-            IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-        ]);
-
-        if (null === $identifier) {
-            throw new InvalidIdentifierStringException($arguments);
-        }
-
-        return new InteractionAction($actionString, $type, $identifier, $arguments);
-    }
-
-    /**
      * @param ActionData $actionData
      *
      * @return ActionInterface

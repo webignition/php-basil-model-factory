@@ -31,13 +31,6 @@ class WaitActionTypeFactory implements ActionTypeFactoryInterface
         return ActionTypes::WAIT === $type;
     }
 
-    public function createForActionType(string $actionString, string $type, string $arguments): ActionInterface
-    {
-        $duration = $this->valueFactory->createFromValueString($arguments);
-
-        return new WaitAction($actionString, $duration);
-    }
-
     /**
      * @param ActionData $actionData
      *
