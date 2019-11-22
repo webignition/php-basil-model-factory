@@ -57,6 +57,8 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
         $cssSelectorIdentifier = new DomIdentifier($elementLocator);
         $scalarValue = new LiteralValue('value');
 
+        $xpathIdentifier = new DomIdentifier('//*[@id="element-id"]');
+
         return [
             'css element selector, scalar value' => [
                 'actionData' => $actionParser->parse('set ".selector" to "value"'),
@@ -65,6 +67,15 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
                     $cssSelectorIdentifier,
                     $scalarValue,
                     '".selector" to "value"'
+                ),
+            ],
+            'xpath selector with escaped quotes in identifier, scalar value' => [
+                'actionData' => $actionParser->parse('set "//*[@id=\"element-id\"]" to "value"'),
+                'expectedAction' => new InputAction(
+                    'set "//*[@id=\"element-id\"]" to "value"',
+                    $xpathIdentifier,
+                    $scalarValue,
+                    '"//*[@id=\"element-id\"]" to "value"'
                 ),
             ],
             'page model element reference, scalar value' => [

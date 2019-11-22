@@ -65,8 +65,8 @@ class DomIdentifierFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider attributeIdentifierDataProvider
-     * @dataProvider cssSelectorIdentifierDataProvider
+     * @!dataProvider attributeIdentifierDataProvider
+     * @!dataProvider cssSelectorIdentifierDataProvider
      * @dataProvider xpathExpressionIdentifierDataProvider
      */
     public function testCreateSuccess(string $identifierString, IdentifierInterface $expectedIdentifier)
