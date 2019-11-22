@@ -26,9 +26,18 @@ class ValueFactory
         ValueTypes::TYPE_ENVIRONMENT_PARAMETER => ObjectValueType::ENVIRONMENT_PARAMETER,
     ];
 
+    private $quotedStringExtractor;
+
+    public function __construct(QuotedStringExtractor $quotedStringExtractor)
+    {
+        $this->quotedStringExtractor = $quotedStringExtractor;
+    }
+
     public static function createFactory(): ValueFactory
     {
-        return new ValueFactory();
+        return new ValueFactory(
+            QuotedStringExtractor::createExtractor()
+        );
     }
 
     public function createFromValueString(string $valueString): ValueInterface
@@ -59,7 +68,7 @@ class ValueFactory
 
         $isUnprocessedStringQuoted = preg_match(self::QUOTED_STRING_PATTERN, $valueString) === 1;
 
-        $valueString = $this->getQuotedValue($valueString);
+        $valueString = $this->quotedStringExtractor->getQuotedValue($valueString);
 
         $isDeQuotedStringQuoted = preg_match(self::QUOTED_STRING_PATTERN, $valueString) === 1;
 
@@ -119,23 +128,6 @@ class ValueFactory
         return null;
     }
 
-    private function getQuotedValue(string $valueString): string
-    {
-        if ('' === $valueString) {
-            return $valueString;
-        }
-
-        if ('"' === $valueString[0]) {
-            $valueString = mb_substr($valueString, 1);
-        }
-
-        if ('"' === $valueString[-1]) {
-            $valueString = mb_substr($valueString, 0, -1);
-        }
-
-        return str_replace('\\"', '"', $valueString);
-    }
-
     private function createEnvironmentValue(string $valueString, string $property)
     {
         $default = '';
@@ -143,7 +135,7 @@ class ValueFactory
         if (preg_match(self::ENVIRONMENT_PARAMETER_WITH_DEFAULT_PATTERN, $property)) {
             $propertyNameDefaultParts = explode(self::ENVIRONMENT_PARAMETER_DEFAULT_DELIMITER, $property, 2);
             $property = $propertyNameDefaultParts[0];
-            $default = $this->getQuotedValue($propertyNameDefaultParts[1]);
+            $default = $this->quotedStringExtractor->getQuotedValue($propertyNameDefaultParts[1]);
         }
 
         return new ObjectValue(ObjectValueType::ENVIRONMENT_PARAMETER, $valueString, $property, $default);

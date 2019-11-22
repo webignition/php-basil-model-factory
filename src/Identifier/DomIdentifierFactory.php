@@ -6,12 +6,22 @@ use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModelFactory\IdentifierTypeFinder;
 use webignition\BasilModelFactory\IdentifierTypes;
+use webignition\BasilModelFactory\QuotedStringExtractor;
 
 class DomIdentifierFactory implements IdentifierTypeFactoryInterface
 {
+    private $quotedStringExtractor;
+
+    public function __construct(QuotedStringExtractor $quotedStringExtractor)
+    {
+        $this->quotedStringExtractor = $quotedStringExtractor;
+    }
+
     public static function createFactory(): DomIdentifierFactory
     {
-        return new DomIdentifierFactory();
+        return new DomIdentifierFactory(
+            QuotedStringExtractor::createExtractor()
+        );
     }
 
     public function handles(string $identifierString): bool
@@ -50,7 +60,9 @@ class DomIdentifierFactory implements IdentifierTypeFactoryInterface
             $elementLocatorAndPosition
         );
 
-        $identifier = new DomIdentifier(trim($elementLocatorString, '"'), $position);
+        $elementLocatorString = $this->quotedStringExtractor->getQuotedValue($elementLocatorString);
+
+        $identifier = new DomIdentifier($elementLocatorString, $position);
 
         if ('' !== $attributeName) {
             $identifier = $identifier->withAttributeName($attributeName);
