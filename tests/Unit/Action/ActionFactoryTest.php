@@ -38,9 +38,9 @@ class ActionFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider createFromActionDataForInputActionDataProvider
-     * @!dataProvider createFromActionDataForInteractionActionDataProvider
-     * @!dataProvider createFromActionDataForNoArgumentsActionDataProvider
-     * @!dataProvider createFromActionDataForWaitActionDataProvider
+     * @dataProvider createFromActionDataForInteractionActionDataProvider
+     * @dataProvider createFromActionDataForNoArgumentsActionDataProvider
+     * @dataProvider createFromActionDataForWaitActionDataProvider
      */
     public function testCreateFromActionData(ActionData $actionData, ActionInterface $expectedAction)
     {
