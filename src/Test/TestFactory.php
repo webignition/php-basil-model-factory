@@ -10,6 +10,7 @@ use webignition\BasilDataStructure\Test\Test as TestData;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingComparisonException;
 use webignition\BasilModelFactory\Exception\MissingValueException;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\StepFactory;
@@ -43,6 +44,7 @@ class TestFactory
      * @throws InvalidActionTypeException
      * @throws InvalidIdentifierStringException
      * @throws MalformedPageElementReferenceException
+     * @throws MissingComparisonException
      * @throws MissingValueException
      */
     public function createFromTestData(string $name, TestData $testData)
@@ -58,6 +60,7 @@ class TestFactory
                 InvalidActionTypeException |
                 InvalidIdentifierStringException |
                 MalformedPageElementReferenceException |
+                MissingComparisonException |
                 MissingValueException $contextAwareException
             ) {
                 $contextAwareException->applyExceptionContext([

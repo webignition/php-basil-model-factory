@@ -1,13 +1,10 @@
 <?php
-/** @noinspection PhpUnhandledExceptionInspection */
-/** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelFactory\Tests\Unit\Test;
 
 use webignition\BasilContextAwareException\ContextAwareExceptionInterface;
 use webignition\BasilContextAwareException\ExceptionContext\ExceptionContext;
 use webignition\BasilContextAwareException\ExceptionContext\ExceptionContextInterface;
-use webignition\BasilDataStructure\PathResolver;
 use webignition\BasilDataStructure\Step as StepData;
 use webignition\BasilDataStructure\Test\Configuration as ConfigurationData;
 use webignition\BasilModel\Action\ActionTypes;
@@ -31,9 +28,12 @@ use webignition\BasilModel\Value\ObjectValueType;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingComparisonException;
 use webignition\BasilModelFactory\Exception\MissingValueException;
 use webignition\BasilModelFactory\MalformedPageElementReferenceException;
 use webignition\BasilModelFactory\Test\TestFactory;
+use webignition\BasilParser\ActionParser;
+use webignition\BasilParser\AssertionParser;
 
 class TestFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -61,17 +61,16 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromTestDataDataProvider(): array
     {
-        $configurationData = [
-            ConfigurationData::KEY_BROWSER => 'chrome',
-            ConfigurationData::KEY_URL => 'http://example.com',
-        ];
-
+        $configurationData =  new ConfigurationData('chrome', 'http://example.com');
         $expectedConfiguration = new Configuration('chrome', 'http://example.com');
+
+        $actionParser = ActionParser::create();
+        $assertionParser = AssertionParser::create();
 
         return [
             'empty' => [
                 'name' => '',
-                'testData' => new TestData(PathResolver::create(), []),
+                'testData' => new TestData('test.yml', new ConfigurationData('', ''), []),
                 'expectedTest' => new Test(
                     '',
                     new Configuration('', ''),
@@ -80,54 +79,44 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'configuration only' => [
                 'name' => 'configuration only',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => $configurationData,
-                    ]
-                ),
+                'testData' => new TestData('test.yml', $configurationData, []),
                 'expectedTest' => new Test('configuration only', $expectedConfiguration, []),
             ],
             'invalid inline steps only' => [
                 'name' => 'invalid inline steps only',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => $configurationData,
-                        'invalid' => [
-                            StepData::KEY_ACTIONS => true,
-                            StepData::KEY_ASSERTIONS => [
-                                '',
-                                false,
-                            ],
-                        ],
-                    ]
-                ),
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'invalid' => new StepData([
+                        1,
+                        true,
+                        'string',
+                    ], [
+                        1,
+                        true,
+                        'string',
+                    ]),
+                ]),
                 'expectedTest' => new Test('invalid inline steps only', $expectedConfiguration, [
                     'invalid' => new Step([], []),
                 ]),
             ],
             'inline step, scalar values' => [
                 'name' => 'inline step, scalar values',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => $configurationData,
-                        'verify page is open' => [
-                            StepData::KEY_ASSERTIONS => [
-                                '$page.url is "http://example.com"',
-                            ],
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'verify page is open' => new StepData(
+                        [],
+                        [
+                            $assertionParser->parse('$page.url is "http://example.com"'),
+                        ]
+                    ),
+                    'query "example"' => new StepData(
+                        [
+                            $actionParser->parse('click ".form .submit"'),
                         ],
-                        'query "example"' => [
-                            StepData::KEY_ACTIONS => [
-                                'click ".form .submit"',
-                            ],
-                            StepData::KEY_ASSERTIONS => [
-                                '$page.title is "example - Example Domain"',
-                            ],
-                        ],
-                    ]
-                ),
+                        [
+                            $assertionParser->parse('$page.title is "example - Example Domain"'),
+                        ]
+                    ),
+                ]),
                 'expectedTest' => new Test('inline step, scalar values', $expectedConfiguration, [
                     'verify page is open' => new Step([], [
                         new ComparisonAssertion(
@@ -159,20 +148,16 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'inline step, page element references' => [
                 'name' => 'inline step, page element references',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => $configurationData,
-                        'query "example"' => [
-                            StepData::KEY_ACTIONS => [
-                                'click page_import_name.elements.button',
-                            ],
-                            StepData::KEY_ASSERTIONS => [
-                                'page_import_name.elements.heading is "example"',
-                            ],
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'query "example"' => new StepData(
+                        [
+                            $actionParser->parse('click page_import_name.elements.button'),
                         ],
-                    ]
-                ),
+                        [
+                            $assertionParser->parse('page_import_name.elements.heading is "example"'),
+                        ]
+                    ),
+                ]),
                 'expectedTest' => new Test('inline step, page element references', $expectedConfiguration, [
                     'query "example"' => new Step(
                         [
@@ -204,47 +189,11 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
                     ),
                 ]),
             ],
-            'invalid page import path, unused' => [
-                'name' => 'invalid page import path, unused',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => $configurationData,
-                    ]
-                ),
-                'expectedTest' => new Test('invalid page import path, unused', $expectedConfiguration, []),
-            ],
-            'invalid step import path, unused' => [
-                'name' => 'invalid step import path, unused',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => $configurationData,
-                    ]
-                ),
-                'expectedTest' => new Test('invalid step import path, unused', $expectedConfiguration, []),
-            ],
-            'invalid data provider import path, unused' => [
-                'name' => 'invalid data provider import path, unused',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => $configurationData,
-                    ]
-                ),
-                'expectedTest' => new Test('invalid data provider import path, unused', $expectedConfiguration, []),
-            ],
             'step import, no parameters' => [
                 'name' => 'step import, no parameters',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => $configurationData,
-                        'step_name' => [
-                            StepData::KEY_USE => 'step_import_name',
-                        ],
-                    ]
-                ),
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'step_name' => (new StepData([], []))->withImportName('step_import_name'),
+                ]),
                 'expectedTest' => new Test(
                     'step import, no parameters',
                     $expectedConfiguration,
@@ -255,20 +204,15 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'step import, inline data' => [
                 'name' => 'step import, inline data',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => $configurationData,
-                        'step_name' => [
-                            StepData::KEY_USE => 'step_import_name',
-                            StepData::KEY_DATA => [
-                                'data_set_1' => [
-                                    'expected_title' => 'Foo',
-                                ],
-                            ]
-                        ],
-                    ]
-                ),
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'step_name' => (new StepData([], []))
+                        ->withImportName('step_import_name')
+                        ->withDataArray([
+                            'data_set_1' => [
+                                'expected_title' => 'Foo',
+                            ],
+                        ]),
+                ]),
                 'expectedTest' => new Test(
                     'step import, inline data',
                     $expectedConfiguration,
@@ -287,16 +231,11 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'step import, imported data' => [
                 'name' => 'step import, imported data',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => $configurationData,
-                        'step_name' => [
-                            StepData::KEY_USE => 'step_import_name',
-                            StepData::KEY_DATA => 'data_provider_import_name',
-                        ],
-                    ]
-                ),
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'step_name' => (new StepData([], []))
+                        ->withImportName('step_import_name')
+                        ->withDataImportName('data_provider_import_name'),
+                ]),
                 'expectedTest' => new Test(
                     'step import, imported data',
                     $expectedConfiguration,
@@ -311,18 +250,13 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'step import, uses page imported page elements' => [
                 'name' => 'step import, uses page imported page elements',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => $configurationData,
-                        'step_name' => [
-                            StepData::KEY_USE => 'step_import_name',
-                            StepData::KEY_ELEMENTS => [
-                                'heading' => 'page_import_name.elements.heading'
-                            ],
-                        ],
-                    ]
-                ),
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'step_name' => (new StepData([], []))
+                        ->withImportName('step_import_name')
+                        ->withElements([
+                            'heading' => 'page_import_name.elements.heading'
+                        ]),
+                ]),
                 'expectedTest' => new Test(
                     'step import, uses page imported page elements',
                     $expectedConfiguration,
@@ -367,23 +301,24 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromTestDataThrowsExceptionDataProvider(): array
     {
+        $actionParser = ActionParser::create();
+        $assertionParser = AssertionParser::create();
+
+        $configurationData =  new ConfigurationData('chrome', 'http://example.com');
+
+        // MissingComparisonException
+
         return [
             'action string contains invalid identifier string' => [
                 'name' => 'test name',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => [
-                            ConfigurationData::KEY_BROWSER => 'chrome',
-                            ConfigurationData::KEY_URL => 'http://example.com',
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'step name' => new StepData(
+                        [
+                            $actionParser->parse('click action_one_element_reference'),
                         ],
-                        'step name' => [
-                            StepData::KEY_ACTIONS => [
-                                'click action_one_element_reference',
-                            ],
-                        ],
-                    ]
-                ),
+                        []
+                    ),
+                ]),
                 'expectedException' => InvalidIdentifierStringException::class,
                 'expectedExceptionMessage' => 'Invalid identifier string "action_one_element_reference"',
                 'expectedExceptionContext' =>  new ExceptionContext([
@@ -394,20 +329,14 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'action string contains invalid action type' => [
                 'name' => 'test name',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => [
-                            ConfigurationData::KEY_BROWSER => 'chrome',
-                            ConfigurationData::KEY_URL => 'http://example.com',
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'step name' => new StepData(
+                        [
+                            $actionParser->parse('foo ".selector"'),
                         ],
-                        'step name' => [
-                            StepData::KEY_ACTIONS => [
-                                'foo ".selector"',
-                            ],
-                        ],
-                    ]
-                ),
+                        []
+                    ),
+                ]),
                 'expectedException' => InvalidActionTypeException::class,
                 'expectedExceptionMessage' => 'Invalid action type "foo"',
                 'expectedExceptionContext' =>  new ExceptionContext([
@@ -418,20 +347,14 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'action string lacks value' => [
                 'name' => 'test name',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => [
-                            ConfigurationData::KEY_BROWSER => 'chrome',
-                            ConfigurationData::KEY_URL => 'http://example.com',
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'step name' => new StepData(
+                        [
+                            $actionParser->parse('set ".selector" to'),
                         ],
-                        'step name' => [
-                            StepData::KEY_ACTIONS => [
-                                'set ".selector" to',
-                            ],
-                        ],
-                    ]
-                ),
+                        []
+                    ),
+                ]),
                 'expectedException' => MissingValueException::class,
                 'expectedExceptionMessage' => '',
                 'expectedExceptionContext' =>  new ExceptionContext([
@@ -442,20 +365,14 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'assertion string lacks value' => [
                 'name' => 'test name',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => [
-                            ConfigurationData::KEY_BROWSER => 'chrome',
-                            ConfigurationData::KEY_URL => 'http://example.com',
-                        ],
-                        'step name' => [
-                            StepData::KEY_ASSERTIONS => [
-                                '".selector" is',
-                            ],
-                        ],
-                    ]
-                ),
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'step name' => new StepData(
+                        [],
+                        [
+                            $assertionParser->parse('".selector" is'),
+                        ]
+                    ),
+                ]),
                 'expectedException' => MissingValueException::class,
                 'expectedExceptionMessage' => '',
                 'expectedExceptionContext' =>  new ExceptionContext([
@@ -466,26 +383,36 @@ class TestFactoryTest extends \PHPUnit\Framework\TestCase
             ],
             'test.elements contains malformed reference' => [
                 'name' => 'test name',
-                'testData' => new TestData(
-                    PathResolver::create(),
-                    [
-                        TestData::KEY_CONFIGURATION => [
-                            ConfigurationData::KEY_BROWSER => 'chrome',
-                            ConfigurationData::KEY_URL => 'http://example.com',
-                        ],
-                        'step one' => [
-                            StepData::KEY_USE => 'step_import_name',
-                            StepData::KEY_ELEMENTS => [
-                                'heading' => 'invalid_page_element_reference',
-                            ],
-                        ],
-                    ]
-                ),
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'step one' => (new StepData([], []))
+                        ->withImportName('step_import_name')
+                        ->withElements([
+                            'heading' => 'invalid_page_element_reference',
+                        ]),
+                ]),
                 'expectedException' => MalformedPageElementReferenceException::class,
                 'expectedExceptionMessage' => 'Malformed page element reference "invalid_page_element_reference"',
                 'expectedExceptionContext' =>  new ExceptionContext([
                     ExceptionContextInterface::KEY_TEST_NAME => 'test name',
                     ExceptionContextInterface::KEY_STEP_NAME => 'step one',
+                ]),
+            ],
+            'assertion string lacks comparison' => [
+                'name' => 'test name',
+                'testData' => new TestData('test.yml', $configurationData, [
+                    'step name' => new StepData(
+                        [],
+                        [
+                            $assertionParser->parse('".selector"'),
+                        ]
+                    ),
+                ]),
+                'expectedException' => MissingComparisonException::class,
+                'expectedExceptionMessage' => '',
+                'expectedExceptionContext' =>  new ExceptionContext([
+                    ExceptionContextInterface::KEY_TEST_NAME => 'test name',
+                    ExceptionContextInterface::KEY_STEP_NAME => 'step name',
+                    ExceptionContextInterface::KEY_CONTENT => '".selector"',
                 ]),
             ],
         ];
