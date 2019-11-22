@@ -1,6 +1,4 @@
 <?php
-/** @noinspection PhpUnhandledExceptionInspection */
-/** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelFactory\Tests\Unit\Test;
 
@@ -39,28 +37,15 @@ class ConfigurationFactoryTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'empty' => [
-                'configurationData' => new ConfigurationData([]),
+                'configurationData' => new ConfigurationData('', ''),
                 'expectedConfiguration' => new Configuration('', ''),
             ],
-            'non-string values' => [
-                'configurationData' => new ConfigurationData([
-                    ConfigurationData::KEY_BROWSER => true,
-                    ConfigurationData::KEY_URL => 3
-                ]),
-                'expectedConfiguration' => new Configuration('1', '3'),
-            ],
             'string values' => [
-                'configurationData' => new ConfigurationData([
-                    ConfigurationData::KEY_BROWSER => 'chrome',
-                    ConfigurationData::KEY_URL => 'http://example.com',
-                ]),
+                'configurationData' => new ConfigurationData('chrome', 'http://example.com'),
                 'expectedConfiguration' => new Configuration('chrome', 'http://example.com'),
             ],
             'page url reference' => [
-                'configurationData' => new ConfigurationData([
-                    ConfigurationData::KEY_BROWSER => 'chrome',
-                    ConfigurationData::KEY_URL => 'page_import_name.url',
-                ]),
+                'configurationData' => new ConfigurationData('chrome', 'page_import_name.url'),
                 'expectedConfiguration' => new Configuration('chrome', 'page_import_name.url'),
             ],
         ];
