@@ -1,12 +1,13 @@
 <?php
-/** @noinspection PhpUnhandledExceptionInspection */
-/** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelFactory\Tests\Unit\Action;
 
+use webignition\BasilDataStructure\Action\InteractionAction as InteractionActionData;
+use webignition\BasilDataStructure\Action\WaitAction as WaitActionData;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModelFactory\Action\InteractionActionTypeFactory;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
+use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
 
 class InteractionActionTypeFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -68,14 +69,42 @@ class InteractionActionTypeFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testCreateForActionTypeThrowsException()
+    public function testCreateForWrongActionTypeThrowsException()
     {
-        $this->expectExceptionObject(new InvalidActionTypeException('set'));
+        $this->expectExceptionObject(new InvalidActionTypeException('wait'));
 
-        $this->actionFactory->createForActionType(
-            'set ".selector" to "value"',
-            ActionTypes::SET,
-            '".selector" to "value"'
-        );
+        $this->actionFactory->create(new WaitActionData('wait 1', '1'));
+    }
+
+    /**
+     * @dataProvider createForMissingIdentifierStringThrowsExceptionDataProvider
+     */
+    public function testCreateForMissingIdentifierThrowsException(InteractionActionData $actionData)
+    {
+        $this->expectExceptionObject(new InvalidIdentifierStringException($actionData->getIdentifier()));
+
+        $this->actionFactory->create($actionData);
+    }
+
+    public function createForMissingIdentifierStringThrowsExceptionDataProvider(): array
+    {
+        return [
+            'missing identifier string' => [
+                'actionData' => new InteractionActionData(
+                    'click',
+                    'click',
+                    '',
+                    ''
+                ),
+            ],
+            'empty identifier string' => [
+                'actionData' => new InteractionActionData(
+                    'click ""',
+                    'click',
+                    '""',
+                    '""'
+                ),
+            ],
+        ];
     }
 }

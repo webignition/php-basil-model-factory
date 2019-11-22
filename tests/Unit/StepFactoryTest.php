@@ -1,6 +1,4 @@
 <?php
-/** @noinspection PhpUnhandledExceptionInspection */
-/** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
@@ -27,8 +25,11 @@ use webignition\BasilDataStructure\Step as StepData;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingComparisonException;
 use webignition\BasilModelFactory\Exception\MissingValueException;
 use webignition\BasilModelFactory\StepFactory;
+use webignition\BasilParser\ActionParser;
+use webignition\BasilParser\AssertionParser;
 
 class StepFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -56,31 +57,22 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function createFromStepDataDataProvider(): array
     {
+        $actionParser = ActionParser::create();
+        $assertionParser = AssertionParser::create();
+
         return [
             'empty step data' => [
-                'stepData' => new StepData([]),
-                'expectedStep' => new Step([], []),
-            ],
-            'empty actions and empty assertions' => [
-                'stepData' => new StepData([
-                    StepData::KEY_ACTIONS => [
-                        '',
-                        ' ',
-                    ],
-                    StepData::KEY_ASSERTIONS => [
-                        '',
-                        ' ',
-                    ],
-                ]),
+                'stepData' => new StepData([], []),
                 'expectedStep' => new Step([], []),
             ],
             'actions only' => [
-                'stepData' => new StepData([
-                    StepData::KEY_ACTIONS => [
-                        'click ".selector"',
-                        'set ".input" to "value"',
+                'stepData' => new StepData(
+                    [
+                        $actionParser->parse('click ".selector"'),
+                        $actionParser->parse('set ".input" to "value"'),
                     ],
-                ]),
+                    []
+                ),
                 'expectedStep' => new Step(
                     [
                         new InteractionAction(
@@ -100,12 +92,13 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'assertions only' => [
-                'stepData' => new StepData([
-                    StepData::KEY_ASSERTIONS => [
-                        '".selector" is "value"',
-                        '".input" exists'
-                    ],
-                ]),
+                'stepData' => new StepData(
+                    [],
+                    [
+                        $assertionParser->parse('".selector" is "value"'),
+                        $assertionParser->parse('".input" exists'),
+                    ]
+                ),
                 'expectedStep' => new Step(
                     [
                     ],
@@ -125,14 +118,14 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'page element references' => [
-                'stepData' => new StepData([
-                    StepData::KEY_ACTIONS => [
-                        'click page_import_name.elements.element_name'
+                'stepData' => new StepData(
+                    [
+                        $actionParser->parse('click page_import_name.elements.element_name'),
                     ],
-                    StepData::KEY_ASSERTIONS => [
-                        'page_import_name.elements.element_name exists'
-                    ],
-                ]),
+                    [
+                        $assertionParser->parse('page_import_name.elements.element_name exists'),
+                    ]
+                ),
                 'expectedStep' => new Step(
                     [
                         new InteractionAction(
@@ -162,22 +155,19 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'import name only' => [
-                'stepData' => new StepData([
-                    StepData::KEY_USE => 'import_name',
-                ]),
+                'stepData' => (new StepData([], []))
+                    ->withImportName('import_name'),
                 'expectedStep' => new PendingImportResolutionStep(new Step([], []), 'import_name', ''),
             ],
             'data provider name only' => [
-                'stepData' => new StepData([
-                    StepData::KEY_DATA => 'data_provider_import_name',
-                ]),
+                'stepData' => (new StepData([], []))
+                    ->withDataImportName('data_provider_import_name'),
                 'expectedStep' => new PendingImportResolutionStep(new Step([], []), '', 'data_provider_import_name'),
             ],
             'import name and data provider name' => [
-                'stepData' => new StepData([
-                    StepData::KEY_USE => 'import_name',
-                    StepData::KEY_DATA => 'data_provider_import_name',
-                ]),
+                'stepData' => (new StepData([], []))
+                    ->withImportName('import_name')
+                    ->withDataImportName('data_provider_import_name'),
                 'expectedStep' => new PendingImportResolutionStep(
                     new Step([], []),
                     'import_name',
@@ -185,14 +175,13 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'import name and inline data' => [
-                'stepData' => new StepData([
-                    StepData::KEY_USE => 'import_name',
-                    StepData::KEY_DATA => [
+                'stepData' => (new StepData([], []))
+                    ->withImportName('import_name')
+                    ->withDataArray([
                         'data_set_1' => [
                             'expected_title' => 'Foo',
                         ],
-                    ]
-                ]),
+                    ]),
                 'expectedStep' => (new PendingImportResolutionStep(
                     new Step([], []),
                     'import_name',
@@ -204,12 +193,11 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                 ])),
             ],
             'import name and page imported page elements' => [
-                'stepData' => new StepData([
-                    StepData::KEY_USE => 'import_name',
-                    StepData::KEY_ELEMENTS => [
+                'stepData' => (new StepData([], []))
+                    ->withImportName('import_name')
+                    ->withElements([
                         'heading' => 'page_import_name.elements.heading'
-                    ],
-                ]),
+                    ]),
                 'expectedStep' => (new PendingImportResolutionStep(
                     new Step([], []),
                     'import_name',
@@ -225,16 +213,17 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                 ])),
             ],
             'import name, data provider name, actions and assertions' => [
-                'stepData' => new StepData([
-                    StepData::KEY_USE => 'import_name',
-                    StepData::KEY_DATA => 'data_provider_import_name',
-                    StepData::KEY_ACTIONS => [
-                        'click ".selector"',
-                    ],
-                    StepData::KEY_ASSERTIONS => [
-                        '".selector" exists',
-                    ],
-                ]),
+                'stepData' =>
+                    (new StepData(
+                        [
+                            $actionParser->parse('click ".selector"'),
+                        ],
+                        [
+                            $assertionParser->parse('".selector" exists'),
+                        ]
+                    ))
+                        ->withImportName('import_name')
+                        ->withDataImportName('data_provider_import_name'),
                 'expectedStep' => new PendingImportResolutionStep(
                     new Step(
                         [
@@ -284,13 +273,17 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function applyContextToContextAwareExceptionDataProvider(): array
     {
+        $actionParser = ActionParser::create();
+        $assertionParser = AssertionParser::create();
+
         return [
             'invalid identifier string within action string' => [
-                'stepData' => new StepData([
-                    StepData::KEY_ACTIONS => [
-                        'click page.element',
+                'stepData' => new StepData(
+                    [
+                        $actionParser->parse('click page.element'),
                     ],
-                ]),
+                    []
+                ),
                 'expectedException' => InvalidIdentifierStringException::class,
                 'expectedExceptionContext' => new ExceptionContext([
                     ExceptionContextInterface::KEY_TEST_NAME => null,
@@ -299,11 +292,12 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                 ]),
             ],
             'invalid action type' => [
-                'stepData' => new StepData([
-                    StepData::KEY_ACTIONS => [
-                        'foo ".selector"',
+                'stepData' => new StepData(
+                    [
+                        $actionParser->parse('foo ".selector"'),
                     ],
-                ]),
+                    []
+                ),
                 'expectedException' => InvalidActionTypeException::class,
                 'expectedExceptionContext' => new ExceptionContext([
                     ExceptionContextInterface::KEY_TEST_NAME => null,
@@ -311,30 +305,32 @@ class StepFactoryTest extends \PHPUnit\Framework\TestCase
                     ExceptionContextInterface::KEY_CONTENT => 'foo ".selector"',
                 ]),
             ],
-            'set action missing value' => [
-                'stepData' => new StepData([
-                    StepData::KEY_ACTIONS => [
-                        'set ".selector" to',
-                    ],
-                ]),
-                'expectedException' => MissingValueException::class,
-                'expectedExceptionContext' => new ExceptionContext([
-                    ExceptionContextInterface::KEY_TEST_NAME => null,
-                    ExceptionContextInterface::KEY_STEP_NAME => null,
-                    ExceptionContextInterface::KEY_CONTENT => 'set ".selector" to',
-                ]),
-            ],
             'is assertion missing value' => [
-                'stepData' => new StepData([
-                    StepData::KEY_ASSERTIONS => [
-                        '".selector" is',
-                    ],
-                ]),
+                'stepData' => new StepData(
+                    [],
+                    [
+                        $assertionParser->parse('".selector" is'),
+                    ]
+                ),
                 'expectedException' => MissingValueException::class,
                 'expectedExceptionContext' => new ExceptionContext([
                     ExceptionContextInterface::KEY_TEST_NAME => null,
                     ExceptionContextInterface::KEY_STEP_NAME => null,
                     ExceptionContextInterface::KEY_CONTENT => '".selector" is',
+                ]),
+            ],
+            'assertion missing comparison' => [
+                'stepData' => new StepData(
+                    [],
+                    [
+                        $assertionParser->parse('".selector" '),
+                    ]
+                ),
+                'expectedException' => MissingComparisonException::class,
+                'expectedExceptionContext' => new ExceptionContext([
+                    ExceptionContextInterface::KEY_TEST_NAME => null,
+                    ExceptionContextInterface::KEY_STEP_NAME => null,
+                    ExceptionContextInterface::KEY_CONTENT => '".selector"',
                 ]),
             ],
         ];

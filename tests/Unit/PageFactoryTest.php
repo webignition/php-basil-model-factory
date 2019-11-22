@@ -1,6 +1,4 @@
 <?php
-/** @noinspection PhpUnhandledExceptionInspection */
-/** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelFactory\Tests\Unit;
 
@@ -49,21 +47,16 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
 
         return [
             'empty page data' => [
-                'pageData' => new PageData([]),
+                'pageData' => new PageData(''),
                 'expectedPage' => new Page(new Uri(''), new DomIdentifierCollection()),
             ],
             'has url, empty elements data' => [
-                'pageData' => new PageData([
-                    PageData::KEY_URL => 'http://example.com/',
-                ]),
+                'pageData' => new PageData('http://example.com/'),
                 'expectedPage' => new Page(new Uri('http://example.com/'), new DomIdentifierCollection()),
             ],
             'single element identifier' => [
-                'pageData' => new PageData([
-                    PageData::KEY_URL => 'http://example.com/',
-                    PageData::KEY_ELEMENTS => [
-                        'css-selector' => '".selector"',
-                    ],
+                'pageData' => new PageData('http://example.com/', [
+                    'css-selector' => '".selector"',
                 ]),
                 'expectedPage' => new Page(
                     new Uri('http://example.com/'),
@@ -73,12 +66,9 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
                 ),
             ],
             'referenced element identifier' => [
-                'pageData' => new PageData([
-                    PageData::KEY_URL => 'http://example.com/',
-                    PageData::KEY_ELEMENTS => [
-                        'form' => '".form"',
-                        'form_field' => '"{{ form }} .field"',
-                    ],
+                'pageData' => new PageData('http://example.com/', [
+                    'form' => '".form"',
+                    'form_field' => '"{{ form }} .field"',
                 ]),
                 'expectedPage' => new Page(
                     new Uri('http://example.com/'),
@@ -113,41 +103,29 @@ class PageFactoryTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'page element reference' => [
-                'pageData' => new PageData([
-                    PageData::KEY_URL => 'http://example.com/',
-                    PageData::KEY_ELEMENTS => [
-                        'name' => 'page_import_name.elements.element_name',
-                    ],
+                'pageData' => new PageData('http://example.com/', [
+                    'name' => 'page_import_name.elements.element_name',
                 ]),
                 'expectedExceptionMessage' =>
                     'Invalid page element identifier "page_import_name.elements.element_name"',
             ],
             'element parameter' => [
-                'pageData' => new PageData([
-                    PageData::KEY_URL => 'http://example.com/',
-                    PageData::KEY_ELEMENTS => [
-                        'name' => '$elements.element_name',
-                    ],
+                'pageData' => new PageData('http://example.com/', [
+                    'name' => '$elements.element_name',
                 ]),
                 'expectedExceptionMessage' =>
                     'Invalid page element identifier "$elements.element_name"',
             ],
             'attribute parameter' => [
-                'pageData' => new PageData([
-                    PageData::KEY_URL => 'http://example.com/',
-                    PageData::KEY_ELEMENTS => [
-                        'name' => '$elements.element_name.attribute_name',
-                    ],
+                'pageData' => new PageData('http://example.com/', [
+                    'name' => '$elements.element_name.attribute_name',
                 ]),
                 'expectedExceptionMessage' =>
                     'Invalid page element identifier "$elements.element_name.attribute_name"',
             ],
             'attribute selector' => [
-                'pageData' => new PageData([
-                    PageData::KEY_URL => 'http://example.com/',
-                    PageData::KEY_ELEMENTS => [
-                        'name' => '".selector".attribute_name',
-                    ],
+                'pageData' => new PageData('http://example.com/', [
+                    'name' => '".selector".attribute_name',
                 ]),
                 'expectedExceptionMessage' =>
                     'Invalid page element identifier "".selector".attribute_name"',

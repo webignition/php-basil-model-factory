@@ -2,27 +2,25 @@
 
 namespace webignition\BasilModelFactory;
 
+use webignition\BasilDataStructure\AssertionInterface as AssertionDataInterface;
 use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Assertion\ComparisonAssertion;
 use webignition\BasilModel\Assertion\ExaminationAssertion;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
+use webignition\BasilModelFactory\Exception\MissingComparisonException;
 use webignition\BasilModelFactory\Exception\MissingValueException;
-use webignition\BasilModelFactory\IdentifierStringExtractor\IdentifierStringExtractor;
 
 class AssertionFactory
 {
     private $valueFactory;
-    private $identifierStringExtractor;
     private $examinedValueFactory;
 
     public function __construct(
         ValueFactory $valueFactory,
-        IdentifierStringExtractor $identifierStringExtractor,
         AssertionExaminedValueFactory $examinedValueFactory
     ) {
         $this->valueFactory = $valueFactory;
-        $this->identifierStringExtractor = $identifierStringExtractor;
         $this->examinedValueFactory = $examinedValueFactory;
     }
 
@@ -30,62 +28,51 @@ class AssertionFactory
     {
         return new AssertionFactory(
             ValueFactory::createFactory(),
-            IdentifierStringExtractor::create(),
             AssertionExaminedValueFactory::createFactory()
         );
     }
 
     /**
-     * @param string $assertionString
+     * @param AssertionDataInterface $assertionData
      *
      * @return AssertionInterface
      *
      * @throws EmptyAssertionStringException
      * @throws MissingValueException
+     * @throws MissingComparisonException
      */
-    public function createFromAssertionString(string $assertionString): AssertionInterface
+    public function createFromAssertionData(AssertionDataInterface $assertionData): AssertionInterface
     {
-        $assertionString = trim($assertionString);
-        if ('' === $assertionString) {
+        $source = $assertionData->getSource();
+        if ('' === $source) {
             throw new EmptyAssertionStringException();
         }
 
-        $identifierString = $this->identifierStringExtractor->extractFromStart($assertionString);
+        $comparison = (string) $assertionData->getComparison();
+        if ('' === $comparison) {
+            throw new MissingComparisonException();
+        }
 
-        $examinedValue = $this->examinedValueFactory->create($identifierString);
-
-        $comparisonAndExpectedValue = trim(mb_substr($assertionString, mb_strlen($identifierString)));
-        list($comparison, $expectedValueString) = $this->findComparisonAndExpectedValue($comparisonAndExpectedValue);
+        $examinedValue = $this->examinedValueFactory->create((string) $assertionData->getIdentifier());
 
         if (in_array($comparison, AssertionComparison::EXAMINATION_COMPARISONS)) {
             return new ExaminationAssertion(
-                $assertionString,
+                $source,
                 $examinedValue,
                 $comparison
             );
         }
 
-        if ('' === $expectedValueString) {
+        $expectedValueString = $assertionData->getValue();
+        if (null === $expectedValueString) {
             throw new MissingValueException();
         }
 
         return new ComparisonAssertion(
-            $assertionString,
+            $source,
             $examinedValue,
             $comparison,
             $this->valueFactory->createFromValueString($expectedValueString)
         );
-    }
-
-    private function findComparisonAndExpectedValue(string $comparisonAndExpectedValue): array
-    {
-        if (substr_count($comparisonAndExpectedValue, ' ') === 0) {
-            return [
-                $comparisonAndExpectedValue,
-                ''
-            ];
-        }
-
-        return explode(' ', $comparisonAndExpectedValue, 2);
     }
 }

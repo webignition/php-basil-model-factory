@@ -1,12 +1,14 @@
 <?php
-/** @noinspection PhpUnhandledExceptionInspection */
-/** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelFactory\Tests\Unit\Action;
 
+use webignition\BasilDataStructure\Action\InputAction as InputActionData;
+use webignition\BasilDataStructure\Action\WaitAction as WaitActionData;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModelFactory\Action\InputActionTypeFactory;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
+use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingValueException;
 
 class InputActionTypeFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -68,14 +70,56 @@ class InputActionTypeFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testCreateForActionTypeThrowsException()
+    public function testCreateForWrongActionTypeThrowsException()
     {
-        $this->expectExceptionObject(new InvalidActionTypeException('click'));
+        $this->expectExceptionObject(new InvalidActionTypeException('wait'));
 
-        $this->actionFactory->createForActionType(
-            'click ".selector"',
-            ActionTypes::CLICK,
-            '".selector"'
+        $this->actionFactory->create(new WaitActionData('wait 1', '1'));
+    }
+
+    public function testCreateForMissingValueThrowsException()
+    {
+        $actionData = new InputActionData(
+            'set ".selector" to',
+            '".selector" to',
+            '".selector"',
+            null
         );
+
+        $this->expectExceptionObject(new MissingValueException());
+
+        $this->actionFactory->create($actionData);
+    }
+
+    /**
+     * @dataProvider createForMissingIdentifierStringThrowsExceptionDataProvider
+     */
+    public function testCreateForMissingIdentifierThrowsException(InputActionData $actionData)
+    {
+        $this->expectExceptionObject(new InvalidIdentifierStringException($actionData->getIdentifier()));
+
+        $this->actionFactory->create($actionData);
+    }
+
+    public function createForMissingIdentifierStringThrowsExceptionDataProvider(): array
+    {
+        return [
+            'missing identifier string' => [
+                'actionData' => new InputActionData(
+                    'set to "value"',
+                    'to "value"',
+                    '',
+                    '"value"'
+                ),
+            ],
+            'empty identifier string' => [
+                'actionData' => new InputActionData(
+                    'set "" to "value"',
+                    '"" to "value"',
+                    '""',
+                    '"value"'
+                ),
+            ],
+        ];
     }
 }

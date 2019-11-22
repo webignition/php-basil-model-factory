@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0f3a703fc49b1a4d81178b3bed78de78",
+    "content-hash": "a85383f5987b8bcf7212430b24ee107d",
     "packages": [
         {
             "name": "nyholm/psr7",
@@ -222,16 +222,16 @@
         },
         {
             "name": "webignition/basil-data-structures",
-            "version": "0.3",
+            "version": "0.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/basil-data-structures.git",
-                "reference": "4d97e081bf0762302fc74c09b555c132c44cb048"
+                "reference": "1a3f4a237ca7c52b632ebb381185b5e18417d3d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/basil-data-structures/zipball/4d97e081bf0762302fc74c09b555c132c44cb048",
-                "reference": "4d97e081bf0762302fc74c09b555c132c44cb048",
+                "url": "https://api.github.com/repos/webignition/basil-data-structures/zipball/1a3f4a237ca7c52b632ebb381185b5e18417d3d9",
+                "reference": "1a3f4a237ca7c52b632ebb381185b5e18417d3d9",
                 "shasum": ""
             },
             "require": {
@@ -260,7 +260,7 @@
             ],
             "description": "Data structures for basil language",
             "homepage": "https://github.com/webignition/basil-data-structures",
-            "time": "2019-11-19T17:35:31+00:00"
+            "time": "2019-11-22T12:50:58+00:00"
         },
         {
             "name": "webignition/php-basil-context-aware-exception",
@@ -3361,6 +3361,50 @@
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
             "time": "2019-06-13T22:48:21+00:00"
+        },
+        {
+            "name": "webignition/basil-parser",
+            "version": "0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/basil-parser.git",
+                "reference": "59cd81a4ee9b28a07c1e4e3dbd91737c3fc51351"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/basil-parser/zipball/59cd81a4ee9b28a07c1e4e3dbd91737c3fc51351",
+                "reference": "59cd81a4ee9b28a07c1e4e3dbd91737c3fc51351",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=7.2",
+                "webignition/basil-data-structures": ">=0.13,<1"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.11.5",
+                "phpunit/phpunit": "~8.0",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "webignition\\BasilParser\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "webignition@gmail.com"
+                }
+            ],
+            "description": "Parses raw basil data into basic data structures",
+            "homepage": "https://github.com/webignition/basil-parser",
+            "time": "2019-11-22T13:04:50+00:00"
         },
         {
             "name": "webignition/php-basil-test-identifier-factory",

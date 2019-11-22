@@ -2,6 +2,8 @@
 
 namespace webignition\BasilModelFactory\Action;
 
+use webignition\BasilDataStructure\Action\ActionInterface as ActionDataInterface;
+use webignition\BasilDataStructure\Action\InteractionAction as InteractionActionData;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InteractionAction;
@@ -36,31 +38,37 @@ class InteractionActionTypeFactory implements ActionTypeFactoryInterface
     }
 
     /**
-     * @param string $actionString
-     * @param string $type
-     * @param string $arguments
+     * @param ActionDataInterface $actionData
      *
      * @return ActionInterface
      *
-     * @throws InvalidIdentifierStringException
      * @throws InvalidActionTypeException
+     * @throws InvalidIdentifierStringException
      */
-    public function createForActionType(string $actionString, string $type, string $arguments): ActionInterface
+    public function create(ActionDataInterface $actionData): ActionInterface
     {
-        if (!$this->handles($type)) {
+        $type = (string) $actionData->getType();
+        if (!$actionData instanceof InteractionActionData) {
             throw new InvalidActionTypeException($type);
         }
 
-        $identifier = $this->identifierFactory->create($arguments, [
+        $identifierString = (string) $actionData->getIdentifier();
+
+        $identifier = $this->identifierFactory->create($identifierString, [
             IdentifierTypes::ELEMENT_REFERENCE,
             IdentifierTypes::ELEMENT_SELECTOR,
             IdentifierTypes::PAGE_ELEMENT_REFERENCE,
         ]);
 
         if (null === $identifier) {
-            throw new InvalidIdentifierStringException($arguments);
+            throw new InvalidIdentifierStringException($identifierString);
         }
 
-        return new InteractionAction($actionString, $type, $identifier, $arguments);
+        return new InteractionAction(
+            $actionData->getSource(),
+            $type,
+            $identifier,
+            (string) $actionData->getArguments()
+        );
     }
 }

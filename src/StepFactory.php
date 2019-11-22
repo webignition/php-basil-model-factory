@@ -15,6 +15,7 @@ use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\Exception\EmptyAssertionStringException;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingComparisonException;
 use webignition\BasilModelFactory\Exception\MissingValueException;
 use webignition\BasilModelFactory\Identifier\PageElementReferenceIdentifierFactory;
 
@@ -52,33 +53,37 @@ class StepFactory
      * @throws InvalidActionTypeException
      * @throws InvalidIdentifierStringException
      * @throws MalformedPageElementReferenceException
+     * @throws MissingComparisonException
      * @throws MissingValueException
      */
     public function createFromStepData(StepData $stepData): StepInterface
     {
-        $actionStrings = $stepData->getActions();
-        $assertionStrings = $stepData->getAssertions();
+        $actionDataCollection = $stepData->getActions();
+        $assertionDataCollection = $stepData->getAssertions();
 
         $actions = [];
         $assertions = [];
 
-        $actionString = '';
-        $assertionString = '';
+        $actionSource = '';
+        $assertionSource = '';
 
         try {
-            foreach ($actionStrings as $actionString) {
-                $actions[] = $this->actionFactory->createFromActionString(trim($actionString));
+            foreach ($actionDataCollection as $actionData) {
+                $actionSource = $actionData->getSource();
+                $actions[] = $this->actionFactory->createFromActionData($actionData);
             }
 
-            foreach ($assertionStrings as $assertionString) {
-                $assertions[] = $this->assertionFactory->createFromAssertionString(trim($assertionString));
+            foreach ($assertionDataCollection as $assertionData) {
+                $assertionSource = $assertionData->getSource();
+                $assertions[] = $this->assertionFactory->createFromAssertionData($assertionData);
             }
         } catch (InvalidActionTypeException |
             InvalidIdentifierStringException |
+            MissingComparisonException |
             MissingValueException $contextAwareException
         ) {
             $contextAwareException->applyExceptionContext([
-                ExceptionContextInterface::KEY_CONTENT => $assertionString !== '' ? $assertionString : $actionString,
+                ExceptionContextInterface::KEY_CONTENT => $assertionSource !== '' ? $assertionSource : $actionSource,
             ]);
 
             throw $contextAwareException;

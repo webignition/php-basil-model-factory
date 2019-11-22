@@ -2,6 +2,7 @@
 
 namespace webignition\BasilModelFactory\Action;
 
+use webignition\BasilDataStructure\Action\ActionInterface as ActionDataInterface;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
@@ -28,7 +29,7 @@ class ActionFactory
     }
 
     /**
-     * @param string $actionString
+     * @param ActionDataInterface $actionData
      *
      * @return ActionInterface
      *
@@ -36,31 +37,24 @@ class ActionFactory
      * @throws InvalidIdentifierStringException
      * @throws MissingValueException
      */
-    public function createFromActionString(string $actionString): ActionInterface
+    public function createFromActionData(ActionDataInterface $actionData): ActionInterface
     {
-        $actionString = trim($actionString);
-
-        $type = $actionString;
-        $arguments = '';
-
-        if (mb_substr_count($actionString, ' ') > 0) {
-            list($type, $arguments) = explode(' ', $actionString, 2);
-        }
+        $type = (string) $actionData->getType();
 
         if ($this->inputActionTypeFactory->handles($type)) {
-            return $this->inputActionTypeFactory->createForActionType($actionString, $type, $arguments);
+            return $this->inputActionTypeFactory->create($actionData);
         }
 
         if ($this->interactionActionTypeFactory->handles($type)) {
-            return $this->interactionActionTypeFactory->createForActionType($actionString, $type, $arguments);
+            return $this->interactionActionTypeFactory->create($actionData);
         }
 
         if ($this->noArgumentsActionTypeFactory->handles($type)) {
-            return $this->noArgumentsActionTypeFactory->createForActionType($actionString, $type, $arguments);
+            return $this->noArgumentsActionTypeFactory->create($actionData);
         }
 
         if ($this->waitActionTypeFactory->handles($type)) {
-            return $this->waitActionTypeFactory->createForActionType($actionString, $type, $arguments);
+            return $this->waitActionTypeFactory->create($actionData);
         }
 
         throw new InvalidActionTypeException($type);
