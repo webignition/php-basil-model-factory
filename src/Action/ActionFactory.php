@@ -6,6 +6,7 @@ use webignition\BasilDataStructure\Action\Action as ActionData;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingValueException;
 
 class ActionFactory
 {
@@ -34,6 +35,7 @@ class ActionFactory
      *
      * @throws InvalidActionTypeException
      * @throws InvalidIdentifierStringException
+     * @throws MissingValueException
      */
     public function createFromActionData(ActionData $actionData): ActionInterface
     {

@@ -8,6 +8,7 @@ use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModelFactory\Action\InputActionTypeFactory;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingValueException;
 
 class InputActionTypeFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -74,6 +75,20 @@ class InputActionTypeFactoryTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionObject(new InvalidActionTypeException('wait'));
 
         $this->actionFactory->create(new WaitActionData('wait 1', '1'));
+    }
+
+    public function testCreateForMissingValueThrowsException()
+    {
+        $actionData = new InputActionData(
+            'set ".selector" to',
+            '".selector" to',
+            '".selector"',
+            null
+        );
+
+        $this->expectExceptionObject(new MissingValueException());
+
+        $this->actionFactory->create($actionData);
     }
 
     /**

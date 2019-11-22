@@ -9,6 +9,7 @@ use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
+use webignition\BasilModelFactory\Exception\MissingValueException;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelFactory\IdentifierTypes;
 use webignition\BasilModelFactory\ValueFactory;
@@ -44,6 +45,7 @@ class InputActionTypeFactory implements ActionTypeFactoryInterface
      *
      * @throws InvalidIdentifierStringException
      * @throws InvalidActionTypeException
+     * @throws MissingValueException
      */
     public function create(ActionData $actionData): ActionInterface
     {
@@ -63,7 +65,12 @@ class InputActionTypeFactory implements ActionTypeFactoryInterface
             throw new InvalidIdentifierStringException($identifierString);
         }
 
-        $value = $this->valueFactory->createFromValueString($actionData->getValue());
+        $valueData = $actionData->getValue();
+        if (null === $valueData) {
+            throw new MissingValueException();
+        }
+
+        $value = $this->valueFactory->createFromValueString((string) $valueData);
 
         return new InputAction($actionData->getSource(), $identifier, $value, (string) $actionData->getArguments());
     }
