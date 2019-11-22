@@ -2,7 +2,7 @@
 
 namespace webignition\BasilModelFactory\Action;
 
-use webignition\BasilDataStructure\Action\Action as ActionData;
+use webignition\BasilDataStructure\Action\ActionInterface as ActionDataInterface;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModelFactory\Exception\InvalidActionTypeException;
 use webignition\BasilModelFactory\Exception\InvalidIdentifierStringException;
@@ -29,7 +29,7 @@ class ActionFactory
     }
 
     /**
-     * @param ActionData $actionData
+     * @param ActionDataInterface $actionData
      *
      * @return ActionInterface
      *
@@ -37,7 +37,7 @@ class ActionFactory
      * @throws InvalidIdentifierStringException
      * @throws MissingValueException
      */
-    public function createFromActionData(ActionData $actionData): ActionInterface
+    public function createFromActionData(ActionDataInterface $actionData): ActionInterface
     {
         $type = (string) $actionData->getType();
 

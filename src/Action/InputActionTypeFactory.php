@@ -2,7 +2,7 @@
 
 namespace webignition\BasilModelFactory\Action;
 
-use webignition\BasilDataStructure\Action\Action as ActionData;
+use webignition\BasilDataStructure\Action\ActionInterface as ActionDataInterface;
 use webignition\BasilDataStructure\Action\InputAction as InputActionData;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
@@ -39,7 +39,7 @@ class InputActionTypeFactory implements ActionTypeFactoryInterface
     }
 
     /**
-     * @param ActionData $actionData
+     * @param ActionDataInterface $actionData
      *
      * @return ActionInterface
      *
@@ -47,9 +47,9 @@ class InputActionTypeFactory implements ActionTypeFactoryInterface
      * @throws InvalidActionTypeException
      * @throws MissingValueException
      */
-    public function create(ActionData $actionData): ActionInterface
+    public function create(ActionDataInterface $actionData): ActionInterface
     {
-        $type = $actionData->getType();
+        $type = (string) $actionData->getType();
         if (!$actionData instanceof InputActionData) {
             throw new InvalidActionTypeException($type);
         }

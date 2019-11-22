@@ -2,7 +2,7 @@
 
 namespace webignition\BasilModelFactory;
 
-use webignition\BasilDataStructure\Assertion as AssertionData;
+use webignition\BasilDataStructure\AssertionInterface as AssertionDataInterface;
 use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Assertion\ComparisonAssertion;
@@ -33,7 +33,7 @@ class AssertionFactory
     }
 
     /**
-     * @param AssertionData $assertionData
+     * @param AssertionDataInterface $assertionData
      *
      * @return AssertionInterface
      *
@@ -41,7 +41,7 @@ class AssertionFactory
      * @throws MissingValueException
      * @throws MissingComparisonException
      */
-    public function createFromAssertionData(AssertionData $assertionData): AssertionInterface
+    public function createFromAssertionData(AssertionDataInterface $assertionData): AssertionInterface
     {
         $source = $assertionData->getSource();
         if ('' === $source) {
