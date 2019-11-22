@@ -35,7 +35,7 @@
         "php": ">=7.2",
         "ext-mbstring": "*",
         "webignition/php-basil-models": ">=0.89,<1",
-        "webignition/basil-data-structures": ">=0.11,<1",
+        "webignition/basil-data-structures": ">=0.13,<1",
         "webignition/php-basil-context-aware-exception": "^0.1.0",
         "nyholm/psr7": "^1.1"
     },
@@ -47,6 +47,6 @@
         "mockery/mockery": "^1.2",
         "phpstan/extension-installer": "^1.0",
         "phpstan/phpstan-mockery": "^0.11.3",
-        "webignition/basil-parser": ">=0.2,<1"
+        "webignition/basil-parser": ">=0.4,<1"
     }
 }
